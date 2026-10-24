@@ -1,0 +1,8 @@
+server:
+  address: ${SERVER_ADDRESS}
+  port: ${SERVER_PORT}
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}

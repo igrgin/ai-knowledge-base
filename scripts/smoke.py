@@ -14,7 +14,10 @@ ROOT = Path(__file__).resolve().parent.parent
 os.chdir(ROOT)
 project = "akb-t1-smoke-" + uuid.uuid4().hex[:8]
 env = dict(os.environ, COMPOSE_PROJECT_NAME=project, DB_HOST="127.0.0.1", DB_PORT="54330",
-           DB_NAME="knowledge_base", DB_USER="knowledge_base", DB_PASSWORD="local-development-only", APP_PORT="18080")
+           DB_NAME="knowledge_base", DB_USER="knowledge_base", DB_PASSWORD="local-development-only", APP_PORT="18080",
+           SPRING_PROFILES_ACTIVE="lvl2test", SERVER_PORT="18080",
+           SPRING_DATASOURCE_URL="jdbc:postgresql://127.0.0.1:54330/knowledge_base?connectTimeout=2&socketTimeout=3",
+           SPRING_DATASOURCE_USERNAME="knowledge_base", SPRING_DATASOURCE_PASSWORD="local-development-only")
 compose = ["docker", "compose", "-f", str(ROOT / "compose.yaml"), "-p", project]
 
 def run(args, **kwargs):
@@ -60,7 +63,7 @@ try:
     assert sql("SELECT value FROM t1_probe") == "restart-preserved"
     sql("DROP TABLE t1_probe")
     with open(".local/smoke-backend.log", "w") as log:
-        app = subprocess.Popen(["java", "-jar", ".local/package/backend.jar"], env=env, stdout=log, stderr=subprocess.STDOUT)
+        app = subprocess.Popen(["java", "-jar", ".local/package/backend.jar", "--spring.config.additional-location=file:backend/src/test/resources/"], env=env, stdout=log, stderr=subprocess.STDOUT)
         wait_status(200)
         browser_env = dict(env, PLAYWRIGHT_BASE_URL="http://127.0.0.1:18080")
         subprocess.run(["npm", "run", "test:e2e", "--prefix", "frontend"], env=browser_env, check=True)
@@ -72,7 +75,7 @@ try:
         wait_status(200)
         app.terminate()
         app.wait(timeout=15)
-        app = subprocess.Popen(["java", "-jar", ".local/package/backend.jar"], env=env, stdout=log, stderr=subprocess.STDOUT)
+        app = subprocess.Popen(["java", "-jar", ".local/package/backend.jar", "--spring.config.additional-location=file:backend/src/test/resources/"], env=env, stdout=log, stderr=subprocess.STDOUT)
         wait_status(200)
     print("PASS: pgvector, persistent restart, packaged browser, database outage/recovery, application restart")
 finally:

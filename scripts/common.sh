@@ -18,3 +18,12 @@ require_java26() {
   version="$(java -XshowSettings:properties -version 2>&1 | sed -n 's/^[[:space:]]*java.specification.version = //p')"
   [[ "$version" == 26 ]] || { echo 'Java 26 is required' >&2; exit 1; }
 }
+
+select_local_profile() {
+  export SPRING_PROFILES_ACTIVE=dev
+  if [[ -n "${APP_PORT:-}" ]]; then
+    export SERVER_PORT="$APP_PORT"
+  elif [[ -n "${SERVER_PORT:-}" ]]; then
+    export APP_PORT="$SERVER_PORT"
+  fi
+}

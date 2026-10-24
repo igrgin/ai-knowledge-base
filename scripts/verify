@@ -3,4 +3,5 @@ source "$(dirname "$0")/common.sh"
 ./scripts/check-tools
 python3 scripts/check_repository.py
 ./scripts/package
+./mvnw -B -Pintegration-tests verify
 python3 scripts/smoke.py
