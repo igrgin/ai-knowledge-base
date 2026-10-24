@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "pluginVersion": "0.1.0",
+  "records": {
+    "changeRoot": "docs/changes",
+    "incidentRoot": "docs/incidents"
+  },
+  "owners": {
+    "roles": {
+      "intent": [
+        "project-owner"
+      ],
+      "design": [
+        "project-owner"
+      ],
+      "plan": [
+        "project-owner"
+      ],
+      "review": [
+        "project-owner"
+      ],
+      "release": [
+        "project-owner"
+      ]
+    },
+    "people": {
+      "project-owner": {
+        "name": "Project owner (user in the adoption conversation)"
+      }
+    }
+  },
+  "policies": {
+    "review": {
+      "path": "docs/policies/review.md",
+      "owner": "project-owner"
+    }
+  },
+  "commands": {},
+  "controls": {},
+  "capabilities": {
+    "concurrency": {
+      "maxParallelTasks": 1
+    },
+    "operationalJobs": {
+      "enabled": false
+    }
+  }
+}

@@ -1,0 +1,38 @@
+# Host/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+.codex/
+
+# Credentials and host-specific configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+
+# Dependencies, build and test output
+node_modules/
+target/
+dist/
+coverage/
+playwright-report/
+test-results/
+__pycache__/
+*.pyc
+*.log
+
+# Private application/runtime data; redistributable fixtures belong in test-fixtures/
+/.local/
+/data/
+/storage/
+/uploads/
+/backups/
+/journals/
+/tmp/
+/evaluation/generated/
+/evaluation/private/
+/evaluation/scalability/generated/
