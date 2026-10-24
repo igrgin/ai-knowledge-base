@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+source "$(dirname "$0")/common.sh"
+./scripts/check-tools
+python3 scripts/check_repository.py
+./scripts/package
+python3 scripts/smoke.py

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+source "$(dirname "$0")/common.sh"
+require_java26
+[[ "$(node --version)" == v24.22.1 ]] || { echo 'Run ./scripts/setup-node' >&2; exit 1; }
+npm ci --prefix frontend
+npm run build --prefix frontend
+./mvnw -B -Pdistribution clean verify
+mkdir -p .local/package
+cp backend/target/backend-0.1.0-SNAPSHOT.jar .local/package/backend.jar
+cp pdf-extractor/target/pdf-extractor-0.1.0-SNAPSHOT.jar .local/package/pdf-extractor.jar
+# Both processes use the same Java executable; no parser/runtime download.
+java -Xmx256m -jar .local/package/pdf-extractor.jar --version

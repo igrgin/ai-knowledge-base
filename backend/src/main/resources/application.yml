@@ -1,0 +1,28 @@
+server:
+  address: 127.0.0.1
+  port: ${APP_PORT:8080}
+spring:
+  application:
+    name: ai-knowledge-base
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:127.0.0.1}:${DB_PORT:54329}/${DB_NAME:knowledge_base}?connectTimeout=2&socketTimeout=3
+    username: ${DB_USER:knowledge_base}
+    password: ${DB_PASSWORD:local-development-only}
+    hikari:
+      maximum-pool-size: 4
+      minimum-idle: 0
+      connection-timeout: 2000
+      initialization-fail-timeout: -1
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+      group:
+        readiness:
+          include: readinessState,db

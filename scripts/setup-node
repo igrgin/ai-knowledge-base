@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+source "$(dirname "$0")/common.sh"
+mkdir -p .local/tools
+archive="node-v$NODE_VERSION-$NODE_PLATFORM.tar.gz"
+base="https://nodejs.org/dist/v$NODE_VERSION"
+curl -fsS "$base/$archive" -o ".local/tools/$archive"
+curl -fsS "$base/SHASUMS256.txt" -o .local/tools/SHASUMS256.txt
+python3 - "$archive" <<'PYTHON'
+import hashlib, pathlib, sys
+name=sys.argv[1]
+root=pathlib.Path('.local/tools')
+expected=next(line.split()[0] for line in (root/'SHASUMS256.txt').read_text().splitlines() if line.split()[-1]==name)
+assert hashlib.sha256((root/name).read_bytes()).hexdigest()==expected, 'Node checksum mismatch'
+PYTHON
+tar -xzf ".local/tools/$archive" -C .local/tools
+node --version
