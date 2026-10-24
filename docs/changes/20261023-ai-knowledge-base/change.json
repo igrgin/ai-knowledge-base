@@ -36,15 +36,15 @@
         "section": "Revised task list"
       },
       "documentState": "ready",
-      "stateReason": "D19 accepts and authorizes only T1 at the setup baseline. T1 implementation/tests/independent review are complete in unmerged PR21; T2–T20 remain pending and unauthorized. Progress-only reconciliation preserves feature definitions and accepted scope."
+      "stateReason": "D19 authorizes T1; D20 refines its README/configuration/testing approach. T1 is in progress again in PR21; T2–T20 remain pending/unauthorized."
     },
     "review": {
       "source": {
         "path": "docs/changes/20261023-ai-knowledge-base/review.md",
         "section": "Comparison"
       },
-      "documentState": "ready",
-      "stateReason": "Initial fresh-context T1 review covers bugs/security/requirements at the fixed implementation candidate: clear, no findings, roundCount0. Metadata-only descendant freshness is recorded in the linked PR assessment. Owner approval/merge remains outstanding."
+      "documentState": "draft",
+      "stateReason": "D20 owner-directed README/profile/test revision invalidates affected coverage at the new candidate; historical clear assessments remain preserved. Correction round1 reserved before edits; refresh pending."
     }
   },
   "decisions": {
@@ -385,6 +385,18 @@
           "section": "Requirements"
         }
       }
+    },
+    "D20": {
+      "kind": "policyDecision",
+      "source": {
+        "providerRef": "codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39",
+        "selector": "2026-10-25 owner message beginning \"Putting a status in the readme is totally unnecessary\", directing a project/startup README like GitHub Voice Draft, shared base application YAML plus prod/dev overrides, environment-required production values without fallback defaults, and test and one-word LVL2 test profiles for basic versus full Spring/Testcontainers/end-to-end tests."
+      },
+      "actorId": "project-owner",
+      "taskIds": [
+        "T1"
+      ],
+      "scope": "Authorize revising the existing unmerged T1 PR: README focuses on product/startup/build with future content scaffolding, using igrgin/voice-draft README as reference; remove status/project-records/development-flow/repository-checks sections. Introduce shared static base Spring configuration and dev/prod overrides, with required environment values (no local fallback defaults) for production. Add test for unit/basic checks and lvl2test for full Spring/Testcontainers/end-to-end checks; update affected launch/test/CI wiring and meaningful tests. This is T1 configuration/testing refinement only, not T2 feature/schema work, hosting, paid AI, extra concurrency or merge authorization. Preserve prior review history; refresh affected tests and all relevant review coverage after the revision."
     }
   },
   "route": "fuller",

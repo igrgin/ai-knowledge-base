@@ -51,7 +51,7 @@ No findings identified within the assessed T1 scope. No blocking or advisory ite
 
 ## Correction history
 
-`roundCount`: 0
+`roundCount`: 1
 
 Initial review completed clear without corrections. No correction batch was reserved or started; `roundCount` remains 0. The shared limit is two correction rounds after initial review. Editorial progress/report/command-reference reconciliation is not a correction batch and does not change the implementation.
 
@@ -72,3 +72,9 @@ The coordinator persists this report, T1 progress/evidence and existing-command 
 ## Decisions and remaining work
 
 D19 supplies T1 implementation/review authority. The project owner retains PR approval and manual merge authority. T2–T20, hosting, paid AI and a concurrency increase remain outside scope.
+
+## Owner-requested revision D20 — round 1
+
+Round 1 is reserved before the README/profile/testing batch starts. Before candidate: `386b652f9e3156f4ecf63d764b3c6fc231eb02fc`. This batch follows the owner's concrete revision request, not a finding in the earlier empty finding set. After candidate and review outcome are pending. The historical initial comparison and clear assessment above apply only to their named earlier candidates.
+
+Current assessment: `incomplete`. Bugs, security and requirements coverage affecting README accuracy, profile/configuration isolation, launcher selection and the basic/full-stack testing split require refresh. Preserve unaffected source coverage only after checking equivalence. One correction round remains after this reserved round; no reset is implied. The coordinator will record the actual revised candidate/report before presenting PR #21 again.

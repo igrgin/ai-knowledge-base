@@ -20,7 +20,7 @@ The revised local-v1 proposal also includes invitation/link project imports, opt
 
 The index's current artifact/decision targets are navigation links to the named sections. D1, D4 and D6 retain their original owner acceptance statements as continuing decision provenance, not as frozen approvals rebound to changed text. No old local object is needed to read this plan. D19 records the owner's later acceptance and implementation authority for T1 at the committed setup baseline; it does not authorize other tasks.
 
-This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorizes only T1 on 2026-10-25; T1 implementation is completed in PR #21, with owner approval/merge pending; T2–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
+This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorizes only T1 on 2026-10-25; T1 is undergoing the D20 owner-requested revision in PR #21; T2–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
 
 ## Repository findings and prerequisites
 
@@ -79,7 +79,7 @@ T1 verifies the core skeleton, runtime pins, database startup and packaging cont
 
 ## Vertical slices and dependency semantics
 
-The D13 reassessment preserved pending tasks; D19 now authorizes **T1 only**, whose implementation is **completed** in PR #21 (not merged). T2–T20 remain pending and unauthorized. `maxParallelTasks` is still **1**, so execution remains one implementation writer at a time unless a later owner decision authorizes a change. Parallel opportunities below describe the dependency structure, not permission to dispatch agents. No application code, runtime configuration, policy or product requirement is changed by this plan.
+The D13 reassessment preserved pending tasks; D19 now authorizes **T1 only**, whose implementation is **in_progress** again under D20 in PR #21 (not merged). T2–T20 remain pending and unauthorized. `maxParallelTasks` is still **1**, so execution remains one implementation writer at a time unless a later owner decision authorizes a change. Parallel opportunities below describe the dependency structure, not permission to dispatch agents. No application code, runtime configuration, policy or product requirement is changed by this plan.
 
 Stable IDs T1–T17 remain in use. T2 provides only the small persistence/contract foundation. T18 owns library PDF reading, T19 extends project import with copied chats, and T20 owns archive/unarchive and chat source controls. All corresponding product behavior is retained in the current slices.
 
@@ -117,7 +117,7 @@ A task in the start column denotes its completion; a K gate denotes the narrower
 
 | Task | Demonstrable result | Requirement IDs | Can start after | Must exist before completion | Assigned writer | State |
 | --- | --- | --- | --- | --- | --- | --- |
-| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | completed |
+| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | in_progress |
 | T2 | Migrate/restart a minimal database and verify shared contract conventions | R18, R23 | T1 | T1 | Foundation owner | pending |
 | T3 | Register, log in/out and retain an authenticated session after restart | R1, R2, R16, R18, R23 | T2 | T2 | Identity slice owner | pending |
 | T4 | Create/list/open/rename private projects through the UI | R2, R3, R6, R17 | T3 | T3 | Project slice owner | pending |
@@ -472,3 +472,9 @@ This current plan is the only implementation task source. It preserves the owner
 - Independent review: one fresh Sol high reviewer, bugs/security/requirements all covered, no findings, `clear`, correction round 0; see [review record](review.md#comparison) and [current PR assessment](https://github.com/igrgin/ai-knowledge-base/pull/21#issuecomment-6390736664).
 - Scope limits: extractor only exposes its real version/build contract and rejects extraction arguments; no PDF extraction, domain tables, Flyway, authentication, AI, multi-instance harness or hosting is claimed.
 - Current disposition: T1 implementation completed; PR approval and manual merge remain the project owner's responsibility. T2–T20 remain pending and unauthorized. No merge authority is granted.
+
+### T1 owner-directed README and profile revision
+
+D20 authorizes the current PR refinement without starting later tasks. README adopts the project/startup/build focus of `igrgin/voice-draft`, removes status/process sections and leaves future product-content scaffolding. Base `application.yml` owns static common settings. `dev` owns local overrides; `prod` requires environment-provided deployment values without local fallback defaults. Test configuration is under test resources: `test` for unit/basic checks and `lvl2test` for full Spring/Testcontainers/end-to-end checks. Launchers and CI select profiles explicitly; real integration checks belong to the latter. A narrow readiness Testcontainer check may establish this requested split without introducing T2 migrations/domain tables or a general fixture framework.
+
+The shared review count is 1: owner-requested batch reserved before edits, previous finding set empty, revised-candidate evidence and independent refresh pending. No merge, hosting, AI calls or concurrency increase is authorized.
