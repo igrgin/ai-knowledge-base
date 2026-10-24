@@ -15,7 +15,7 @@ npm ci --prefix frontend
 ./mvnw -pl backend clean package -DskipTests
 java -jar backend/target/backend-0.1.0-SNAPSHOT.jar &
 backend_pid=$!
-node frontend/node_modules/vite/bin/vite.js --host 127.0.0.1 &
+(cd frontend && exec node node_modules/vite/bin/vite.js --host 127.0.0.1) &
 frontend_pid=$!
 cleanup() {
   kill "$backend_pid" "$frontend_pid" 2>/dev/null || true
