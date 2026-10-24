@@ -17,7 +17,7 @@ The setup applies the following settings after the initial baseline is pushed an
 | Merge methods | Squash only; merge commits, rebase merging and auto-merge disabled |
 | Main pull requests | Required, including administrators |
 | Native approving-review count | 0; no CODEOWNER or last-push approval requirement |
-| Required check | `Repository checks`, pinned to the GitHub Actions app after its first successful run |
+| Required checks | `Repository checks`; T1 subsequently adds the successful `Runtime checks`, both pinned to the GitHub Actions app |
 | Update requirement | Branch must be up to date with `main` |
 | Review conversations | Must be resolved |
 | Main history | Linear; force pushes and branch deletion blocked |

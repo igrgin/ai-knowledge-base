@@ -35,7 +35,29 @@
       "owner": "project-owner"
     }
   },
-  "commands": {},
+  "commands": {
+    "setupNode": {
+      "path": "scripts/setup-node"
+    },
+    "checkTools": {
+      "path": "scripts/check-tools"
+    },
+    "verify": {
+      "path": "scripts/verify"
+    },
+    "package": {
+      "path": "scripts/package"
+    },
+    "dev": {
+      "path": "scripts/dev"
+    },
+    "runLocal": {
+      "path": "scripts/run-local"
+    },
+    "repositoryChecks": {
+      "path": "scripts/check_repository.py"
+    }
+  },
   "controls": {},
   "capabilities": {
     "concurrency": {

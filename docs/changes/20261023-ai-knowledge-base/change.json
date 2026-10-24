@@ -36,7 +36,15 @@
         "section": "Revised task list"
       },
       "documentState": "ready",
-      "stateReason": "Current consolidated plan; D19 accepts and authorizes only T1 at the initial committed baseline. T1 progress is maintained here; later task implementation is not authorized."
+      "stateReason": "D19 accepts and authorizes only T1 at the setup baseline. T1 implementation/tests/independent review are complete in unmerged PR21; T2–T20 remain pending and unauthorized. Progress-only reconciliation preserves feature definitions and accepted scope."
+    },
+    "review": {
+      "source": {
+        "path": "docs/changes/20261023-ai-knowledge-base/review.md",
+        "section": "Comparison"
+      },
+      "documentState": "ready",
+      "stateReason": "Initial fresh-context T1 review covers bugs/security/requirements at the fixed implementation candidate: clear, no findings, roundCount0. Metadata-only descendant freshness is recorded in the linked PR assessment. Owner approval/merge remains outstanding."
     }
   },
   "decisions": {
