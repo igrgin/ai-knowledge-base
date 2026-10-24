@@ -2,7 +2,7 @@
 
 A learning and portfolio project for exploring text PDFs through grounded AI conversations. The planned stack is Java 26, Spring Boot, React with shadcn/ui, and PostgreSQL with pgvector.
 
-**Status: planning and repository setup. Application implementation has not been authorized or started.** The current plan has 20 pending tasks. Hosting is optional for a later phase.
+**Status: T1 implementation is authorized and in progress.** The remaining 19 tasks are pending and unauthorized. Hosting is optional for a later phase.
 
 Users will register, create private projects, upload up to ten PDFs per project, read their files, and reopen saved chats with answers linked to the original PDF pages. Unsupported questions should receive an explicit abstention. Project and per-chat source controls, independent project copies, and revocable read-only chat snapshots are included in the current requirements. Individual PDFs can be archived; deletion applies to chats and whole projects.
 

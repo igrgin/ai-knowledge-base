@@ -6,7 +6,7 @@ Owner decision D17 in the [change index](changes/20261023-ai-knowledge-base/chan
 
 The [actual issue mapping](changes/20261023-ai-knowledge-base/github-issues.json) records all 20 task IDs, issue numbers, URLs and planned branch names. Issues reproduce the current plan's behavior, start/completion distinction, meaningful tests, exclusive ownership and required reuse. GitHub assignment to `igrgin` means human accountability; it does not appoint or dispatch an implementation agent.
 
-**Implementation remains unauthorized and all tasks remain pending.** No feature branch, worktree or agent is created during setup. Create each mapped branch when its slice is separately authorized; the branch is based on the appropriate agreed integration baseline. Preserve the [dependency graph and parallel opportunities](changes/20261023-ai-knowledge-base/plan.md#potential-parallel-execution-and-ownership). Task numbering is not execution order. `maxParallelTasks` stays 1; two remains a separate proposal.
+**At the setup baseline, implementation was unauthorized and all tasks were pending.** Setup created no feature branch, worktree or agent. Subsequent D19 authorizes T1 only; the current plan/index record its execution. Create each mapped branch when its slice is separately authorized; the branch is based on the appropriate agreed integration baseline. Preserve the [dependency graph and parallel opportunities](changes/20261023-ai-knowledge-base/plan.md#potential-parallel-execution-and-ownership). Task numbering is not execution order. `maxParallelTasks` stays 1; two remains a separate proposal.
 
 ## Workflow configuration
 

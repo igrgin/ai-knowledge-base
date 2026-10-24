@@ -20,7 +20,7 @@ The revised local-v1 proposal also includes invitation/link project imports, opt
 
 The index's current artifact/decision targets are navigation links to the named sections. D1, D4 and D6 retain their original owner acceptance statements as continuing decision provenance, not as frozen approvals rebound to changed text. No old local object is needed to read this plan. The owner's later approval of the committed current baseline will be recorded separately before implementation.
 
-This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. All 20 tasks remain pending. Repository/issue setup and the owner's implementation approval remain ahead of coding; this reference cleanup starts no implementation, agents or paid work and changes no settings.
+This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorizes only T1 on 2026-10-25; T1 is in progress and T2–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
 
 ## Repository findings and prerequisites
 
@@ -79,7 +79,7 @@ T1 verifies the core skeleton, runtime pins, database startup and packaging cont
 
 ## Vertical slices and dependency semantics
 
-All tasks remain **pending**. This is a planning-only reassessment authorized by D13. `maxParallelTasks` is still **1**, so execution remains one implementation writer at a time unless a later owner decision authorizes a change. Parallel opportunities below describe the dependency structure, not permission to dispatch agents. No application code, runtime configuration, policy or product requirement is changed by this plan.
+The D13 reassessment preserved pending tasks; D19 now authorizes **T1 only**, which is **in_progress**. T2–T20 remain pending and unauthorized. `maxParallelTasks` is still **1**, so execution remains one implementation writer at a time unless a later owner decision authorizes a change. Parallel opportunities below describe the dependency structure, not permission to dispatch agents. No application code, runtime configuration, policy or product requirement is changed by this plan.
 
 Stable IDs T1–T17 remain in use. T2 provides only the small persistence/contract foundation. T18 owns library PDF reading, T19 extends project import with copied chats, and T20 owns archive/unarchive and chat source controls. All corresponding product behavior is retained in the current slices.
 
@@ -117,7 +117,7 @@ A task in the start column denotes its completion; a K gate denotes the narrower
 
 | Task | Demonstrable result | Requirement IDs | Can start after | Must exist before completion | Assigned writer | State |
 | --- | --- | --- | --- | --- | --- | --- |
-| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | pending |
+| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | in_progress |
 | T2 | Migrate/restart a minimal database and verify shared contract conventions | R18, R23 | T1 | T1 | Foundation owner | pending |
 | T3 | Register, log in/out and retain an authenticated session after restart | R1, R2, R16, R18, R23 | T2 | T2 | Identity slice owner | pending |
 | T4 | Create/list/open/rename private projects through the UI | R2, R3, R6, R17 | T3 | T3 | Project slice owner | pending |
@@ -456,4 +456,13 @@ Counts/quotas, reservations, global admission and archive-grant changes are data
 
 D14 records accepted GitHub/review/model rules in the linked policies and removes the project Codex override in favor of the global Lighthouse installation. Development-agent billing and usage budgets are outside this plan; application AI controls are unchanged.
 
-This current plan is the only implementation task source. It preserves the owner's product decisions and the vertical-slice/start/completion/ownership structure, with the two-writer proposal still unapplied. All 20 tasks remain pending. The reference cleanup creates no implementation, agents, approval, paid work or settings changes. Hosting remains optional later.
+This current plan is the only implementation task source. It preserves the owner's product decisions and the vertical-slice/start/completion/ownership structure, with the two-writer proposal still unapplied. D19 now authorizes only T1; its progress is tracked above. T2–T20 remain pending. The earlier reference cleanup supplied no implementation authority; the current T1 authority comes from the later original owner message. Hosting remains optional later.
+
+## T1 execution progress
+
+- Authority: D19, 2026-10-25, scoped to T1 at baseline `b203ffd17063f65f06e0e4bea3cb49e9e68cdc44`.
+- Issue: [#1](https://github.com/igrgin/ai-knowledge-base/issues/1), linked branch `1-run-java-26-react-shell-and-local-database`.
+- Single application writer: GPT-6.1 Sol, medium; the integrator yields application writes during that assignment. The integrator alone updates plan/index/review records. A later Sol high reviewer receives a fresh report-only context after implementation yields.
+- Scope: runtime/build/React shell, local PostgreSQL and database-backed readiness, extractor packaging contract, deterministic commands and meaningful checks. T2 migration infrastructure, all domain features, AI calls, cloud hosting and multi-instance harness remain excluded.
+- Preflight: Java 26.0.1 and Maven 3.9.16 are present; global Node is 22.12.0 and must be preserved. Docker's daemon was initially unreachable; local startup and project-runtime compatibility are part of T1 execution.
+- Evidence/PR/review: not yet available. No merge authority is granted.

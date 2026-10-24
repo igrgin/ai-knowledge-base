@@ -36,7 +36,7 @@
         "section": "Revised task list"
       },
       "documentState": "ready",
-      "stateReason": "Single current consolidated document. References use its live path/section rather than obsolete local snapshot objects. Original owner statements remain decision provenance; this cleanup is not a new content approval or permission to implement."
+      "stateReason": "Current consolidated plan; D19 accepts and authorizes only T1 at the initial committed baseline. T1 progress is maintained here; later task implementation is not authorized."
     }
   },
   "decisions": {
@@ -344,6 +344,51 @@
           "section": "Repository and initial baseline"
         }
       }
+    },
+    "D19": {
+      "kind": "acceptance",
+      "source": {
+        "providerRef": "codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39",
+        "selector": "2026-10-25 user message: \"I approve starting implementation with T1. Use the agreed agent assignments and review process, keep concurrency at 1, and present the PR to me before merging.\""
+      },
+      "actorId": "project-owner",
+      "scope": "Accept the committed current plan for the bounded T1 increment and authorize implementing T1, its issue branch, meaningful local/CI checks, implementation-agent PR creation and the agreed sequential fresh technical review/correction process. Use GPT-6.1 Sol medium for normal implementation and Sol high fresh-context review; orchestrator/integrator follows its recorded assignment. Preserve maxParallelTasks=1. Present the current PR and evidence to the owner; no merge is authorized. T2–T20, hosting, paid AI calls and concurrency increase remain unauthorized.",
+      "taskIds": [
+        "T1"
+      ],
+      "requirementIds": [
+        "R18",
+        "R19"
+      ],
+      "targets": {
+        "plan": {
+          "path": "docs/changes/20261023-ai-knowledge-base/plan.md",
+          "revision": "b203ffd17063f65f06e0e4bea3cb49e9e68cdc44",
+          "section": "Revised task list"
+        },
+        "implementationDetail": {
+          "path": "docs/changes/20261023-ai-knowledge-base/plan.md",
+          "revision": "b203ffd17063f65f06e0e4bea3cb49e9e68cdc44",
+          "section": "Slice implementation and reuse"
+        },
+        "requirements": {
+          "path": "docs/changes/20261023-ai-knowledge-base/spec.md",
+          "revision": "b203ffd17063f65f06e0e4bea3cb49e9e68cdc44",
+          "section": "Requirements"
+        }
+      }
     }
+  },
+  "route": "fuller",
+  "risk": {
+    "classification": "consequential",
+    "reason": "The overall change introduces authentication, private persistent content and infrastructure, which trigger the fuller route. The current authorization is limited to T1 local runtime/build/database shell; later feature and hosting risks remain outside this increment.",
+    "sources": [
+      {
+        "path": "docs/changes/20261023-ai-knowledge-base/spec.md",
+        "revision": "b203ffd17063f65f06e0e4bea3cb49e9e68cdc44",
+        "section": "Invariants"
+      }
+    ]
   }
 }

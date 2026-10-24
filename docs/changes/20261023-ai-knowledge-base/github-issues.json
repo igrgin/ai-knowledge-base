@@ -4,7 +4,6 @@
   "plan": "docs/changes/20261023-ai-knowledge-base/plan.md",
   "planSection": "Revised task list",
   "setupDecision": "D17",
-  "implementationAuthorized": false,
   "tasks": [
     {
       "taskId": "T1",
@@ -12,7 +11,7 @@
       "title": "Run Java 26 React shell and local database",
       "issueUrl": "https://github.com/igrgin/ai-knowledge-base/issues/1",
       "branch": "1-run-java-26-react-shell-and-local-database",
-      "branchCreated": false
+      "branchCreated": true
     },
     {
       "taskId": "T2",
@@ -166,5 +165,11 @@
       "branch": "20-archive-pdfs-and-control-chat-retrieval-sources",
       "branchCreated": false
     }
-  ]
+  ],
+  "implementationAuthorization": {
+    "decisionId": "D19",
+    "taskIds": [
+      "T1"
+    ]
+  }
 }
