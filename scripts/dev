@@ -6,6 +6,7 @@ import os, socket
 for name, default in [('APP_PORT', '8080'), ('FRONTEND_PORT', '5173')]:
     try:
         with socket.socket() as probe:
+            probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             probe.bind(('127.0.0.1', int(os.environ.get(name, default))))
     except OSError:
         raise SystemExit(f'{name} port is occupied; choose another exported port')

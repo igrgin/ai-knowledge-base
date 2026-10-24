@@ -43,6 +43,7 @@ def wait_status(expected):
 # Refuse an already-used port rather than probing somebody else's service.
 for port in (54330, 18080):
     with socket.socket() as probe:
+        probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         probe.bind(("127.0.0.1", port))
 if run(compose + ["ps", "-aq"], capture_output=True).stdout.strip():
     raise SystemExit("akb-t1-smoke already exists; inspect it before rerunning")
