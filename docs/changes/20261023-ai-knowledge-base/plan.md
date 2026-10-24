@@ -20,7 +20,7 @@ The revised local-v1 proposal also includes invitation/link project imports, opt
 
 The index's current artifact/decision targets are navigation links to the named sections. D1, D4 and D6 retain their original owner acceptance statements as continuing decision provenance, not as frozen approvals rebound to changed text. No old local object is needed to read this plan. D19 records the owner's later acceptance and implementation authority for T1 at the committed setup baseline; it does not authorize other tasks.
 
-This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorizes only T1 on 2026-10-25; T1 is undergoing the D20 owner-requested revision in PR #21; T2–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
+This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorizes only T1 on 2026-10-25; T1 and its D20 revision are completed in PR #21, with owner approval/manual merge pending; T2–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
 
 ## Repository findings and prerequisites
 
@@ -79,7 +79,7 @@ T1 verifies the core skeleton, runtime pins, database startup and packaging cont
 
 ## Vertical slices and dependency semantics
 
-The D13 reassessment preserved pending tasks; D19 now authorizes **T1 only**, whose implementation is **in_progress** again under D20 in PR #21 (not merged). T2–T20 remain pending and unauthorized. `maxParallelTasks` is still **1**, so execution remains one implementation writer at a time unless a later owner decision authorizes a change. Parallel opportunities below describe the dependency structure, not permission to dispatch agents. No application code, runtime configuration, policy or product requirement is changed by this plan.
+The D13 reassessment preserved pending tasks; D19 now authorizes **T1 only**, whose implementation and D20 revision are **completed** in PR #21 (not merged). T2–T20 remain pending and unauthorized. `maxParallelTasks` is still **1**, so execution remains one implementation writer at a time unless a later owner decision authorizes a change. Parallel opportunities below describe the dependency structure, not permission to dispatch agents. No application code, runtime configuration, policy or product requirement is changed by this plan.
 
 Stable IDs T1–T17 remain in use. T2 provides only the small persistence/contract foundation. T18 owns library PDF reading, T19 extends project import with copied chats, and T20 owns archive/unarchive and chat source controls. All corresponding product behavior is retained in the current slices.
 
@@ -117,7 +117,7 @@ A task in the start column denotes its completion; a K gate denotes the narrower
 
 | Task | Demonstrable result | Requirement IDs | Can start after | Must exist before completion | Assigned writer | State |
 | --- | --- | --- | --- | --- | --- | --- |
-| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | in_progress |
+| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | completed |
 | T2 | Migrate/restart a minimal database and verify shared contract conventions | R18, R23 | T1 | T1 | Foundation owner | pending |
 | T3 | Register, log in/out and retain an authenticated session after restart | R1, R2, R16, R18, R23 | T2 | T2 | Identity slice owner | pending |
 | T4 | Create/list/open/rename private projects through the UI | R2, R3, R6, R17 | T3 | T3 | Project slice owner | pending |
@@ -185,7 +185,7 @@ For example, T5 starts after K0 while T3 is unfinished, although its signed-in U
 
 **T1:** Establish the pinned Maven reactor, Java 26 backend/extractor build contract, project Node/frontend locks, loopback PostgreSQL service, a minimal React shell and health/startup checks. Confirm the extractor can be packaged with the same Java runtime. Deliver a browser shell plus a database-backed readiness check and deterministic build/test entry points. Do not implement domain tables, multi-instance orchestration or feature-specific metrics here. Preserve global tools/settings; Docker availability and dependency compatibility are checked in this authorized build step, not assumed from catalog metadata.
 
-**T2:** Establish Flyway and the real-PostgreSQL test fixture, one minimal migration/restart smoke path and K0. Define only needed ID/principal/error/transaction conventions, plus how feature owners publish later contracts. No all-domain schema or speculative job/cache/storage framework. Evidence is a clean database migration, restart without schema recreation, and consumer contract checks. T3 owns actual identity/session tables; later tasks own their own migrations.
+**T2:** Reuse T1's `lvl2test`/Testcontainers setup, adding Flyway and the shared real-PostgreSQL migration fixture, one minimal migration/restart smoke path and K0. Define only needed ID/principal/error/transaction conventions, plus how feature owners publish later contracts. No all-domain schema or speculative job/cache/storage framework. Evidence is a clean database migration, restart without schema recreation, and consumer contract checks. T3 owns actual identity/session tables; later tasks own their own migrations.
 
 **T3:** Own identity/session migrations, Spring Security hashing/login rotation/logout/CSRF, JDBC sessions, `/me` and registration/login/expired-session screens. Demonstrate two accounts, persistent sessions and rejected unauthorized/CSRF writes through the UI/API and actual database. Local cookies are explicitly loopback-compatible and secure for non-local HTTPS. Include cross-instance session tests when T13's harness exists; current shared-session design must not rely on sticky sessions. Email verification/recovery stays deferred.
 
@@ -477,4 +477,13 @@ This current plan is the only implementation task source. It preserves the owner
 
 D20 authorizes the current PR refinement without starting later tasks. README adopts the project/startup/build focus of `igrgin/voice-draft`, removes status/process sections and leaves future product-content scaffolding. Base `application.yml` owns static common settings. `dev` owns local overrides; `prod` requires environment-provided deployment values without local fallback defaults. Test configuration is under test resources: `test` for unit/basic checks and `lvl2test` for full Spring/Testcontainers/end-to-end checks. Launchers and CI select profiles explicitly; real integration checks belong to the latter. A narrow readiness Testcontainer check may establish this requested split without introducing T2 migrations/domain tables or a general fixture framework.
 
-The shared review count is 1: owner-requested batch reserved before edits, previous finding set empty, revised-candidate evidence and independent refresh pending. No merge, hosting, AI calls or concurrency increase is authorized.
+The shared review count is 1: owner-requested batch was reserved before edits and completed clear with the original empty finding set preserved. Revised-candidate evidence and independent review are recorded below. No merge, hosting, AI calls or concurrency increase is authorized.
+
+### D20 revision verification
+
+- Revised implementation: `a043cf1522be32250d9b9533370cd979e53d2d59`, same PR #21 and issue branch; owner approval/manual merge pending.
+- Profile files: main `application.yml` contains shared static health/pool/listen settings; `application-dev.yml` contains local datasource literals; `application-prod.yml` requires `SERVER_ADDRESS`, `SERVER_PORT`, `DATABASE_URL`, `DATABASE_USER`, `DATABASE_PASSWORD` without YAML fallback placeholders. A prod-only validator rejects missing/blank required inputs. No default profile implicitly selects dev.
+- `application-test.yml` and `application-lvl2test.yml` are test resources, excluded from the runtime JAR. Basic Surefire checks select `test`; explicit Maven `-Pintegration-tests` runs Failsafe `*IT` with `lvl2test`. Testcontainers PostgreSQL 2.0.5 and Failsafe 3.5.6 use Boot management. No accepted core pin changed.
+- Basic tests passed with an unreachable Docker socket; full Spring/pinned-pgvector readiness IT, complete package/browser/outage/recovery/persistence/restart checks, and a direct local dev launch passed. Runtime CI now explicitly verifies basic tests without Docker access. [Repository](https://github.com/igrgin/ai-knowledge-base/actions/runs/40143650017) and [Runtime](https://github.com/igrgin/ai-knowledge-base/actions/runs/40143649974) checks passed at the revised implementation.
+- The product/startup README follows the owner's Voice Draft reference, with no delivery status/process sections and only HTML scaffolding for future content. Deep engineering details remain in the local-development guide and Lighthouse records. Custom database settings use matching Compose `DB_*` and Spring `SPRING_DATASOURCE_*` overrides as documented.
+- Independent Sol high refresh covered bugs/security/requirements, found no findings and assessed round 1 clear. The reviewer independently verified prod blank-password rejection, complete environment binding, supplied unavailable-database HTTP 503, test resource/dependency exclusion and owned-process cleanup. No hosting or later feature was exercised or authorized.

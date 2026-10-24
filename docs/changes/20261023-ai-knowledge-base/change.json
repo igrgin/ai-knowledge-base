@@ -36,15 +36,15 @@
         "section": "Revised task list"
       },
       "documentState": "ready",
-      "stateReason": "D19 authorizes T1; D20 refines its README/configuration/testing approach. T1 is in progress again in PR21; T2–T20 remain pending/unauthorized."
+      "stateReason": "T1 and owner-directed D20 README/profile/test refinement are complete in unmerged PR21 with local/CI evidence and independent review. T2–T20 remain pending and unauthorized."
     },
     "review": {
       "source": {
         "path": "docs/changes/20261023-ai-knowledge-base/review.md",
         "section": "Comparison"
       },
-      "documentState": "draft",
-      "stateReason": "D20 owner-directed README/profile/test revision invalidates affected coverage at the new candidate; historical clear assessments remain preserved. Correction round1 reserved before edits; refresh pending."
+      "documentState": "ready",
+      "stateReason": "D20 correction round1 complete at a043cf1522be32250d9b9533370cd979e53d2d59: all three independent passes covered, current CI passed, no findings, clear. Final record-only descendant freshness is linked through PR assessment. Owner approval/merge pending."
     }
   },
   "decisions": {

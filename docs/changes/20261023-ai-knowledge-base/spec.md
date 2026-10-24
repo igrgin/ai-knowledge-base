@@ -80,6 +80,8 @@ Use Spring Session JDBC so either web instance can handle the next request witho
 
 Dependency family: Java 26, stable Spring Boot 4.1.x with Spring AI 2.0.x, Maven, React/TypeScript with Vite, PostgreSQL and a compatible pgvector extension. Pin exact supported patch versions in implementation planning; use released dependencies rather than snapshots. Current Spring AI documentation lists Boot 4.0.x/4.1.x compatibility. [Spring AI getting started](https://docs.spring.io/spring-ai/reference/getting-started.html)
 
+D20 refines configuration and testing within T1: keep static shared settings in base `application.yml`, local overrides in `application-dev.yml`, and required environment-provided deployment values in `application-prod.yml` without local fallbacks. Local launchers select `dev` explicitly; supplying production configuration does not authorize hosting. Keep `application-test.yml` and `application-lvl2test.yml` in test resources: `test` supports unit/basic checks, while `lvl2test` supports full Spring startup, real Testcontainers and end-to-end feature checks. Basic checks do not require Docker. The explicit Maven integration-test selection is separate from the Spring profile name.
+
 ### D-B: Own the retrieval data in PostgreSQL
 
 Store account, project, document, page, chunk, chat, message and citation metadata alongside vectors in PostgreSQL. Store original PDFs in a private file-store abstraction: a local persistent directory in phase 1; an S3-compatible private bucket in the optional hosted phase. Files are never served as public assets.
