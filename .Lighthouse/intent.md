@@ -40,7 +40,7 @@ Build a learning and portfolio application that lets people organize text PDFs i
 - Keep the $15–20/month target before tax/domain costs for an optional small hosted demo. Larger capacity and hosting need separate assessment/authorization. Credentials or a budget target do not authorize spending.
 - Retain files and citations through archive and chat deletion. Do not provide individual PDF deletion or an automatic orphan purge. Whole-project removal, backup expiry and independent provider retention are distinct; recovery must not revive deleted projects or revoked shares.
 - Existing file/page/token, account, AI and quality bounds remain in [Limits and user experience](spec.md#limits-and-user-experience) and [Verification and quality gate](spec.md#verification-and-quality-gate).
-- The owner adopted the [review policy](project.md#review-policy), Lighthouse GitHub defaults and [agent assignments](project.md#development-agent-assignments) through D14. Lighthouse is globally installed. Operations/platform controls remain to be configured before their dependent actions; D19 subsequently authorizes T1 only; later task implementation remains unauthorized.
+- The owner adopted the Lighthouse review defaults, Lighthouse GitHub defaults and [agent assignments](project.md#development-agent-assignments) through D14. Lighthouse is globally installed. Operations/platform controls remain to be configured before their dependent actions; D19 subsequently authorizes T1 only; later task implementation remains unauthorized.
 
 ## Exclusions
 
@@ -66,6 +66,6 @@ Product choices are settled through the owner statements referenced in `change.j
 | `codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39` | Owner messages and replies recorded as D1–D14 in the preserved historical source | Product purpose/stack, optional hosting/budget, final PDF lifecycle, Java 26, scalability, sharing, source context and vertical-slice planning directions |
 | [Requirements and design](spec.md#requirements) | Current R1–R29 and design sections | Detailed behavior, invariants, interfaces, constraints and verification |
 | [Implementation plan](plan.md#revised-task-list) | Current T1–T20 with start/completion gates | One implementation plan, reuse, ownership and conditional parallel-work proposal |
-| [Project workflow](project.md) | Project ownership and configured policy/control sources | `project-owner` owns the decision roles; actual platform identities are not inferred |
+| [Agent settings](project.md#development-agent-assignments) | D14 project-specific role/model assignments | Selected development-agent models and effort levels; application AI choices remain in the specification |
 
 Implementation, publication, deployment and paid calls remain separate actions requiring their applicable owner authority. This cleanup does not record a new approval of those actions.

@@ -16,7 +16,7 @@ These links identify the current documents and relevant sections. `change.json` 
 | [Scalability research](research/scalability-evaluation.md#target-shape) | Target shape and Proposed experiments | Supporting primary sources and measurable growth-path experiments |
 | [Caching research](research/caching-evaluation.md#recommendation) | Recommendation and Measurement and follow-up | No-cache baseline, persisted embedding reuse and optional evidence-based optimization |
 | [Implementation plan](plan.md#revised-task-list) | Revised task list; Contract gates for early starts | Current task allocation for this specification, including split slice ownership |
-| [Project workflow](project.md) | Current owner/policy/control mapping | Project ownership and missing formal policy/platform inputs |
+| [Agent settings](project.md#development-agent-assignments) | D14 project-specific role/model assignments | Selected development-agent models and effort; application and platform concerns remain below |
 
 This is the current specification. Later explicit owner choices replace only the affected earlier choices. Use R1–R29 below and the current implementation plan, rather than looking for older draft files or local Git objects.
 
