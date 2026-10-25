@@ -47,7 +47,7 @@
     },
     "localDevelopment": {
       "path": "docs/local-development.md",
-      "section": "Start and stop"
+      "section": "Development and package"
     }
   },
   "controls": {},

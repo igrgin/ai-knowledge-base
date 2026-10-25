@@ -20,7 +20,7 @@ The revised local-v1 proposal also includes invitation/link project imports, opt
 
 The index's current artifact/decision targets are navigation links to the named sections. D1, D4 and D6 retain their original owner acceptance statements as continuing decision provenance, not as frozen approvals rebound to changed text. No old local object is needed to read this plan. D19 records the owner's later acceptance and implementation authority for T1 at the committed setup baseline; it does not authorize other tasks.
 
-This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorizes only T1 on 2026-10-25; T1 and its D20 revision are completed in PR #21, with owner approval/manual merge pending; T2–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
+This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorizes only T1 on 2026-10-25; T1 and its D20/D21 revisions are completed in PR #21, with owner approval/manual merge pending; T2–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
 
 ## Repository findings and prerequisites
 
@@ -79,7 +79,7 @@ T1 verifies the core skeleton, runtime pins, database startup and packaging cont
 
 ## Vertical slices and dependency semantics
 
-The D13 reassessment preserved pending tasks; D19 now authorizes **T1 only**, whose implementation and D20 revision are **completed** in PR #21 (not merged). T2–T20 remain pending and unauthorized. `maxParallelTasks` is still **1**, so execution remains one implementation writer at a time unless a later owner decision authorizes a change. Parallel opportunities below describe the dependency structure, not permission to dispatch agents. No application code, runtime configuration, policy or product requirement is changed by this plan.
+The D13 reassessment preserved pending tasks; D19 now authorizes **T1 only**, whose implementation and D20/D21 revisions are **completed** in PR #21 (not merged). T2–T20 remain pending and unauthorized. `maxParallelTasks` is still **1**, so execution remains one implementation writer at a time unless a later owner decision authorizes a change. Parallel opportunities below describe the dependency structure, not permission to dispatch agents. No application code, runtime configuration, policy or product requirement is changed by this plan.
 
 Stable IDs T1–T17 remain in use. T2 provides only the small persistence/contract foundation. T18 owns library PDF reading, T19 extends project import with copied chats, and T20 owns archive/unarchive and chat source controls. All corresponding product behavior is retained in the current slices.
 
@@ -117,7 +117,7 @@ A task in the start column denotes its completion; a K gate denotes the narrower
 
 | Task | Demonstrable result | Requirement IDs | Can start after | Must exist before completion | Assigned writer | State |
 | --- | --- | --- | --- | --- | --- | --- |
-| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | in_progress |
+| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | completed |
 | T2 | Migrate/restart a minimal database and verify shared contract conventions | R18, R23 | T1 | T1 | Foundation owner | pending |
 | T3 | Register, log in/out and retain an authenticated session after restart | R1, R2, R16, R18, R23 | T2 | T2 | Identity slice owner | pending |
 | T4 | Create/list/open/rename private projects through the UI | R2, R3, R6, R17 | T3 | T3 | Project slice owner | pending |
@@ -378,21 +378,20 @@ Each requirement maps to its owning vertical implementation and later integratio
 
 ## Local command contract and verification
 
-These commands are planned interfaces, not files or scripts already present. T1 establishes the core check/dev/build syntax; the owning slice adds feature commands, T11 backup/restore, T13 multi-instance/performance and T14 paid evaluation. T15 verifies/documents their integrated use:
+D21 selects native tool commands for T1. CI performs environment/dependency setup and runs these two suites directly:
 
-- `./scripts/check-tools`: validate project JDK/Node/Docker and required configuration without printing secret values.
-- `docker compose up -d db`: start the local database only; private data persists across ordinary shutdown.
-- `./scripts/dev`: start backend/frontend development with the same API/session contract as the package.
-- `./scripts/verify`: run backend/extractor integration checks, frontend checks/build and offline browser tests; outbound model calls are unavailable in test mode.
-- `./scripts/verify-multi-instance`: start two web instances and two competing workers on loopback with shared local database/files/journal; run cross-process correctness and failure cases without live AI calls.
-- `./scripts/evaluate-performance`: run reproducible no-cache load/corpus and embedding-reuse/batch experiments; write the required T13 report. No Redis/Caffeine comparison is required; an optimization prototype needs a measured reason.
-- `./scripts/package` and `./scripts/run-local`: build and run the single-origin local distribution with the extractor included.
-- `./scripts/evaluate-ai`: an explicitly separate bounded real-provider evaluation, requiring server-side credentials and applicable paid-call authority.
-- `./scripts/backup-local` and `./scripts/restore-local`: manual consistent snapshot/replay workflow; restore never serves before deletion replay.
+```sh
+npm test --prefix frontend
+./mvnw -B -Pintegration-tests verify
+```
 
-Implement all helpers as repository-local commands. The accepted configuration is explicit; if a launcher reads a local `.env`, parse documented assignments without shell `eval` or sourcing arbitrary code. Backend credentials never use a `VITE_` variable or enter frontend bundles. The local database, originals, temporary files, recovery journal and backups use separate ignored persistent paths/volumes; none is stored under public assets or committed as demo content.
+The frontend's normal `pretest` builds its production assets; Playwright owns its preview server and the test-only readiness responses for browser behavior. Maven runs basic `test`-profile checks, native Failsafe `lvl2test` integration checks, the actual packaged backend against pinned pgvector Testcontainers, and the packaged extractor launch contract. Backend resources consume `frontend/dist`, so build/test the frontend before full packaging/integration. Basic `./mvnw test` requires neither Docker nor full application startup.
 
-Tests concentrate on meaningful failure paths rather than one-to-one mirrors of classes or generated UI snapshots. Use Testcontainers for PostgreSQL constraints/vector behavior, a real PDFBox child for extraction, controlled adapters for provider outcomes and Playwright for user-visible source/ownership/lifecycle behavior. There is no live-AI traffic in ordinary unit, integration or browser commands. Test results and later Lighthouse review coverage are distinct records.
+Local development uses native Maven `spring-boot:run` with explicit `dev` and frontend `npm run dev`. Packaging uses frontend `npm run build` followed by Maven `package`; direct `java -jar` selects the intended profile. See [the development guide](../../local-development.md#development-and-package) for exact commands and port/environment settings. Docker Compose manages the persistent local database. Only the optional self-contained project-local Node installer remains; CI does not invoke it. The custom verify/package/dev/run/smoke/metadata-check wrappers are retired.
+
+Later slices extend these native test/build definitions and add only task-specific capabilities actually needed: T11 backup/restore with deletion replay, T13 multi-instance/no-cache performance measurements, T14 separately authorized paid evaluation, and T15 integrated documentation/handoff. Their required behaviors remain unchanged; the earlier proposed wrapper filenames are not mandates. Ordinary tests make no paid AI calls. Test fixtures own disposable processes/containers and must preserve development data and unrelated listeners.
+
+Tests target meaningful failure paths, not implementation-mirroring snapshots. Frontend browser behavior is tested independently from actual packaged backend/database behavior; there is no combined live-database browser harness in the simplified T1 suite. PostgreSQL/vector/restart/persistence, readiness/outage/recovery, same-origin HTML/assets, backend restart and extractor packaging remain exercised by native integration tests. Keep private files, credentials, database data and generated outputs in ignored paths; never source `.env` as executable code or expose backend credentials through frontend configuration.
 
 ## Rollout
 
@@ -493,3 +492,11 @@ The shared review count is 1: owner-requested batch was reserved before edits an
 D21 replaces bespoke test/build orchestration with native Maven/npm test commands. CI sets up the environment/dependencies and runs the frontend/backend suites, without a repository-document/metadata gate or custom verification/package wrappers. Test-framework fixtures/lifecycle retain meaningful frontend behavior, real Spring/Testcontainers readiness, outage/restart and packaging checks where applicable; simpler commands must not silently substitute fake application behavior. Local instructions use standard tool commands; optional project-local runtime provisioning may remain if genuinely needed. The dev/prod/test/lvl2test split remains unchanged.
 
 Retire obsolete required-check names only once the replacement application test check has actually passed, preserving PR/admin/conversation/strict-update protections and manual owner merging. Remove proposed squash text from PR presentation/template, retaining the accepted plain commit convention and squash-only merge method. Round2 is reserved for this batch; all later task scopes remain unauthorized.
+
+### D21 verification and review outcome
+
+T1 implementation and this revision are completed in unmerged PR #21. The replacement single `Tests` workflow passed at `2227a489bb01da13732cf829902f9692ca6bc6a3`: [run 40156201638](https://github.com/igrgin/ai-knowledge-base/actions/runs/40156201638). Three frontend browser tests and seven Java tests passed locally and on Linux. Native dev and packaged launches also served actual readiness on free loopback ports while preserving unrelated listeners, development data and global Node. No app behavior, dependency version or D20 profile semantics changed.
+
+Both old workflows and eight orchestration/metadata scripts were removed; only optional `scripts/setup-node` remains. The former Maven distribution profile is unnecessary because standard backend resources consume the frontend build. Current setup/test commands and precise coverage are above; earlier script-based evidence in this plan is historical at its named candidate.
+
+One independent Sol high reviewer refreshed all three passes and assessed round 2 clear. F1 identified a known nonblocking stale command-heading pointer; the coordinator corrected it as part of final metadata reconciliation and the final refresh verifies it. The required native context is now `Tests`, after its successful run; all other branch protections remain intact. The accepted correction count remains 2, without reset. Owner approval/manual merge and all later task authority remain outstanding.

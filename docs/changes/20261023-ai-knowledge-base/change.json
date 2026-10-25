@@ -36,15 +36,15 @@
         "section": "Revised task list"
       },
       "documentState": "ready",
-      "stateReason": "T1 in progress for D21 CI/command simplification; T2–T20 remain pending and unauthorized."
+      "stateReason": "T1/D20/D21 implemented in unmerged PR21, native suites and independent review complete. Current commands use Maven/npm; later tasks remain pending/unauthorized."
     },
     "review": {
       "source": {
         "path": "docs/changes/20261023-ai-knowledge-base/review.md",
         "section": "Comparison"
       },
-      "documentState": "draft",
-      "stateReason": "D21 owner-directed CI/command simplification: round2 reserved before implementation; prior clear comparisons remain historical, affected review coverage pending."
+      "documentState": "ready",
+      "stateReason": "D21 round2 implementation clear at 2227a489bb01da13732cf829902f9692ca6bc6a3; all passes covered, Tests CI passed. Nonblocking F1 pointer addressed in final metadata; equivalence/current-head tests linked in PR assessment. No merge approval."
     }
   },
   "decisions": {
