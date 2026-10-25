@@ -1,12 +1,12 @@
 # GitHub workflow
 
-The project owner accepted the workflow in D14 and amended commit formatting in D15–D16 in [the change index](../changes/20261023-ai-knowledge-base/change.json). These rules define the intended setup; they do not claim GitHub resources or protections already exist. The [current plan](../changes/20261023-ai-knowledge-base/plan.md#revised-task-list) remains the task source.
+The project owner accepted the workflow in D14 and amended commit formatting in D15–D16 in [the change index](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). The repository and 20 task issues exist; the current Tests requirement and protections were inspected before migration. Original setup-only wording below describes the preserved setup baseline. The [current plan](plan.md#revised-task-list) remains the task source.
 
 ## Repository and initial baseline
 
 The selected repository is `igrgin/ai-knowledge-base`, public, with the MIT license and default branch `main`. Confirm the copyright holder and actual Git author/noreply identity during authorized setup before creating the license/commit. Prefer the GitHub-provided noreply identity for public commits.
 
-D17 authorizes the initial GitHub setup. D18 confirms `igrgin` as copyright holder/Git author and `10382095+igrgin@users.noreply.github.com` as the repository-local public commit email. See the [setup baseline](../github-setup.md); implementation remains separately gated.
+D17 authorizes the initial GitHub setup. D18 confirms `igrgin` as copyright holder/Git author and `10382095+igrgin@users.noreply.github.com` as the repository-local public commit email. See the [setup baseline](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/github-setup.md); implementation remains separately gated.
 
 The authorized initial setup commit contains current project instructions, Lighthouse configuration, consolidated planning records, agreed policies, README, license, ignore rules, issue/PR templates and bootstrap CI. Use the consolidated documents as the baseline; future Git commits provide ordinary history. Do not recreate obsolete draft references or a history folder. Application code belongs to the later approved implementation slices.
 
@@ -14,7 +14,7 @@ The repository, all task issues, their mapping and workflow setup must be ready 
 
 ## Issues and branches
 
-Create an issue for each of the 20 current Lighthouse tasks during authorized setup. Preserve the real task-to-issue mapping in `docs/changes/20261023-ai-knowledge-base/github-issues.json`; capture actual issue numbers rather than assuming they equal task IDs.
+The 20 task issues already exist. Their real issue links, established branch names and creation states are in current plan rows; preserve them instead of recreating issues or a mapping JSON. New issues use actual returned numbers.
 
 Each issue includes task/requirement IDs and current section links, demonstrable behavior, start gates, separate completion prerequisites, meaningful tests, owning role/files, shared-interface/migration coordination and required reuse. Distinguish an agent's role in the issue body from an actual GitHub account assignee. Contract-based starts may precede completion of other slices; do not turn the plan into a chain of issues blocked until every predecessor closes.
 
@@ -44,7 +44,7 @@ Use squash merges so the completed slice produces one coherent main-branch commi
 
 After implementing the slice and self-checking, the implementation agent pushes its issue branch and opens a PR linking its issue and Lighthouse task. It may remain draft while independent review/corrections run. Use `Refs` for incomplete work; use `Closes #42` when the PR delivers the issue's completed slice. Reuse the existing PR for corrections.
 
-Follow the [review policy](review.md). Present the final current candidate to the owner with a behavior/change summary, actual test commands/results and CI links, independent review coverage/findings, limitations, and base/head identities. Planned tests are not results.
+Follow the [review policy](project.md#review-policy). Present the final current candidate to the owner with a behavior/change summary, actual test commands/results and CI links, independent review coverage/findings, limitations, and base/head identities. Planned tests are not results.
 
 The owner merges manually after approval. Auto-merge stays disabled. Agents do not merge or push directly to protected `main`. Implementation, technical review, integration and human approval are distinct responsibilities.
 
@@ -58,6 +58,18 @@ Under D21, CI sets up the required environment/dependencies, then runs all front
 
 ## Tracking and worktrees
 
-Track instructions/configuration, policies, current planning records and dated cost/caching/scalability research. Keep credentials, private PDFs/chats, databases, backups/journals, generated private evaluation data, dependency/build output, local logs and `.DS_Store` ignored. Track only deliberately redistributable fixtures and sanitized results.
+Track repository instructions, current `.Lighthouse/` records/policies and deliberately retained research. Keep credentials, private PDFs/chats, databases, backups/journals, generated private evaluation data, dependency/build output, local logs and `.DS_Store` ignored. Track only deliberately redistributable fixtures and sanitized results.
 
-Worktree agents start from a committed baseline containing these records and read the existing task contracts/ownership. Current implementation concurrency is 1; increasing it to 2 remains a separate proposal. [Global Lighthouse installation](../development-tooling.md) supplies the skills without a project Codex enable flag or vendored package.
+Worktree agents start from a committed baseline containing these records and read the existing task contracts/ownership. Current implementation concurrency is 1; increasing it to 2 remains a separate proposal. [Global Lighthouse installation](project.md#tooling-and-native-commands) supplies the skills without a project Codex enable flag or vendored package.
+
+## Issue-intent labels and interactive spikes
+
+Use exactly one primary label: `bug` for correcting incorrect/undesirable existing behavior, `feature` for a bounded new behavior, or `spike` for interactive research/documentation/prototyping to reach a decision. Preserve other applicable labels. The existing `bug` label is reused; `feature` uses the existing enhancement color `a2eeef`, and `spike` uses `fbca04`. No supplementary labels are mandatory. Additional taxonomy changes need an actual project request.
+
+Tasks T1–T13 and T15–T20 are feature delivery/integrated-verification tasks. T14 is the interactive AI-evaluation spike described in the plan; it retains its evidence thresholds and separate paid-call prerequisites. Labeling an issue starts no work. For spikes, the assigned developer and agent discuss evidence and agree a conclusion; there is no implementation-agent handoff, mandatory issue branch/worktree, commit, PR or formal implementation-review cycle. Temporary research/prototypes are disposable. A verified final issue comment records the question, evidence, human-agreed decision, limitations and follow-ups before completion; optional lasting documentation is deliberate. Production changes require separately authorized bug/feature scope.
+
+## Worktree cleanup and record maintenance
+
+Retain checkouts until merging or user-directed disposition. Within authorized cleanup, use a recoverable native archive, preserve unique/dirty work, and never force-remove a dirty checkout. Serialize shared record writes. Owner-directed amendments and records-only reconciliation consume no finding-correction round, retain unaffected approvals, and never erase outstanding findings or reset their remaining allowance. The historical T1 count of 2 is preserved.
+
+The migration branch is records-only work with no new implementation issue; its `codex/lighthouse-0.2-migration` name is not a replacement issue branch. Issue implementation continues to use the established issue-number/title convention above. PR #21 remains untouched and unmerged. Active issue links may target the migration branch until the user integrates it; historical evidence uses immutable prior commit links.

@@ -1,6 +1,13 @@
 # Intent for an AI knowledge base with PDF chat
 
-This is the current consolidated intent. It carries the owner's continuing decisions and later changes together in one document. Detailed behavior is in [Requirements](spec.md#requirements); implementation work is in the single [Revised task list](plan.md#revised-task-list). Original owner statements remain identified in `change.json`; they are decision provenance, not alternative plans to implement.
+## Current scope and sources
+
+Migrated to Lighthouse 0.2.0 on 2026-10-25 under the [user's migration instruction](codex://threads/01a170fe-e89b-7be3-a093-bad07cf053b8): “I approve the migration plan. Go ahead and migrate both projects to Lighthouse 0.2.0, preserving decisions and progress. Don’t merge PR #21 or start any new implementation work.” The preserved pre-migration content is commit `7252f046b96f9a33e94f095f2b8b7790b76785ad`. Original human statements and their covered scopes remain recoverable in the [historical decision source](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json); D1–D21 are legacy provenance identifiers, not an active decision index.
+
+Current product direction, unresolved concerns, task gates and prior acceptance remain as stated in these documents. Only T1 and its D20/D21 refinements were authorized for implementation. T1 is completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2–T20 remain pending and unauthorized. The migration authorizes record, policy and issue-link/label reconciliation, not application implementation or merging. The archive amendment used in the Lighthouse discussion was an example, not a product decision for this project.
+
+
+This is the current consolidated intent. It carries the owner's continuing decisions and later changes together in one document. Detailed behavior is in [Requirements](spec.md#requirements); implementation work is in the single [Revised task list](plan.md#revised-task-list). Original human statements remain in the historical source linked below; current scope lives in these maintained documents.
 
 ## Problem
 
@@ -38,7 +45,7 @@ Build a learning and portfolio application that lets people organize text PDFs i
 - Keep the $15–20/month target before tax/domain costs for an optional small hosted demo. Larger capacity and hosting need separate assessment/authorization. Credentials or a budget target do not authorize spending.
 - Retain files and citations through archive and chat deletion. Do not provide individual PDF deletion or an automatic orphan purge. Whole-project removal, backup expiry and independent provider retention are distinct; recovery must not revive deleted projects or revoked shares.
 - Existing file/page/token, account, AI and quality bounds remain in [Limits and user experience](spec.md#limits-and-user-experience) and [Verification and quality gate](spec.md#verification-and-quality-gate).
-- The owner adopted the [review policy](../../policies/review.md), [GitHub workflow](../../policies/github-workflow.md) and [agent assignments](../../policies/development-agents.md) through D14. Lighthouse is globally installed. Operations/platform controls remain to be configured before their dependent actions; D19 subsequently authorizes T1 only; later task implementation remains unauthorized.
+- The owner adopted the [review policy](project.md#review-policy), [GitHub workflow](github.md) and [agent assignments](project.md#development-agent-assignments) through D14. Lighthouse is globally installed. Operations/platform controls remain to be configured before their dependent actions; D19 subsequently authorizes T1 only; later task implementation remains unauthorized.
 
 ## Exclusions
 
@@ -61,9 +68,9 @@ Product choices are settled through the owner statements referenced in `change.j
 
 | Source | Identifying information | Current content |
 | --- | --- | --- |
-| `codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39` | Owner messages and replies recorded as D1–D14 in `change.json` | Product purpose/stack, optional hosting/budget, final PDF lifecycle, Java 26, scalability, sharing, source context and vertical-slice planning directions |
+| `codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39` | Owner messages and replies recorded as D1–D14 in the preserved historical source | Product purpose/stack, optional hosting/budget, final PDF lifecycle, Java 26, scalability, sharing, source context and vertical-slice planning directions |
 | [Requirements and design](spec.md#requirements) | Current R1–R29 and design sections | Detailed behavior, invariants, interfaces, constraints and verification |
 | [Implementation plan](plan.md#revised-task-list) | Current T1–T20 with start/completion gates | One implementation plan, reuse, ownership and conditional parallel-work proposal |
-| `docs/lighthouse-adoption.md`, `lighthouse.json` | Project ownership and configured policy/control sources | `project-owner` owns the decision roles; actual platform identities are not inferred |
+| [Project workflow](project.md) | Project ownership and configured policy/control sources | `project-owner` owns the decision roles; actual platform identities are not inferred |
 
 Implementation, publication, deployment and paid calls remain separate actions requiring their applicable owner authority. This cleanup does not record a new approval of those actions.

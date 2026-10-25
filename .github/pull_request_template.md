@@ -18,7 +18,7 @@ Record actual commands/results and CI links, or clearly identify checks not run 
 
 ## Independent technical review
 
-Link the fresh-context assessment with fixed base/head identities and separate bugs, security and requirements coverage. List blocking/advisory findings and dispositions. Record correction round 0, 1 or 2; explain any affected review refresh after fixes, rebase or integration changes.
+Link the fresh-context assessment with fixed base/head identities and separate bugs, security and requirements coverage. List blocking/advisory findings and dispositions. Record the actual finding-correction count (normally 0, 1 or 2); owner amendments and records-only reconciliation do not consume or reset it; explain any affected review refresh after fixes, rebase or integration changes.
 
 ## Limitations and owner decision
 

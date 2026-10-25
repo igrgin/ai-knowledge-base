@@ -2,7 +2,7 @@
 
 ## Current planning references
 
-This is supporting research, not another implementation plan. Use the current [requirements](spec.md#requirements), [design decisions](spec.md#design-decisions) and single [task list](plan.md#revised-task-list). The [performance checkpoint](plan.md#offline-scalability-and-performanceembedding-checkpoint-in-t13) measures a no-cache baseline and embedding batching/reuse; no Caffeine or Redis prototype is required. Hosting remains optional later. No implementation or capacity result is claimed by this note.
+This is supporting research, not another implementation plan. Use the current [requirements](../spec.md#requirements), [design decisions](../spec.md#design-decisions) and single [task list](../plan.md#revised-task-list). The [performance checkpoint](../plan.md#offline-scalability-and-performanceembedding-checkpoint-in-t13) measures a no-cache baseline and embedding batching/reuse; no Caffeine or Redis prototype is required. Hosting remains optional later. No implementation or capacity result is claimed by this note.
 
 ## Owner requirement and recommendation
 
@@ -91,8 +91,8 @@ The generation cap deliberately stays global in the first multi-instance test: i
 
 ## Current task allocation
 
-Implementation ownership is defined only by the current [task list](plan.md#revised-task-list), [contract gates](plan.md#contract-gates-for-early-starts) and [file/schema ownership](plan.md#file-and-schema-ownership). T6 establishes actual durable worker execution; T7 and T9 extend it. T5 owns shared provider accounting/admission, T20 source controls, T11 lifecycle recovery, and T13 integrated multi-instance/performance evidence. T16/T19 own independent copies and T17 transcript publication. These references replace the earlier task-placement suggestions; this research note carries no separate task state or execution authority.
+Implementation ownership is defined only by the current [task list](../plan.md#revised-task-list), [contract gates](../plan.md#contract-gates-for-early-starts) and [file/schema ownership](../plan.md#file-and-schema-ownership). T6 establishes actual durable worker execution; T7 and T9 extend it. T5 owns shared provider accounting/admission, T20 source controls, T11 lifecycle recovery, and T13 integrated multi-instance/performance evidence. T16/T19 own independent copies and T17 transcript publication. These references replace the earlier task-placement suggestions; this research note carries no separate task state or execution authority.
 
 ## Project and request sources
 
-Use the current `spec.md` and `plan.md` for product behavior, Java 26, local limits and optional hosting. The original owner requests and scale clarification are in `codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39`, 2026-10-24. The companion `caching-evaluation.md` evaluates individual cache candidates. This note supplies evidence for the current requirements and plan; original owner-message references remain in `change.json`.
+Use the current `../spec.md` and `../plan.md` for product behavior, Java 26, local limits and optional hosting. The original owner requests and scale clarification are in `codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39`, 2026-10-24. The companion `caching-evaluation.md` evaluates individual cache candidates. This note supplies evidence for the current requirements and plan; original owner-message references remain in `change.json`.

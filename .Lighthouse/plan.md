@@ -1,5 +1,12 @@
 # Implementation plan for local AI knowledge base v1
 
+## Current scope and sources
+
+Migrated to Lighthouse 0.2.0 on 2026-10-25 under the [user's migration instruction](codex://threads/01a170fe-e89b-7be3-a093-bad07cf053b8): “I approve the migration plan. Go ahead and migrate both projects to Lighthouse 0.2.0, preserving decisions and progress. Don’t merge PR #21 or start any new implementation work.” The preserved pre-migration content is commit `7252f046b96f9a33e94f095f2b8b7790b76785ad`. Original human statements and their covered scopes remain recoverable in the [historical decision source](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json); D1–D21 are legacy provenance identifiers, not an active decision index.
+
+Current product direction, unresolved concerns, task gates and prior acceptance remain as stated in these documents. Only T1 and its D20/D21 refinements were authorized for implementation. T1 is completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2–T20 remain pending and unauthorized. The migration authorizes record, policy and issue-link/label reconciliation, not application implementation or merging. The archive amendment used in the Lighthouse discussion was an example, not a product decision for this project.
+
+
 ## Sources and scope
 
 | Source | Current section or identifying information | Relevant content |
@@ -7,12 +14,12 @@
 | [Requirements](spec.md#requirements) | R1–R29 | Current product behavior and constraints; no requirement changes in this cleanup |
 | [Design decisions](spec.md#design-decisions) | D-A–D-L; Invariants; Verification and quality gate | Architecture, lifecycle, privacy, source eligibility and evidence requirements |
 | [Intent](intent.md#desired-outcome) | Desired outcome and Constraints | Consolidated product purpose and owner-selected scope |
-| [Cost research](costs.md#owner-choices-and-delivery-phases) | Delivery phases and dated cost scenarios | Optional later hosting, application AI allowance proposal and retention boundaries; not permission to spend |
-| [Scalability research](scalability-evaluation.md#target-shape), [caching research](caching-evaluation.md#recommendation) | Supporting research and measurement guidance | Evidence behind the selected scalable, initially no-cache design |
-| [Owner decision references](change.json) | Original source locators/selectors for D1–D14 | Continuing product/planning directions, including vertical slices; source provenance does not mean implementation permission |
-| `AGENTS.md`, `lighthouse.json` | Current guidance/configuration | Preserve instructions/tools; current writer limit is 1; review policy is configured; security/operations/platform sources remain unconfigured |
+| [Cost research](research/costs.md#owner-choices-and-delivery-phases) | Delivery phases and dated cost scenarios | Optional later hosting, application AI allowance proposal and retention boundaries; not permission to spend |
+| [Scalability research](research/scalability-evaluation.md#target-shape), [caching research](research/caching-evaluation.md#recommendation) | Supporting research and measurement guidance | Evidence behind the selected scalable, initially no-cache design |
+| [Owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | Original source locators/selectors for D1–D14 | Continuing product/planning directions, including vertical slices; source provenance does not mean implementation permission |
+| `AGENTS.md`, `.Lighthouse/project.md` | Current guidance/configuration | Preserve instructions/tools; current writer limit is 1; review policy is configured; security/operations/platform sources remain unconfigured |
 | Current owner cleanup instruction | 2026-10-24: "clean it up and make sure that they point to correct parts of the plan ... We just have a plan" | One consolidated set of planning documents with current section references; no history folder or replacement approval |
-| [GitHub workflow](../../policies/github-workflow.md), [review policy](../../policies/review.md), [agent assignments](../../policies/development-agents.md), [global tooling](../../development-tooling.md) | D14 owner-selected setup/review/model rules and project Codex-config removal | Local policy adoption only; repository resources, commits and implementation still require their own authorization |
+| [GitHub workflow](github.md), [review policy](project.md#review-policy), [agent assignments](project.md#development-agent-assignments), [global tooling](project.md#tooling-and-native-commands) | D14 owner-selected setup/review/model rules and project Codex-config removal | Local policy adoption only; repository resources, commits and implementation still require their own authorization |
 
 Implement the full local application: public-style registration/login, private projects, text-PDF ingestion, project-grounded answers and page navigation, independent saved chats, archive-only PDFs, chat deletion, whole-project purge, usage limits and local recovery. A local application may accept registrations through its interface without being published to the internet.
 
@@ -115,28 +122,28 @@ K0 needs no speculative framework. Later gates are agreed by the first real prov
 
 A task in the start column denotes its completion; a K gate denotes the narrower checkpoint above. Completion columns list the real dependencies directly, including some transitive ones for clarity. A feature can begin before all its completion dependencies exist, but cannot claim its integrated demonstration early. Writer roles are bounded assignments for a future build, not people or agents appointed by this record.
 
-| Task | Demonstrable result | Requirement IDs | Can start after | Must exist before completion | Assigned writer | State |
-| --- | --- | --- | --- | --- | --- | --- |
-| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | completed |
-| T2 | Migrate/restart a minimal database and verify shared contract conventions | R18, R23 | T1 | T1 | Foundation owner | pending |
-| T3 | Register, log in/out and retain an authenticated session after restart | R1, R2, R16, R18, R23 | T2 | T2 | Identity slice owner | pending |
-| T4 | Create/list/open/rename private projects through the UI | R2, R3, R6, R17 | T3 | T3 | Project slice owner | pending |
-| T5 | See AI availability/budget status and enforce bounded, idempotent provider spending | R12, R16, R17, R23 | T2 and K0 | T3 | Usage/model slice owner | pending |
-| T6 | Upload a private PDF, observe durable extraction/failure status and recover after restart | R2, R4, R5, R6, R16, R17, R22, R23 | KP | T4 | Document slice owner | pending |
-| T8 | Create/reopen/delete separate saved chats in a project | R2, R8, R14 | KP | T4 | Saved-chat slice owner | pending |
-| T18 | Open an uploaded original PDF from the project library | R2, R3, R13, R29 | KD | T6 | Viewer slice owner | pending |
-| T7 | Finish indexing a text PDF and show it ready for knowledge queries | R4, R5, R6, R16, R17, R22, R23, R25 | KD and KU | T6, T5 | Indexing slice owner | pending |
-| T20 | Archive/unarchive files and control each chat's fresh-retrieval sources | R2, R7, R13, R28 | KD and KH | T6, T8 | Source-control slice owner | pending |
-| T11 | Delete a project and recover safely from purge/restart/restore failures | R2, R5, R14, R15, R20, R23, R24 | KP, KD and KH | T6, T8 | Lifecycle slice owner | pending |
-| T9 | Ask a grounded question and persist an idempotent, validated answer | R2, R7, R9, R10, R11, R12, R16, R17, R22, R23, R28 | KU, KD, KH, KS and KL | T5, T7, T8, T20, T11 | Answer slice owner | pending |
-| T10 | Open a validated answer citation at its original physical PDF page | R2, R10, R13, R29 | KV and KC | T18, T9 | Citation slice owner | pending |
-| T16 | Share/import a fixed project copy containing files and ready knowledge | R2, R3, R7, R13, R15, R17, R20, R25, R26, R29 | KP, KD, KS, KV and KL | T7, T18, T20, T11 | Distribution slice owner | pending |
-| T17 | Publish/update/revoke a restricted or public read-only chat snapshot | R2, R14, R15, R16, R20, R27 | KH, KC and KL | T8, T9, T11 | Publication slice owner | pending |
-| T19 | Include all saved chats with working destination citations in a project copy | R2, R7, R8, R10, R14, R20, R26, R28 | KI, KH and KC | T16, T10 | Distribution extension owner | pending |
-| T12 | Complete cross-feature navigation, accessibility and packaged UI consistency | R1, R3, R6, R8, R10, R11, R12, R13, R14, R15, R18, R26, R27, R28, R29 | T4 | T17, T19 and all feature demos integrated with passing evidence | Integrator/UI integration owner | pending |
-| T13 | Prove integrated privacy/lifecycle/scalability behavior and measure no-cache performance | R1, R2, R4, R5, R7, R10, R12, R13, R14, R15, R17, R20, R21, R22, R23, R24, R25, R26, R27, R28, R29 | T6 | T12 and its feature prerequisites | Verification owner | pending |
-| T14 | Evaluate actual model grounding, citation quality, latency and cost within a bounded allowance | R4, R9, R10, R11, R16, R17, R21, R24, R25 | T5, T7 and passing focused offline dispatch/accounting checks; separate credential/paid-call authority | T9, T10 and passing focused offline answer/citation checks; paid-call authority | AI evaluation owner | pending |
-| T15 | Hand over the reproducible local package and truthful readiness evidence | R18, R19, R20, R21, R22, R24, R25, R26, R27, R28, R29 | T1 for living documentation | T12, T13; T14 additionally required for a real-AI-ready claim | Integrator/handoff owner | pending |
+| Task | Demonstrable result | Requirement IDs | Can start after | Must exist before completion | Assigned writer | State | Intent label | Issue / branch |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | completed | feature | [#1](https://github.com/igrgin/ai-knowledge-base/issues/1); `1-run-java-26-react-shell-and-local-database` (created) |
+| T2 | Migrate/restart a minimal database and verify shared contract conventions | R18, R23 | T1 | T1 | Foundation owner | pending | feature | [#2](https://github.com/igrgin/ai-knowledge-base/issues/2); `2-add-minimal-persistence-and-contract-conventions` (planned; not created) |
+| T3 | Register, log in/out and retain an authenticated session after restart | R1, R2, R16, R18, R23 | T2 | T2 | Identity slice owner | pending | feature | [#3](https://github.com/igrgin/ai-knowledge-base/issues/3); `3-register-log-in-and-retain-authenticated-sessions` (planned; not created) |
+| T4 | Create/list/open/rename private projects through the UI | R2, R3, R6, R17 | T3 | T3 | Project slice owner | pending | feature | [#4](https://github.com/igrgin/ai-knowledge-base/issues/4); `4-create-and-manage-private-projects` (planned; not created) |
+| T5 | See AI availability/budget status and enforce bounded, idempotent provider spending | R12, R16, R17, R23 | T2 and K0 | T3 | Usage/model slice owner | pending | feature | [#5](https://github.com/igrgin/ai-knowledge-base/issues/5); `5-show-ai-availability-and-enforce-provider-spending-limits` (planned; not created) |
+| T6 | Upload a private PDF, observe durable extraction/failure status and recover after restart | R2, R4, R5, R6, R16, R17, R22, R23 | KP | T4 | Document slice owner | pending | feature | [#6](https://github.com/igrgin/ai-knowledge-base/issues/6); `6-upload-and-extract-private-pdfs-with-durable-status` (planned; not created) |
+| T8 | Create/reopen/delete separate saved chats in a project | R2, R8, R14 | KP | T4 | Saved-chat slice owner | pending | feature | [#8](https://github.com/igrgin/ai-knowledge-base/issues/8); `8-create-reopen-and-delete-saved-project-chats` (planned; not created) |
+| T18 | Open an uploaded original PDF from the project library | R2, R3, R13, R29 | KD | T6 | Viewer slice owner | pending | feature | [#18](https://github.com/igrgin/ai-knowledge-base/issues/18); `18-read-original-pdfs-from-the-project-library` (planned; not created) |
+| T7 | Finish indexing a text PDF and show it ready for knowledge queries | R4, R5, R6, R16, R17, R22, R23, R25 | KD and KU | T6, T5 | Indexing slice owner | pending | feature | [#7](https://github.com/igrgin/ai-knowledge-base/issues/7); `7-index-pdfs-and-recover-interrupted-embedding-work` (planned; not created) |
+| T20 | Archive/unarchive files and control each chat's fresh-retrieval sources | R2, R7, R13, R28 | KD and KH | T6, T8 | Source-control slice owner | pending | feature | [#20](https://github.com/igrgin/ai-knowledge-base/issues/20); `20-archive-pdfs-and-control-chat-retrieval-sources` (planned; not created) |
+| T11 | Delete a project and recover safely from purge/restart/restore failures | R2, R5, R14, R15, R20, R23, R24 | KP, KD and KH | T6, T8 | Lifecycle slice owner | pending | feature | [#11](https://github.com/igrgin/ai-knowledge-base/issues/11); `11-purge-projects-and-recover-safely-after-restore` (planned; not created) |
+| T9 | Ask a grounded question and persist an idempotent, validated answer | R2, R7, R9, R10, R11, R12, R16, R17, R22, R23, R28 | KU, KD, KH, KS and KL | T5, T7, T8, T20, T11 | Answer slice owner | pending | feature | [#9](https://github.com/igrgin/ai-knowledge-base/issues/9); `9-answer-grounded-questions-with-saved-provenance` (planned; not created) |
+| T10 | Open a validated answer citation at its original physical PDF page | R2, R10, R13, R29 | KV and KC | T18, T9 | Citation slice owner | pending | feature | [#10](https://github.com/igrgin/ai-knowledge-base/issues/10); `10-open-answer-citations-at-the-correct-pdf-page` (planned; not created) |
+| T16 | Share/import a fixed project copy containing files and ready knowledge | R2, R3, R7, R13, R15, R17, R20, R25, R26, R29 | KP, KD, KS, KV and KL | T7, T18, T20, T11 | Distribution slice owner | pending | feature | [#16](https://github.com/igrgin/ai-knowledge-base/issues/16); `16-share-and-import-independent-fixed-project-copies` (planned; not created) |
+| T17 | Publish/update/revoke a restricted or public read-only chat snapshot | R2, R14, R15, R16, R20, R27 | KH, KC and KL | T8, T9, T11 | Publication slice owner | pending | feature | [#17](https://github.com/igrgin/ai-knowledge-base/issues/17); `17-publish-and-revoke-read-only-chat-snapshots` (planned; not created) |
+| T19 | Include all saved chats with working destination citations in a project copy | R2, R7, R8, R10, R14, R20, R26, R28 | KI, KH and KC | T16, T10 | Distribution extension owner | pending | feature | [#19](https://github.com/igrgin/ai-knowledge-base/issues/19); `19-include-saved-chats-and-citations-in-project-copies` (planned; not created) |
+| T12 | Complete cross-feature navigation, accessibility and packaged UI consistency | R1, R3, R6, R8, R10, R11, R12, R13, R14, R15, R18, R26, R27, R28, R29 | T4 | T17, T19 and all feature demos integrated with passing evidence | Integrator/UI integration owner | pending | feature | [#12](https://github.com/igrgin/ai-knowledge-base/issues/12); `12-integrate-navigation-accessibility-and-packaged-ui` (planned; not created) |
+| T13 | Prove integrated privacy/lifecycle/scalability behavior and measure no-cache performance | R1, R2, R4, R5, R7, R10, R12, R13, R14, R15, R17, R20, R21, R22, R23, R24, R25, R26, R27, R28, R29 | T6 | T12 and its feature prerequisites | Verification owner | pending | feature | [#13](https://github.com/igrgin/ai-knowledge-base/issues/13); `13-verify-privacy-lifecycle-scalability-and-embedding-performance` (planned; not created) |
+| T14 | Evaluate actual model grounding, citation quality, latency and cost within a bounded allowance | R4, R9, R10, R11, R16, R17, R21, R24, R25 | T5, T7 and passing focused offline dispatch/accounting checks; separate credential/paid-call authority | T9, T10 and passing focused offline answer/citation checks; paid-call authority | AI evaluation owner | pending | spike | [#14](https://github.com/igrgin/ai-knowledge-base/issues/14); `14-evaluate-real-ai-grounding-quality-latency-and-cost` (legacy planned name; no branch required for spike) |
+| T15 | Hand over the reproducible local package and truthful readiness evidence | R18, R19, R20, R21, R22, R24, R25, R26, R27, R28, R29 | T1 for living documentation | T12, T13; T14 additionally required for a real-AI-ready claim | Integrator/handoff owner | pending | feature | [#15](https://github.com/igrgin/ai-knowledge-base/issues/15); `15-document-and-hand-over-the-reproducible-local-package` (planned; not created) |
 
 T5 can begin beside T3 and does not depend on T4's project UI. T8 has no T7 dependency. T18 has no embedding/answer dependency. T16 and T17 have no dependency on each other. T19 completes R26's optional chat-copy branch without putting that work inside basic project import. T12 does not gate any feature slice.
 
@@ -244,7 +251,7 @@ A valid single-writer sequence remains possible, for example T1, T2, T3, T4, T6,
 
 ## Potential parallel execution and ownership
 
-The present configuration remains one writer. The following role/path assignments are a proposal for a later authorized build; assign each role to a named writer and isolated checkout before dispatch. The integrator owns the shared plan/index and merges feature work. An individual slice writer owns its UI, backend, feature migrations and tests together, avoiding separate frontend/backend handoffs for the same behavior.
+The present configuration remains one writer. The following role/path assignments are a proposal for a later authorized build; assign each role to a named writer and isolated checkout before dispatch. The integrator owns the shared plan and merges feature work. An individual slice writer owns its UI, backend, feature migrations and tests together, avoiding separate frontend/backend handoffs for the same behavior.
 
 ### File and schema ownership
 
@@ -252,7 +259,7 @@ Paths are proposed because implementation files do not exist yet. Backend paths 
 
 | Slice owner | Exclusive application files/directories | Feature schema/migration responsibility | Shared touchpoints to coordinate |
 | --- | --- | --- | --- |
-| Integrator, T1/T2/T12/T15 | Root build/config/scripts, application shell/routes, `components/ui/`, `lib/api/`, contract records, plan/index and shared test bootstrap | Only minimal migration wiring in T2; reviews/numbers feature migrations at integration | Sole editor of poms, npm manifest/lock, common config, Compose, shell/routes, shared API types and plan/index; feature authors submit narrow changes |
+| Integrator, T1/T2/T12/T15 | Root build/config/scripts, application shell/routes, `components/ui/`, `lib/api/`, contract records, plan and shared test bootstrap | Only minimal migration wiring in T2; reviews/numbers feature migrations at integration | Sole editor of poms, npm manifest/lock, common config, Compose, shell/routes, shared API types and plan; feature authors submit narrow changes |
 | Identity, T3 | `identity/**`, `features/auth/**` | Users/JDBC sessions | K0 actor/principal and route/auth integration |
 | Projects, T4 | `project/**`, `features/projects/**` | Projects/ownership/count limits and lifecycle revision | KP ownership/lock API; library mounts feature components without taking their files |
 | Usage/model, T5 | `usage/**`, `model/**`, `features/ai-status/**` | Reservations/usage/periods/shared provider admission | KU, actor FK to T3, model dependencies/config through integrator |
@@ -296,7 +303,7 @@ These are alternatives, not permission to start every ready pair at once. The in
 
 ### Proposed concurrency-setting change, not applied
 
-Current effective `lighthouse.json` value is `capabilities.concurrency.maxParallelTasks = 1`. No setting, owner mapping or agent state changes in this reassessment.
+The accepted project concurrency limit is 1, recorded in project.md. The proposed increase remains unapplied; migration does not change dispatch authority.
 
 A later proposal is **2 active implementation tasks/writers maximum**, with `project-owner` remaining accountable for shared records and one named integrator as their sole writer. The integrator counts within those two writers whenever implementing, editing shared code or integrating changes. Prefer one slice writer also holding the integrator role; two independent feature writers must yield a slot before a separate integrator writes/merges. Human milestone review and migration integration stay one at a time. More ready tasks wait. This is deliberately not a proposal to raise runtime AI/ingestion concurrency, which retains two global generations, one per chat and one ingestion/embedding pipeline.
 
@@ -374,7 +381,7 @@ Each requirement maps to its owning vertical implementation and later integratio
 | C10 no-cache performance | T7/T16 reuse ready embeddings; T13 report mandatory, cache prototype optional only with evidence |
 | C11 retrieval-only exclusion | D12 settled behavior; T20 filter/T9 bounded prior context, T13 checks; no transitive history-filter graph |
 | C12 import/publication operating limits | T16 reuses existing quota/admission/jobs; T17 bounds views; T19 extends one copy pipeline; T13 measures before hosting |
-| Preserve instructions/settings/tools | Only plan/index edited now; T1 and feature owners add project-local definitions during a future authorized build; concurrency proposal unapplied |
+| Preserve instructions/settings/tools | Preserve current records and native definitions; T1 is delivered in the unmerged PR, later tasks remain pending, and the concurrency proposal is unapplied |
 
 ## Local command contract and verification
 
@@ -387,7 +394,7 @@ npm test --prefix frontend
 
 The frontend's normal `pretest` builds its production assets; Playwright owns its preview server and the test-only readiness responses for browser behavior. Maven runs basic `test`-profile checks, native Failsafe `lvl2test` integration checks, the actual packaged backend against pinned pgvector Testcontainers, and the packaged extractor launch contract. Backend resources consume `frontend/dist`, so build/test the frontend before full packaging/integration. Basic `./mvnw test` requires neither Docker nor full application startup.
 
-Local development uses native Maven `spring-boot:run` with explicit `dev` and frontend `npm run dev`. Packaging uses frontend `npm run build` followed by Maven `package`; direct `java -jar` selects the intended profile. See [the development guide](../../local-development.md#development-and-package) for exact commands and port/environment settings. Docker Compose manages the persistent local database. Only the optional self-contained project-local Node installer remains; CI does not invoke it. The custom verify/package/dev/run/smoke/metadata-check wrappers are retired.
+Local development uses native Maven `spring-boot:run` with explicit `dev` and frontend `npm run dev`. Packaging uses frontend `npm run build` followed by Maven `package`; direct `java -jar` selects the intended profile. See [the development guide](../docs/local-development.md#development-and-package) for exact commands and port/environment settings. Docker Compose manages the persistent local database. Only the optional self-contained project-local Node installer remains; CI does not invoke it. The custom verify/package/dev/run/smoke/metadata-check wrappers are retired.
 
 Later slices extend these native test/build definitions and add only task-specific capabilities actually needed: T11 backup/restore with deletion replay, T13 multi-instance/no-cache performance measurements, T14 separately authorized paid evaluation, and T15 integrated documentation/handoff. Their required behaviors remain unchanged; the earlier proposed wrapper filenames are not mandates. Ordinary tests make no paid AI calls. Test fixtures own disposable processes/containers and must preserve development data and unrelated listeners.
 
@@ -417,7 +424,7 @@ Limits below derive from the accepted specification. Owner is `project-owner`; n
 
 | Downstream system | Limit and units | Responsible owner | Assumptions/source | Reassess when |
 | --- | --- | --- | --- | --- |
-| Implementation writers | Current limit 1 active task/writer; future proposal 2 total writers including an implementing integrator | project-owner | `lighthouse.json` unchanged; bounded ownership/contracts/migration rules above are proposals only | Owner explicitly authorizes a new limit/dispatch; reduce parallel starts if shared edits or review/migration capacity becomes a bottleneck |
+| Implementation writers | Current limit 1 active task/writer; future proposal 2 total writers including an implementing integrator | project-owner | Accepted concurrency remains 1 in project.md; preserve bounded ownership/contracts/migration rules and their stated approval scope | Owner explicitly authorizes a new limit/dispatch; reduce parallel starts if shared edits or review/migration capacity becomes a bottleneck |
 | PDF intake/storage | 10 MiB/PDF, 200 pages/PDF, 250,000 text tokens/PDF; 3 projects/account, 10 PDFs/project including archives, 2,000 retained pages/account | project-owner | Accepted spec limits; archive does not free capacity | Valid fixtures fail bounds, disk reserve approaches configured high-water mark, or scope changes |
 | Local disk admission | Initial proposal: 5 GiB managed PDF store and 2 GiB PostgreSQL high-water budgets, plus 1 GiB unallocated host free-space reserve; backup/journal space separate and checked | project-owner | Implementation-level capacity values for plan acceptance; no hosted allocation assumed | Measured derived/vector growth or backup/free space cannot fit; stop uploads rather than silently expand |
 | Ingestion | 1 job/parser at a time; parser 256 MiB heap; extraction 2 minutes; whole job 10 minutes; at most 2 transient embedding retries | project-owner | Accepted concurrency/deadlines; parser heap is a plan-level resource choice, verified T6/T13/T14 | Valid bounded PDFs exceed memory/time or foreground responsiveness degrades |
@@ -438,7 +445,7 @@ Counts/quotas, reservations, global admission and archive-grant changes are data
 
 | Decision/input | Resolution or current limitation | Decision owner | Affected work |
 | --- | --- | --- | --- |
-| Requirements/design direction | Current R1–R29 and design sections consolidate Java 26, scalability, independent copies, snapshots, PDF viewing, automatic uploads, archive-only files and retrieval-only source toggles; original owner statements remain in the index | project-owner | R1–R29; current scoped revision for review |
+| Requirements/design direction | Current R1–R29 and design sections consolidate Java 26, scalability, independent copies, snapshots, PDF viewing, automatic uploads, archive-only files and retrieval-only source toggles; original owner statements remain in the historical decision source | project-owner | R1–R29; current scoped revision for review |
 | Plan/implementation scope | D19 accepts the committed T1 increment and authorizes its implementation/review. T1 is implemented in PR #21; owner approval/merge remains pending. Other task definitions/gates are unchanged | project-owner | T1 completed as an unmerged implementation; T2–T20 pending and unauthorized |
 | Docker engine | CLI exists but daemon was unreachable; resolve before database/integration commands | project-owner/local machine operator | Execution preflight in T1; independent planning complete |
 | Project Node runtime | Select Node 24.22.1; installed Node 22.12.0 does not satisfy the chosen PDF.js version | project-owner/implementing agent within accepted local setup | T1 frontend build/packaged viewer; no global overwrite |
@@ -461,14 +468,14 @@ This current plan is the only implementation task source. It preserves the owner
 
 - Authority: D19, 2026-10-25, scoped to T1 at baseline `b203ffd17063f65f06e0e4bea3cb49e9e68cdc44`.
 - Issue: [#1](https://github.com/igrgin/ai-knowledge-base/issues/1), linked branch `1-run-java-26-react-shell-and-local-database`.
-- Single application writer: GPT-6.1 Sol, medium; the integrator yields application writes during that assignment. The integrator alone updates plan/index/review records. A later Sol high reviewer receives a fresh report-only context after implementation yields.
+- Single application writer: GPT-6.1 Sol, medium; the integrator yields application writes during that assignment. The integrator alone updates plan and review evidence. A later Sol high reviewer receives a fresh report-only context after implementation yields.
 - Scope: runtime/build/React shell, local PostgreSQL and database-backed readiness, extractor packaging contract, deterministic commands and meaningful checks. T2 migration infrastructure, all domain features, AI calls, cloud hosting and multi-instance harness remain excluded.
 - Preflight: Java 26.0.1 and Maven 3.9.16 are present; global Node is 22.12.0 and must be preserved. Docker's daemon was initially unreachable; local startup and project-runtime compatibility are part of T1 execution.
 - Implementation candidate: `67fd957c3686bd8b0385a843a0cfc97482c9692e`, PR [#21](https://github.com/igrgin/ai-knowledge-base/pull/21), based on the setup commit above; source implementation completed and clean.
 - Actual compatibility: all accepted T1 pins resolved and built on Java 26.0.1, locally on macOS/arm64 and GitHub Linux/x64. The pinned database digest ran PostgreSQL 17.11/pgvector 0.8.7. Global Node 22.12.0 was preserved; Node 24.22.1 is project-local. No plan pin changed. New Tailwind/plugin 4.3.3 accepts Vite 8; an initial 4.1.18 candidate did not. Boot BOM resolved Spring JDBC 7.0.10, PostgreSQL JDBC 42.7.14, Jackson 3.1.7 and JUnit 6.0.3.
 - `./scripts/verify` passed Java/backend/extractor checks, locked frontend build, packaged Chromium readiness/retry, vector checks, database outage/recovery, persisted restart sentinel and backend restart. Development proxy and direct packaged run were also verified on alternate loopback ports; unrelated listeners on 8080/5173 were preserved. Owned development processes shut down cleanly.
 - CI: [Repository checks](https://github.com/igrgin/ai-knowledge-base/actions/runs/40141270696) and [Runtime checks](https://github.com/igrgin/ai-knowledge-base/actions/runs/40141270670) passed at the implementation candidate. Later metadata-only head CI is linked in the PR.
-- Independent review: one fresh Sol high reviewer, bugs/security/requirements all covered, no findings, `clear`, correction round 0; see [review record](review.md#comparison) and [current PR assessment](https://github.com/igrgin/ai-knowledge-base/pull/21#issuecomment-6390736664).
+- Independent review: one fresh Sol high reviewer, bugs/security/requirements all covered, no findings, `clear`, correction round 0; see [review record](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/review.md#comparison) and [current PR assessment](https://github.com/igrgin/ai-knowledge-base/pull/21#issuecomment-6390736664).
 - Scope limits: extractor only exposes its real version/build contract and rejects extraction arguments; no PDF extraction, domain tables, Flyway, authentication, AI, multi-instance harness or hosting is claimed.
 - Current disposition: T1 implementation completed; PR approval and manual merge remain the project owner's responsibility. T2–T20 remain pending and unauthorized. No merge authority is granted.
 
@@ -500,3 +507,13 @@ T1 implementation and this revision are completed in unmerged PR #21. The replac
 Both old workflows and eight orchestration/metadata scripts were removed; only optional `scripts/setup-node` remains. The former Maven distribution profile is unnecessary because standard backend resources consume the frontend build. Current setup/test commands and precise coverage are above; earlier script-based evidence in this plan is historical at its named candidate.
 
 One independent Sol high reviewer refreshed all three passes and assessed round 2 clear. F1 identified a known nonblocking stale command-heading pointer; the coordinator corrected it as part of final metadata reconciliation and the final refresh verifies it. The required native context is now `Tests`, after its successful run; all other branch protections remain intact. The accepted correction count remains 2, without reset. Owner approval/manual merge and all later task authority remain outstanding.
+
+## Interactive AI evaluation task
+
+T14 / issue #14 uses the `spike` intent label for a developer–agent evaluation and decision, with no implementation-agent handoff, mandatory branch or PR. Its existing start gates, completion prerequisites, model/fixture/version evidence and numerical grounding/citation criteria remain unchanged. Real calls still require a separately authorized credential and token/cost allowance. Do not execute this task during migration.
+
+Agree the evaluation conclusion with the developer and post a final issue comment covering the question, actual evidence/cost/limits, agreed model or readiness decision, and follow-ups. Verify the comment before marking T14 complete. Keep any useful evaluation documentation deliberately. Required production tooling changes need their own feature/bug scope; prototype success does not establish application readiness. T15 still requires T14 evidence for a real-AI-ready claim; it remains a feature task because it includes runnable-package and integrated verification obligations, not documentation alone.
+
+## Migration disposition
+
+The primary checkout's migration branch starts at the reviewed T1 head; the original T1 worktree/branch and PR #21 remain unchanged. This records-only migration consumes no implementation-finding correction round. T1's historical count remains 2 and F1 remains addressed. The migration has its own scoped review; it does not extend T1's technical assessment to changed files without inspection. Merge/integration of migration work into main follows the user's manual disposition of PR #21, with no direct push to main or agent merge.

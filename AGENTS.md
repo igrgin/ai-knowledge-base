@@ -1,13 +1,9 @@
 # Project instructions
 
-For Lighthouse work, read `lighthouse.json`. For owner provenance or missing policy inputs, read `docs/lighthouse-adoption.md`. Resolve project paths from this repository root.
+For Lighthouse delivery, amendments or resume, use the globally installed Lighthouse 0.2.0 skills and read the relevant current [intent](.Lighthouse/intent.md), [specification](.Lighthouse/spec.md) and [plan](.Lighthouse/plan.md). The user is the default decision-maker. Read the current scope before acting: T1 is implemented in unmerged PR #21; later tasks remain pending and unauthorized.
 
-For implementation requests, use the `lighthouse` skill to resolve the active change and route. Implement within the accepted plan and recorded authorization; return material scope or risk changes to the project owner.
+For issues, branches, worktrees, commits, PRs or cleanup, read [.Lighthouse/github.md](.Lighthouse/github.md). For review, agent/model assignment, concurrency or operational boundaries, read the applicable section of [.Lighthouse/project.md](.Lighthouse/project.md). Use original decision sources only when provenance or a conflict requires them; current records are the normal task input.
 
-For a stage-specific request, use its Lighthouse skill and retain the requested scope. Keep progress and original decision references with the active change. Create stage records when their work begins.
+Backend/extractor modules use the root and module Maven definitions; frontend tasks use `frontend/package.json`. For local startup, configuration profiles, build and meaningful tests, read [local development](docs/local-development.md). Keep implementation within accepted task/file ownership and native commands. Real AI calls, hosting and provider operations retain separate authorization.
 
-For repository setup, issues, branches, commits, PRs or merges, read `docs/policies/github-workflow.md`. For agent role/model assignment or escalation, read `docs/policies/development-agents.md`. For Lighthouse availability in a worktree or another host, read `docs/development-tooling.md`.
-
-For architecture, security, review, UX, release, or incident work, consult the applicable policy source in `lighthouse.json`. When a required source is unconfigured, identify the owner and affected work using the adoption record, then continue independent authorized work. For reviews, use `lighthouse-review` and resolve required review-policy choices before an authoritative clear assessment.
-
-Use existing project task definitions and provider tools as they become available. Keep project policies and change records in this repository. Project adoption and upgrades require explicit user invocation of `lighthouse-init`; scoped instructions apply when work enters their directories.
+Preserve stable requirements/tasks, separate start gates from completion prerequisites, and completed evidence. One writer owns shared records; implementation concurrency is 1, followed by one fresh reviewer for bugs/security/requirements. PRs are presented for the user's manual merge. Root README explains the product and startup; workflow records belong in `.Lighthouse/`. Adoption/upgrades remain explicit user operations.

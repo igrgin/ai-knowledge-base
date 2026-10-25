@@ -2,13 +2,13 @@
 name: Planned task
 about: Define demonstrable behavior with separate start and completion gates
 title: ''
-labels: ''
+labels: 'feature'
 assignees: ''
 ---
 
 ## Lighthouse source
 
-Task ID and current plan/spec sections. Check the existing task mapping before creating a duplicate issue.
+Task ID and current `.Lighthouse/plan.md` / `spec.md` sections; exactly one bug/feature/spike intent label. Check current `.Lighthouse/plan.md` issue links before creating a duplicate issue.
 
 ## Demonstrable behavior
 
@@ -33,3 +33,5 @@ Name the slice role, permitted paths, schema ownership, provider/consumer contra
 ## Authorization and delivery
 
 Implementation needs separate owner authorization. Preserve current task concurrency. Use the issue-number/title branch convention, a linked PR, independent technical review and manual owner approval/merge.
+
+For an interactive spike, replace implementation/delivery sections with the question, boundaries, evidence and human-agreed decision finish line. No implementation-agent handoff or mandatory PR applies; verify the final decision comment on the issue before completion. Labeling a task supplies no execution authority.

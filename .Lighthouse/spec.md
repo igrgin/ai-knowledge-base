@@ -1,5 +1,12 @@
 # Requirements and design for the AI knowledge base
 
+## Current scope and sources
+
+Migrated to Lighthouse 0.2.0 on 2026-10-25 under the [user's migration instruction](codex://threads/01a170fe-e89b-7be3-a093-bad07cf053b8): “I approve the migration plan. Go ahead and migrate both projects to Lighthouse 0.2.0, preserving decisions and progress. Don’t merge PR #21 or start any new implementation work.” The preserved pre-migration content is commit `7252f046b96f9a33e94f095f2b8b7790b76785ad`. Original human statements and their covered scopes remain recoverable in the [historical decision source](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json); D1–D21 are legacy provenance identifiers, not an active decision index.
+
+Current product direction, unresolved concerns, task gates and prior acceptance remain as stated in these documents. Only T1 and its D20/D21 refinements were authorized for implementation. T1 is completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2–T20 remain pending and unauthorized. The migration authorizes record, policy and issue-link/label reconciliation, not application implementation or merging. The archive amendment used in the Lighthouse discussion was an example, not a product decision for this project.
+
+
 This specification covers local v1, its scalable architecture, and an optional later hosted demo. D4–D5 preserve the original acceptance and Java 26 amendment. D7 records the scalable architecture direction. D8–D12 clarify project-copy sharing, public read-only chat snapshots, file viewing, reversible archive and automatic later uploads. D11 restores archive-only handling for individual PDFs; the performance checkpoint now prioritizes measured bottlenecks and embedding reuse without a required cache experiment. Detailed experiments below do not establish measured capacity or service-level commitments. No application implementation, provisioning, or paid API experiment is part of this stage.
 
 ## Sources
@@ -9,12 +16,12 @@ These links identify the current documents and relevant sections. `change.json` 
 | Source | Current section or identifying information | Relevant content |
 | --- | --- | --- |
 | [Intent](intent.md#desired-outcome) | Desired outcome and Constraints | Current consolidated product purpose and owner-selected behavior |
-| [Owner decision references](change.json) | D1–D13, with original conversation locators/selectors | Continuing owner directions and explicit later replacements; no alternative plan copies |
-| [Cost research](costs.md#owner-choices-and-delivery-phases) | Owner choices, local/optional hosted phases and dated calculations | Budget scenarios and provider/retention caveats; not spending authority |
-| [Scalability research](scalability-evaluation.md#target-shape) | Target shape and Proposed experiments | Supporting primary sources and measurable growth-path experiments |
-| [Caching research](caching-evaluation.md#recommendation) | Recommendation and Measurement and follow-up | No-cache baseline, persisted embedding reuse and optional evidence-based optimization |
+| [Owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | D1–D13, with original conversation locators/selectors | Continuing owner directions and explicit later replacements; no alternative plan copies |
+| [Cost research](research/costs.md#owner-choices-and-delivery-phases) | Owner choices, local/optional hosted phases and dated calculations | Budget scenarios and provider/retention caveats; not spending authority |
+| [Scalability research](research/scalability-evaluation.md#target-shape) | Target shape and Proposed experiments | Supporting primary sources and measurable growth-path experiments |
+| [Caching research](research/caching-evaluation.md#recommendation) | Recommendation and Measurement and follow-up | No-cache baseline, persisted embedding reuse and optional evidence-based optimization |
 | [Implementation plan](plan.md#revised-task-list) | Revised task list; Contract gates for early starts | Current task allocation for this specification, including split slice ownership |
-| `lighthouse.json`, `docs/lighthouse-adoption.md` | Current owner/policy/control mapping | Project ownership and missing formal policy/platform inputs |
+| [Project workflow](project.md) | Current owner/policy/control mapping | Project ownership and missing formal policy/platform inputs |
 
 This is the current specification. Later explicit owner choices replace only the affected earlier choices. Use R1–R29 below and the current implementation plan, rather than looking for older draft files or local Git objects.
 
@@ -134,7 +141,7 @@ Phase 1 runs the full app, PostgreSQL/pgvector and persistent file storage local
 
 For phase 2, propose a single-region Railway application + pgvector database + private bucket, with the React build inside the app image. Railway bucket docs describe private storage served through a backend; ensure authorization and private cache headers rather than copying a public-asset caching example. [Storage pattern](https://docs.railway.com/guides/storage-buckets-guide)
 
-A hosted demonstration has one app instance and one database instance initially. It tolerates deployment/restart interruptions; no high-availability service level is promised. Health checks reveal service readiness without document contents. Project owner approves any release candidate/environment; the actual provider-account owner configures credentials, compute limits and platform permissions. Those account identities/controls remain to be resolved before release, not fabricated in `lighthouse.json`.
+A hosted demonstration has one app instance and one database instance initially. It tolerates deployment/restart interruptions; no high-availability service level is promised. Health checks reveal service readiness without document contents. Project owner approves any release candidate/environment; the actual provider-account owner configures credentials, compute limits and platform permissions. Those account identities/controls remain to be resolved before release, not inferred from a project record.
 
 ### D-H: Measured AI choice and bounded use
 
@@ -355,4 +362,4 @@ All concerns belong to `project-owner` unless the owner names an actual platform
 | C11: retrieval-only exclusion verification | Resolved product choice under D12; actual behavior still needs tests | Keep bounded prior conversation context and history/citations; filter only fresh retrieval, explain that earlier discussion may influence answers, and fence stale retrieved-source publication. No transitive context-filter graph | project-owner | R28, D-D/D-L, T8/T9/T13 |
 | C12: import/publication operating limits | Quotas exist but copy cost and link-import/public-view rates are unmeasured | Copy within existing account/global limits; bound queues/rates, use explicit owner actions and idempotency; measure T13 before hosted exposure. In-app invitations avoid a mail-service dependency | project-owner | R26–R27, T16/T17/T13; hosted operations remain later |
 
-Original acceptances remain recoverable in the index. D7–D11 provide the scoped architecture/product directions incorporated here. C11 is resolved by D12; remaining implementation details, including C12, are ready for owner review; no full-document acceptance is inferred from answers to individual questions. D19 subsequently accepts and authorizes the bounded T1 increment at the committed setup baseline. Its implementation/review evidence is in the current plan; T2–T20 remain pending and unauthorized. No broader plan acceptance is inferred. Hosting is optional later; no publication, deployment or paid work is authorized by these records.
+Original acceptances remain recoverable in the historical decision source linked above. D7–D11 provide the scoped architecture/product directions incorporated here. C11 is resolved by D12; remaining implementation details, including C12, are ready for owner review; no full-document acceptance is inferred from answers to individual questions. D19 subsequently accepts and authorizes the bounded T1 increment at the committed setup baseline. Its implementation/review evidence is in the current plan; T2–T20 remain pending and unauthorized. No broader plan acceptance is inferred. Hosting is optional later; no publication, deployment or paid work is authorized by these records.
