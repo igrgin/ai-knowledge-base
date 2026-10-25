@@ -67,7 +67,7 @@ No findings identified. The original empty finding set is preserved; no advisory
 
 ## Comparison and correction history
 
-`roundCount`: 1
+`roundCount`: 2
 
 | Round | Before / after | Outcome |
 | --- | --- | --- |
@@ -88,3 +88,7 @@ All three required passes are covered for the fixed revised T1 candidate, curren
 The coordinator updates review/progress and records the exact D20 profile semantics in the plan/design after this comparison. These records introduce no new behavior, authority, policy, concurrency or runtime source. The same independent reviewer checks their equivalence and records the current metadata-only head in the linked PR assessment before final presentation. Any material implementation change requires affected tests/review refresh.
 
 D19/D20 cover T1 only. The project owner retains approval and manual merge authority. T2–T20, hosting, paid AI and a concurrency increase remain unauthorized.
+
+## D21 owner-requested simplification — round 2 reservation
+
+Reserved before edits, with before candidate `490fa7ee1eb1cb1e32a8834fa762703a6c0c0fd7`. D21 requests standard frontend/backend test CI, removal of redundant orchestration and no proposed squash-commit body. This is an owner-directed revision, not a finding in the earlier empty finding set. Revised candidate/evidence/review are pending. Current assessment is `incomplete` for the new revision; previous clear statements apply only to their named comparisons. This is the final ordinary correction batch under the existing two-round policy; no new allowance or reset is implied.

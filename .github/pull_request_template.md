@@ -23,11 +23,3 @@ Link the fresh-context assessment with fixed base/head identities and separate b
 ## Limitations and owner decision
 
 Identify material risks, unresolved questions and readiness limits. The owner approves and merges manually; an agent clear assessment is not merge authority.
-
-## Proposed squash commit
-
-```text
-#<issue-number> <issue title>
-
-Briefly describe the work delivered.
-```

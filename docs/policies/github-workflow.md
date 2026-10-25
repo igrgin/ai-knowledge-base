@@ -38,7 +38,7 @@ Add private PDF uploads and durable processing status.
 
 Use the actual issue number/title and describe the particular commit, even when it completes only part of the issue. For a commit unrelated to an issue, use a brief descriptive subject such as `Update setup instructions`.
 
-Use squash merges so the completed slice produces one coherent main-branch commit. The squash message follows the same format; include its proposed message in the final PR presentation. Original development commits remain associated with the PR discussion. Issue closure remains in the completed PR's `Closes` reference rather than the commit's issue-number header.
+Use squash merges so the completed slice produces one coherent main-branch commit. The squash message follows the same format. Do not include a proposed squash-commit message in the PR body or template (owner decision D21). Original development commits remain associated with the PR discussion. Issue closure remains in the completed PR's `Closes` reference rather than the commit's issue-number header.
 
 ## PRs and owner approval
 
@@ -54,7 +54,7 @@ Configure `main` to require PRs, passing required CI, resolved review conversati
 
 For this solo repository using the owner's account, require **zero GitHub approving reviews**. Do not require the owner's CODEOWNER approval or another approval of the last push: agents using that account are not independent GitHub identities, and the owner cannot approve their own PR through that mechanism. The fresh technical review and human decision remain required by policy. Stronger identity-based review gates need genuinely distinct identities.
 
-Bootstrap CI validates repository configuration, current planning references and workflow metadata. Require only checks that actually exist and have run successfully. T1 and later slices introduce real application build/test checks as their code appears; make those required as part of the agreed workflow setup progression. CI performs no live AI calls. Native checks enforce mechanical conditions, not the truth or independence of an agent review.
+Under D21, CI sets up the required environment/dependencies, then runs all frontend and backend tests through native npm/Maven commands. It does not validate Lighthouse records, documentation or PR metadata and does not call custom verification/package orchestration. Keep meaningful checks in the application test suites and use their standard fixtures/lifecycle. Require only application test checks that exist and have run successfully; replace obsolete bootstrap contexts after the replacement passes. CI performs no live AI calls. Technical-review quality and independence remain separate policy obligations.
 
 ## Tracking and worktrees
 

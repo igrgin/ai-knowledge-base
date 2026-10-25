@@ -36,15 +36,15 @@
         "section": "Revised task list"
       },
       "documentState": "ready",
-      "stateReason": "T1 and owner-directed D20 README/profile/test refinement are complete in unmerged PR21 with local/CI evidence and independent review. T2–T20 remain pending and unauthorized."
+      "stateReason": "T1 in progress for D21 CI/command simplification; T2–T20 remain pending and unauthorized."
     },
     "review": {
       "source": {
         "path": "docs/changes/20261023-ai-knowledge-base/review.md",
         "section": "Comparison"
       },
-      "documentState": "ready",
-      "stateReason": "D20 correction round1 complete at a043cf1522be32250d9b9533370cd979e53d2d59: all three independent passes covered, current CI passed, no findings, clear. Final record-only descendant freshness is linked through PR assessment. Owner approval/merge pending."
+      "documentState": "draft",
+      "stateReason": "D21 owner-directed CI/command simplification: round2 reserved before implementation; prior clear comparisons remain historical, affected review coverage pending."
     }
   },
   "decisions": {
@@ -397,6 +397,18 @@
         "T1"
       ],
       "scope": "Authorize revising the existing unmerged T1 PR: README focuses on product/startup/build with future content scaffolding, using igrgin/voice-draft README as reference; remove status/project-records/development-flow/repository-checks sections. Introduce shared static base Spring configuration and dev/prod overrides, with required environment values (no local fallback defaults) for production. Add test for unit/basic checks and lvl2test for full Spring/Testcontainers/end-to-end checks; update affected launch/test/CI wiring and meaningful tests. This is T1 configuration/testing refinement only, not T2 feature/schema work, hosting, paid AI, extra concurrency or merge authorization. Preserve prior review history; refresh affected tests and all relevant review coverage after the revision."
+    },
+    "D21": {
+      "kind": "policyDecision",
+      "source": {
+        "providerRef": "codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39",
+        "selector": "2026-10-25 owner message: \"It is unnecessary to have the squashed commit in the PR body. The only things that the GitHub should do is, meaning the CI, is set up environment and then run all of the tests for the front end and the backend. I think this is sort of overcomplicating it with all of the scripts.\""
+      },
+      "actorId": "project-owner",
+      "taskIds": [
+        "T1"
+      ],
+      "scope": "Remove proposed squash-commit text from PR bodies/templates while preserving plain commit conventions and squash-only/manual merges. Simplify T1 CI to environment/dependency setup and direct standard frontend/backend test commands; retire repository/document/metadata CI checks and custom verification/package orchestration, replacing redundant local wrappers with standard Maven/npm commands while preserving meaningful tests in native suites. Update affected docs/command references and replace obsolete native required-check contexts only after the replacement test check has passed. Preserve dev/prod/test/lvl2test semantics, stable tasks, concurrency1, independent review and no-merge authority. No later feature, hosting or paid AI work is authorized."
     }
   },
   "route": "fuller",

@@ -36,26 +36,18 @@
     }
   },
   "commands": {
-    "setupNode": {
-      "path": "scripts/setup-node"
+    "backendTests": {
+      "path": "backend/pom.xml"
     },
-    "checkTools": {
-      "path": "scripts/check-tools"
+    "frontendTests": {
+      "path": "frontend/package.json"
     },
-    "verify": {
-      "path": "scripts/verify"
+    "build": {
+      "path": "pom.xml"
     },
-    "package": {
-      "path": "scripts/package"
-    },
-    "dev": {
-      "path": "scripts/dev"
-    },
-    "runLocal": {
-      "path": "scripts/run-local"
-    },
-    "repositoryChecks": {
-      "path": "scripts/check_repository.py"
+    "localDevelopment": {
+      "path": "docs/local-development.md",
+      "section": "Start and stop"
     }
   },
   "controls": {},

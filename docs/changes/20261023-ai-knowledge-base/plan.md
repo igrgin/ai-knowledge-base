@@ -117,7 +117,7 @@ A task in the start column denotes its completion; a K gate denotes the narrower
 
 | Task | Demonstrable result | Requirement IDs | Can start after | Must exist before completion | Assigned writer | State |
 | --- | --- | --- | --- | --- | --- | --- |
-| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | completed |
+| T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | in_progress |
 | T2 | Migrate/restart a minimal database and verify shared contract conventions | R18, R23 | T1 | T1 | Foundation owner | pending |
 | T3 | Register, log in/out and retain an authenticated session after restart | R1, R2, R16, R18, R23 | T2 | T2 | Identity slice owner | pending |
 | T4 | Create/list/open/rename private projects through the UI | R2, R3, R6, R17 | T3 | T3 | Project slice owner | pending |
@@ -487,3 +487,9 @@ The shared review count is 1: owner-requested batch was reserved before edits an
 - Basic tests passed with an unreachable Docker socket; full Spring/pinned-pgvector readiness IT, complete package/browser/outage/recovery/persistence/restart checks, and a direct local dev launch passed. Runtime CI now explicitly verifies basic tests without Docker access. [Repository](https://github.com/igrgin/ai-knowledge-base/actions/runs/40143650017) and [Runtime](https://github.com/igrgin/ai-knowledge-base/actions/runs/40143649974) checks passed at the revised implementation.
 - The product/startup README follows the owner's Voice Draft reference, with no delivery status/process sections and only HTML scaffolding for future content. Deep engineering details remain in the local-development guide and Lighthouse records. Custom database settings use matching Compose `DB_*` and Spring `SPRING_DATASOURCE_*` overrides as documented.
 - Independent Sol high refresh covered bugs/security/requirements, found no findings and assessed round 1 clear. The reviewer independently verified prod blank-password rejection, complete environment binding, supplied unavailable-database HTTP 503, test resource/dependency exclusion and owned-process cleanup. No hosting or later feature was exercised or authorized.
+
+### T1 D21 CI and command simplification
+
+D21 replaces bespoke test/build orchestration with native Maven/npm test commands. CI sets up the environment/dependencies and runs the frontend/backend suites, without a repository-document/metadata gate or custom verification/package wrappers. Test-framework fixtures/lifecycle retain meaningful frontend behavior, real Spring/Testcontainers readiness, outage/restart and packaging checks where applicable; simpler commands must not silently substitute fake application behavior. Local instructions use standard tool commands; optional project-local runtime provisioning may remain if genuinely needed. The dev/prod/test/lvl2test split remains unchanged.
+
+Retire obsolete required-check names only once the replacement application test check has actually passed, preserving PR/admin/conversation/strict-update protections and manual owner merging. Remove proposed squash text from PR presentation/template, retaining the accepted plain commit convention and squash-only merge method. Round2 is reserved for this batch; all later task scopes remain unauthorized.
