@@ -1,101 +1,103 @@
 # Local development
 
-T1 supplies a Java/React runtime and a real PostgreSQL readiness check. PDF extraction, accounts, projects and AI are later slices. Ordinary checks make no AI calls.
+## Tools
 
-## Prerequisites
+Use Java 26 (`JAVA_HOME` must point to it when configured), Maven Wrapper 3.9.16 and Node 24.22.1/npm 11.19.1. Docker with Compose is required for the local database and backend integration tests. No global tool installation is changed by the repository.
 
-Use Java **26** (initially tested with Temurin **26.0.1**) and set `JAVA_HOME` to that JDK when present. The scripts use its `bin/java` for both the backend and extractor. Maven Wrapper **3.9.16** is checked in with the distribution SHA-256; a global Maven installation is unnecessary. Python 3.12+, curl, tar and a running Docker engine with Compose are required.
-
-Install the project Node runtime without changing global Node:
+The only optional helper is `./scripts/setup-node`: a self-contained installer that verifies the official Node archive SHA-256 and extracts under ignored `.local/tools`. It needs Python 3, curl and tar. Add the resulting platform directory to PATH; for example:
 
 ```sh
 ./scripts/setup-node
-./scripts/check-tools
+export PATH="$PWD/.local/tools/node-v24.22.1-darwin-arm64/bin:$PATH"
 ```
 
-`setup-node` installs **24.22.1** under the ignored `.local/tools` directory after checking the official release's SHA-256. It supports macOS/Linux on arm64/x64. Scripts also accept Node 24.22.1 already on PATH, as in CI. The release bundles npm **11.19.1**. Frontend dependencies use exact direct versions and a committed npm lockfile. `npm ci` checks the lock before every package build.
+Supported directories end in `darwin-arm64`, `darwin-x64`, `linux-arm64` or `linux-x64`. CI uses setup-node directly and never invokes this installer.
 
-## Start and stop
+## Development and package
+
+From the repository root, start PostgreSQL and the Java backend:
 
 ```sh
 docker compose up -d --wait db
-./scripts/dev
+./mvnw -pl backend spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-Open [the development UI](http://127.0.0.1:5173). Vite forwards `/actuator` to the backend on `127.0.0.1:${APP_PORT:-8080}`; packaged requests use that same relative URL. Stop development with Ctrl-C. Backend Java edits require restarting the command; frontend edits reload through Vite.
-
-For the single-origin package:
+In another terminal with project Node on PATH:
 
 ```sh
-./scripts/package
-./scripts/run-local
+npm ci --prefix frontend
+npm run dev --prefix frontend
 ```
 
-Open [the packaged UI](http://127.0.0.1:8080). `.local/package/backend.jar` contains the built frontend; `pdf-extractor.jar` is alongside it. Both launch with the same Java 26 executable. The standalone extractor currently supports only the following packaging probe, exits 2 for extraction arguments, and does not parse PDFs:
+The frontend listens on 127.0.0.1:5173 and proxies readiness to 127.0.0.1:8080. Neither process silently chooses another frontend port. If defaults are occupied, select matching backend/proxy ports explicitly:
 
 ```sh
-java -Xmx256m -jar .local/package/pdf-extractor.jar --version
+SERVER_PORT=18081 ./mvnw -pl backend spring-boot:run -Dspring-boot.run.profiles=dev
+APP_PORT=18081 FRONTEND_PORT=15173 npm run dev --prefix frontend
 ```
 
-Expected probe: `{"contractVersion":1,"javaFeature":26,"extractionAvailable":false}`. T6 will add the bounded extraction protocol.
+Stop the processes with Ctrl-C. They run directly through their standard tools; there is no combined launcher. Backend Java edits require a restart; Vite reloads frontend changes.
 
-`docker compose stop db` stops only this project's database. `docker compose up -d --wait db` starts it again. The named `ai-knowledge-base_database` volume retains data through restarts and `docker compose down`. Do not remove that volume to fix startup. Database initialization enables pgvector only when a fresh volume is first initialized; there are no application tables or Flyway migrations in T1. Changing database user/password/name variables does not rewrite an initialized volume's credentials.
-
-## Configuration
-
-All services bind to loopback. Default PostgreSQL port is **54329**, backend port **8080**, and frontend development port **5173**. Backend readiness is [the readiness endpoint](http://127.0.0.1:8080/actuator/health/readiness): HTTP 200/`UP` requires a real database connection; HTTP 503/`DOWN` means unavailable. The UI checks on load and on **Check again**. It can still load while the database is down.
-
-### Spring profiles
-
-There is no automatic `dev` profile. `application.yml` contains common static settings: application name, loopback/8080 server defaults, pool limits and readiness exposure. It contains no database URL or credentials.
-
-| Spring profile | Configuration | Selection and purpose |
-| --- | --- | --- |
-| `dev` | Main resources `application-dev.yml` | Local PostgreSQL URL/credentials; selected explicitly by `scripts/dev` and `scripts/run-local` |
-| `prod` | Main resources `application-prod.yml` | Requires `SERVER_ADDRESS`, `SERVER_PORT`, `DATABASE_URL`, `DATABASE_USER`, `DATABASE_PASSWORD`; no fallback values |
-| `test` | Test resources `application-test.yml` | Basic configuration/binding checks, without a web application or Docker |
-| `lvl2test` | Test resources `application-lvl2test.yml` | Full Spring startup with an ephemeral port and small test pool; real Testcontainers/readiness and packaged browser scenarios |
-
-`prod` overrides the base bind address/port with required deployment values. Its validator rejects missing or blank deployment variables before serving. It cannot inherit the development datasource. A directly launched application without a selected profile has no datasource configuration and cannot silently choose local credentials. No production launcher supplies defaults, and these files do not constitute a hosted deployment.
-
-Local defaults live in `dev`; ordinary Spring environment overrides remain available. For a custom local database, export matching Compose and Java settings (scripts never source/evaluate `.env`):
+Build the frontend before packaging the Maven reactor:
 
 ```sh
-export DB_PORT=54331 DB_NAME=custom_local DB_USER=custom_user
-export DB_PASSWORD='choose-a-local-password'
+npm run build --prefix frontend
+./mvnw package
+SERVER_PORT=18081 java -jar backend/target/backend-0.1.0-SNAPSHOT.jar --spring.profiles.active=dev
+```
+
+The backend JAR includes `frontend/dist` as static resources. The separate `pdf-extractor/target/pdf-extractor-0.1.0-SNAPSHOT.jar` is alongside its own module's build output. Both use Java 26; the extractor exposes only `--version` and exits 2 for unsupported extraction arguments. No parser feature is implemented.
+
+```sh
+java -Xmx256m -jar pdf-extractor/target/pdf-extractor-0.1.0-SNAPSHOT.jar --version
+```
+
+`docker compose stop db` and `docker compose down` preserve the named `ai-knowledge-base_database` volume. Do not remove user volumes to fix startup. Fresh-volume initialization enables pgvector; there are no application migrations/tables. Changing initialization credentials does not rewrite an existing database.
+
+## Configuration and profiles
+
+`application.yml` contains common static settings: loopback/8080, application name, bounded pool and readiness exposure. It has no datasource URL/credentials and never defaults to `dev`.
+
+| Spring profile | Location and use |
+| --- | --- |
+| `dev` | Main resources; local datasource literals; explicitly select in native run commands |
+| `prod` | Main resources; requires SERVER_ADDRESS, SERVER_PORT, DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD; no fallback values |
+| `test` | Test resources; basic configuration checks without a web application or Docker |
+| `lvl2test` | Test resources; actual full Spring/package integration tests with the real pinned database |
+
+The prod-only validator rejects missing/blank deployment values. Prod overrides base bind values and cannot inherit dev credentials. Test YAMLs and Testcontainers dependencies are absent from the distributed runtime. Production configuration checks bind supplied values locally without hosting anything.
+
+`.env.example` lists local Compose `DB_*` and Java `SPRING_DATASOURCE_*` variables. Compose reads `.env`; Java reads exported environment values. Nothing sources/evaluates `.env`. For custom local database settings, export matching values for both:
+
+```sh
+export DB_PORT=54331 DB_NAME=custom_local DB_USER=custom_user DB_PASSWORD='local-password'
 export SPRING_DATASOURCE_URL='jdbc:postgresql://127.0.0.1:54331/custom_local?connectTimeout=2&socketTimeout=3'
-export SPRING_DATASOURCE_USERNAME="$DB_USER"
-export SPRING_DATASOURCE_PASSWORD="$DB_PASSWORD"
+export SPRING_DATASOURCE_USERNAME="$DB_USER" SPRING_DATASOURCE_PASSWORD="$DB_PASSWORD"
 ```
 
-Compose reads the `DB_*` values; Spring reads `SPRING_DATASOURCE_*`. `.env.example` lists both explicitly. Compose itself also reads `.env`, so export matching Java values if using that feature. Changing values does not rewrite credentials in an existing volume. `APP_PORT` remains the local launcher alias for Spring's `SERVER_PORT`; `FRONTEND_PORT` sets the Vite port. For occupied defaults, use `APP_PORT=18081 FRONTEND_PORT=15173 ./scripts/dev`. These local commands always select `dev`; direct Java launches may select `prod` with complete environment values. Backend credentials are never Vite variables or frontend assets.
+`SERVER_PORT` controls Java directly; `APP_PORT` controls the Vite backend proxy. Set both to the same value for custom development ports. `FRONTEND_PORT` changes the Vite listener. Credentials never use `VITE_` variables or enter browser assets.
 
-## Verification
-
-The Maven profile `integration-tests` is a build switch, distinct from Spring's `lvl2test` runtime profile:
+## Native tests
 
 ```sh
-./mvnw test                         # Surefire *Test; Spring profile test; no full startup/Docker
-./mvnw -Pintegration-tests verify   # Also Failsafe *IT; Spring profile lvl2test; requires Docker
-./scripts/package                  # Basic tests and package build, no Docker required
+npm ci --prefix frontend
+npx --prefix frontend playwright install chromium
+npm test --prefix frontend
+./mvnw -Pintegration-tests verify
 ```
 
-Basic tests load/bind configuration and use a small configuration-only context to verify prod's missing/complete environment handling. They do not launch `KnowledgeBaseApplication`, a web server or Testcontainers. The extractor basic test retains its separate Java26 child process check. The narrow readiness integration test launches actual Spring against the exact pinned pgvector Testcontainer, verifies HTTP200 and vector SQL, then stops its owned container and requires HTTP503. There are no application tables/migrations or shared fixture framework.
+`npm test` uses npm's normal `pretest` build hook, then Playwright starts/stops its own Vite preview on loopback 15175. Three isolated browser tests cover successful readiness and retry, HTTP503-to-success recovery, and connection failure. These mocks exist only in Playwright; application code always calls the real readiness endpoint.
 
-Install the locked Chromium once with project Node on PATH (`npx --prefix frontend playwright install chromium`; Linux may require `--with-deps`), then:
+The explicit Maven `integration-tests` build profile activates Failsafe `*IT` in both Java modules with Spring profile `lvl2test`. This is distinct from the Spring runtime profile. Run the frontend build/test first because the packaged-backend test verifies that actual HTML and JS assets are served from its origin.
 
-```sh
-./scripts/verify
-```
+- Surefire basic tests use Spring `test`: production missing/complete environment binding, no implicit dev configuration, plus the extractor Java child contract. `./mvnw test` needs no Docker/full startup.
+- Backend Failsafe starts the actual Java 26 packaged application with external test-only `lvl2test` configuration and an owned pinned pgvector Testcontainer. It verifies same-origin HTML/JS, real HTTP readiness, vector SQL, database stop/recovery, a SQL sentinel surviving an ordinary container restart, and application-process restart.
+- Extractor Failsafe launches the actual built JAR with the same Java runtime and bounded heap, checking its probe and unsupported-argument exit.
 
-`verify` checks tools/records, builds the frontend and JARs, runs the basic and explicit integration suites, then creates an isolated Compose project for the packaged browser smoke. The packaged JVM explicitly selects `lvl2test` and loads `backend/src/test/resources/` as an additional configuration directory. These test YAML files are never inside the distributable JAR. The browser talks to that JVM's real readiness endpoint; no stub is used.
+Browser rendering is tested independently from real database/process behavior; there is no combined browser/database orchestrator. Tests do not call AI providers. Testcontainers owns cleanup, and the application IT terminates only its child. User development data/listeners remain untouched.
 
-The smoke checks pgvector/version, a sentinel preserved across database restart, the browser success/failure messages, HTTP503 after database stop, recovery and backend restart. It removes only its disposable smoke volume. Development data stays intact. Ports **54330** and **18080** must be free.
+CI has one `Tests` job: environment/dependency setup, `npm test --prefix frontend`, then `./mvnw -B -Pintegration-tests verify`. No repository/document/PR metadata checks or custom build/test wrappers run there.
 
-The `Runtime checks` workflow demonstrates basic tests with an unreachable Docker socket, then runs the complete profile-aware package/database/browser checks on Linux. Local logs/screenshots are under `.local`; test output is ignored. `./mvnw dependency:tree` shows the managed versions. No parser, model, auth or migration libraries and no AI calls are involved.
+## Compatibility
 
-## Compatibility checkpoint
-
-The accepted core pins resolved and ran: Boot **4.1.2**, React/React DOM **19.3.1**, Vite **8.3.5**, TypeScript **7.0.2**, React plugin **6.1.2**, and Playwright **1.64.1**. PostgreSQL **17.11** with pgvector **0.8.7** ran from the plan's exact multi-platform image digest on arm64. CI verifies the same digest on x64.
-
-The local shadcn/ui Button is project source using the [documented Radix button pattern](https://ui.shadcn.com/docs/components/radix/button), with its Slot/CVA/utility dependencies locked. No initializer runs during builds. Tailwind and its Vite plugin use **4.3.3**: an initial 4.1.18 candidate rejected Vite 8 in its peer range, while [4.3.3's registry metadata](https://registry.npmjs.org/@tailwindcss/vite/4.3.3) accepts it. No accepted plan pin was changed. `./mvnw dependency:tree` resolved Spring JDBC **7.0.10**, PostgreSQL JDBC **42.7.14**, Jackson Databind **3.1.7**, and JUnit **6.0.3** from the Boot BOM. Testcontainers PostgreSQL **2.0.5** is now supplied by the Boot BOM for the narrow readiness integration test. Failsafe uses Boot-managed **3.5.6**. Feature libraries are added only by their owning slices.
+Core pins remain Boot 4.1.2, Java 26, Maven 3.9.16, Node 24.22.1, React 19.3.1, TypeScript 7.0.2, Vite 8.3.5/plugin 6.1.2 and Playwright 1.64.1. Compose and Testcontainers use the same pgvector 0.8.7/PostgreSQL 17 image manifest digest. Testcontainers 2.0.5 and Failsafe 3.5.6 come from the Boot BOM. `./mvnw dependency:tree` shows resolved Java dependencies. No dependency version changed for the command simplification.

@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
-source "$(dirname "$0")/common.sh"
+set -euo pipefail
+cd "$(dirname "$0")/.."
+NODE_VERSION="$(cat frontend/.node-version)"
+case "$(uname -s)-$(uname -m)" in
+  Darwin-arm64) NODE_PLATFORM=darwin-arm64;;
+  Darwin-x86_64) NODE_PLATFORM=darwin-x64;;
+  Linux-aarch64) NODE_PLATFORM=linux-arm64;;
+  Linux-x86_64) NODE_PLATFORM=linux-x64;;
+  *) echo 'Supported platforms: macOS/Linux arm64/x64' >&2; exit 1;;
+esac
 mkdir -p .local/tools
 archive="node-v$NODE_VERSION-$NODE_PLATFORM.tar.gz"
 base="https://nodejs.org/dist/v$NODE_VERSION"
@@ -13,4 +22,4 @@ expected=next(line.split()[0] for line in (root/'SHASUMS256.txt').read_text().sp
 assert hashlib.sha256((root/name).read_bytes()).hexdigest()==expected, 'Node checksum mismatch'
 PYTHON
 tar -xzf ".local/tools/$archive" -C .local/tools
-node --version
+".local/tools/node-v$NODE_VERSION-$NODE_PLATFORM/bin/node" --version

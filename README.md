@@ -26,44 +26,50 @@ The React shell asks the Spring Boot backend for readiness. The backend checks a
 
 ## Run locally
 
-You need JDK 26, Python 3.12+, curl, tar and a running Docker engine with Compose. Set `JAVA_HOME` to your JDK if it is configured. Maven is provided by the wrapper; Node 24.22.1 installs inside this project without changing your global Node.
+You need JDK 26, a running Docker engine with Compose, and Node 24.22.1. Maven is provided by the wrapper. To install Node inside this project without changing your global runtime:
 
 ```sh
 ./scripts/setup-node
-./scripts/check-tools
-docker compose up -d --wait db
-./scripts/package
-./scripts/run-local
+export PATH="$PWD/.local/tools/node-v24.22.1-darwin-arm64/bin:$PATH"
 ```
 
-Open [localhost:8080](http://127.0.0.1:8080). The local launcher explicitly selects Spring's `dev` profile. Stop the app with Ctrl-C; use `docker compose stop db` to stop its database. Ordinary stops preserve the database volume.
+Use your platform's directory (`darwin-arm64`, `darwin-x64`, `linux-arm64` or `linux-x64`). The optional installer also needs Python 3, curl and tar.
 
-For frontend development with live reload:
+Start the database, then run the backend and frontend in separate terminals:
 
 ```sh
-./scripts/dev
+docker compose up -d --wait db
+./mvnw -pl backend spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-Open [localhost:5173](http://127.0.0.1:5173). If those ports are occupied, use `APP_PORT=18081 FRONTEND_PORT=15173 ./scripts/dev`. See [local development](docs/local-development.md) for configuration, profiles and database commands.
+```sh
+npm ci --prefix frontend
+npm run dev --prefix frontend
+```
+
+Open [localhost:5173](http://127.0.0.1:5173). Stop each app with Ctrl-C; `docker compose stop db` stops its database while preserving the named volume.
+
+To build and run the single-origin package:
+
+```sh
+npm run build --prefix frontend
+./mvnw package
+java -jar backend/target/backend-0.1.0-SNAPSHOT.jar --spring.profiles.active=dev
+```
+
+Open [localhost:8080](http://127.0.0.1:8080). For occupied ports or custom database settings, see [local development](docs/local-development.md).
 
 ## Test and build
 
 ```sh
-./mvnw test                         # Basic tests; no Docker or full application startup
-./mvnw -Pintegration-tests verify   # Full Spring startup and a real PostgreSQL Testcontainer
-./scripts/package                  # Frontend build and both Java packages
+npx --prefix frontend playwright install chromium  # Once per browser version
+npm test --prefix frontend                        # Builds UI; browser tests start their own preview
+./mvnw -Pintegration-tests verify                 # Basic + real database/package integration tests
 ```
 
-For browser checks, install Chromium once with project Node on PATH, then run the complete suite:
+Run the frontend command first: its production build is included in the backend package. Linux may need Playwright's `--with-deps` option when installing Chromium. `./mvnw test` runs only the basic Java tests, without Docker or a full application startup.
 
-```sh
-PATH="$PWD/.local/tools/node-v24.22.1-darwin-arm64/bin:$PATH" npx --prefix frontend playwright install chromium
-./scripts/verify
-```
-
-Use your platform's project Node directory in that command; the development guide lists supported platforms. Linux may need Playwright's `--with-deps` option.
-
-The full suite checks the packaged shell against real PostgreSQL, database outage and recovery, retained data across restart, and the extractor's Java launch contract. Tests do not call AI providers.
+Frontend browser tests isolate readiness success, failure and retry with test-only network mocks. Backend integration tests use the real packaged Spring application and PostgreSQL to verify same-origin frontend assets, readiness, outage/recovery, retained data and application restart. Extractor tests launch its actual Java package. Tests do not call AI providers.
 
 ## Scope
 
