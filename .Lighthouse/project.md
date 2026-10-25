@@ -22,7 +22,7 @@ These are role assignments only. Agent billing and development usage budgets are
 
 ## Review policy
 
-The project owner accepted this policy in decision D14 in [the change index](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use `lighthouse-review` for a candidate assessment. [Agent assignments](project.md#development-agent-assignments) define reviewer models; [GitHub workflow](github.md) defines PR presentation and merge authority.
+The project owner accepted this policy in decision D14 in [the change index](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use `lighthouse-review` for a candidate assessment. [Agent assignments](project.md#development-agent-assignments) define reviewer models; The installed Lighthouse `references/github.md` guide defines PR presentation and merge defaults; optional `.Lighthouse/github.md` overrides change only their named settings.
 
 ### Responsibilities and independence
 
@@ -71,7 +71,7 @@ Required CI and conversation resolution are native checks. GitHub cannot establi
 
 ## Tooling and native commands
 
-Use globally installed Lighthouse 0.2.0; this project has no vendored plugin or repository enable override. On another host verify compatible skill availability through its normal installation route. Commands are authoritative in [Maven](../pom.xml), [backend Maven](../backend/pom.xml) and [frontend npm](../frontend/package.json); read [local development](../docs/local-development.md) for startup/test profile details. Preserve global runtimes/settings. Native CI remains environment/dependency setup followed by frontend/backend tests; no Lighthouse/document/PR-metadata validators or orchestration wrappers are introduced.
+Use globally installed Lighthouse; this project has no vendored plugin or repository enable override. On another host verify compatible skill availability through its normal installation route. Commands are authoritative in [Maven](../pom.xml), [backend Maven](../backend/pom.xml) and [frontend npm](../frontend/package.json); read [local development](../docs/local-development.md) for startup/test profile details. Preserve global runtimes/settings. Native CI remains environment/dependency setup followed by frontend/backend tests; no Lighthouse/document/PR-metadata validators or orchestration wrappers are introduced.
 
 Accepted concurrency is one, with sequential implementation then independent review. Two writers remains an unaccepted proposal. One writer owns shared planning/policy files. Operational jobs remain disabled. Hosting, paid AI evaluation and native provider controls retain separate authority; missing security/operations sources limit only dependent work and are not silently filled with an invented policy. The user is the default decision-maker.
 

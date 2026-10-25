@@ -40,7 +40,7 @@ Build a learning and portfolio application that lets people organize text PDFs i
 - Keep the $15–20/month target before tax/domain costs for an optional small hosted demo. Larger capacity and hosting need separate assessment/authorization. Credentials or a budget target do not authorize spending.
 - Retain files and citations through archive and chat deletion. Do not provide individual PDF deletion or an automatic orphan purge. Whole-project removal, backup expiry and independent provider retention are distinct; recovery must not revive deleted projects or revoked shares.
 - Existing file/page/token, account, AI and quality bounds remain in [Limits and user experience](spec.md#limits-and-user-experience) and [Verification and quality gate](spec.md#verification-and-quality-gate).
-- The owner adopted the [review policy](project.md#review-policy), [GitHub workflow](github.md) and [agent assignments](project.md#development-agent-assignments) through D14. Lighthouse is globally installed. Operations/platform controls remain to be configured before their dependent actions; D19 subsequently authorizes T1 only; later task implementation remains unauthorized.
+- The owner adopted the [review policy](project.md#review-policy), Lighthouse GitHub defaults and [agent assignments](project.md#development-agent-assignments) through D14. Lighthouse is globally installed. Operations/platform controls remain to be configured before their dependent actions; D19 subsequently authorizes T1 only; later task implementation remains unauthorized.
 
 ## Exclusions
 
