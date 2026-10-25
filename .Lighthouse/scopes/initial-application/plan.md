@@ -16,8 +16,8 @@ Only T1 and its D20/D21 refinements were authorized for implementation. T1 is co
 | [Cost research](../../research/costs.md#owner-choices-and-delivery-phases) | Delivery phases and dated cost scenarios | Optional later hosting, application AI allowance proposal and retention boundaries; not permission to spend |
 | [Scalability research](../../research/scalability-evaluation.md#target-shape), [caching research](../../research/caching-evaluation.md#recommendation) | Supporting research and measurement guidance | Evidence behind the selected scalable, initially no-cache design |
 | [Owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | Original source locators/selectors for D1–D14 | Continuing product/planning directions, including vertical slices; source provenance does not mean implementation permission |
-| `AGENTS.md`, `.Lighthouse/project.md` | Repository navigation and selected agent settings | Native task definitions own commands; Lighthouse supplies workflow/review defaults; application constraints and missing platform inputs remain in the specification |
-| Lighthouse GitHub defaults, Lighthouse review defaults, [agent assignments](../../project.md#development-agent-assignments), native task definitions and local-development guidance | D14 owner-selected setup/review/model rules and project Codex-config removal | Local policy adoption only; repository resources, commits and implementation still require their own authorization |
+| `AGENTS.md`, `.Lighthouse/settings/project.md` | Repository navigation and selected agent settings | Native task definitions own commands; Lighthouse supplies workflow/review defaults; application constraints and missing platform inputs remain in the specification |
+| Lighthouse GitHub defaults, Lighthouse review defaults, [agent assignments](../../settings/project.md#development-agent-assignments), native task definitions and local-development guidance | D14 owner-selected setup/review/model rules and project Codex-config removal | Local policy adoption only; repository resources, commits and implementation still require their own authorization |
 
 Implement the full local application: public-style registration/login, private projects, text-PDF ingestion, project-grounded answers and page navigation, independent saved chats, archive-only PDFs, chat deletion, whole-project purge, usage limits and local recovery. A local application may accept registrations through its interface without being published to the internet.
 
@@ -445,7 +445,7 @@ Only T1 and its D20/D21 refinements have implementation authority. T2–T20 rema
 | Model quality | Execute recorded fixtures and numeric grounding/citation criteria; structural citation validation alone is insufficient | T14; T15 real-AI-ready claim |
 | Hosted operations/email/provider controls | Optional later phase; establish actual permissions, security/operating controls and recovery before dependent release actions | Hosted operations, not local-v1 readiness |
 
-Deployment/model/usage allowance choices are separate from development-agent settings. Applicable [agent assignments](../../project.md#development-agent-assignments) stay project-local. Current native GitHub controls use `Tests` and manual user squash merging; provider state must be inspected before changing it.
+Deployment/model/usage allowance choices are separate from development-agent settings. Applicable [agent assignments](../../settings/project.md#development-agent-assignments) stay project-local. Current native GitHub controls use `Tests` and manual user squash merging; provider state must be inspected before changing it.
 
 ## T1 execution progress
 

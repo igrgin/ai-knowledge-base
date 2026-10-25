@@ -13,4 +13,4 @@ The owner selected these project settings under D14 in the [original decision so
 | Narrow mechanical work | GPT-6 Luna, low or medium | Use Sol when interpretation or judgment is required |
 
 
-Use model IDs `gpt-6.1-sol`, `gpt-6-astra` and `gpt-6-luna`. The application's RAG model is defined separately in the [specification](scopes/initial-application/spec.md#d-h-measured-ai-choice-and-bounded-use).
+Use model IDs `gpt-6.1-sol`, `gpt-6-astra` and `gpt-6-luna`. The application's RAG model is defined separately in the [specification](../scopes/initial-application/spec.md#d-h-measured-ai-choice-and-bounded-use).
