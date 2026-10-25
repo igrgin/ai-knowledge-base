@@ -10,38 +10,28 @@ Only T1 and its D20/D21 refinements were authorized for implementation. T1 is co
 
 | Source | Current section or identifying information | Relevant content |
 | --- | --- | --- |
-| [Requirements](spec.md#requirements) | R1–R29 | Current product behavior and constraints; no requirement changes in this cleanup |
+| [Requirements](spec.md#requirements) | R1–R29 | Current product behavior, constraints and acceptance/proposal distinctions |
 | [Design decisions](spec.md#design-decisions) | D-A–D-L; Invariants; Verification and quality gate | Architecture, lifecycle, privacy, source eligibility and evidence requirements |
 | [Intent](intent.md#desired-outcome) | Desired outcome and Constraints | Consolidated product purpose and owner-selected scope |
 | [Cost research](research/costs.md#owner-choices-and-delivery-phases) | Delivery phases and dated cost scenarios | Optional later hosting, application AI allowance proposal and retention boundaries; not permission to spend |
 | [Scalability research](research/scalability-evaluation.md#target-shape), [caching research](research/caching-evaluation.md#recommendation) | Supporting research and measurement guidance | Evidence behind the selected scalable, initially no-cache design |
 | [Owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | Original source locators/selectors for D1–D14 | Continuing product/planning directions, including vertical slices; source provenance does not mean implementation permission |
 | `AGENTS.md`, `.Lighthouse/project.md` | Repository navigation and selected agent settings | Native task definitions own commands; Lighthouse supplies workflow/review defaults; application constraints and missing platform inputs remain in the specification |
-| Current owner cleanup instruction | 2026-10-24: "clean it up and make sure that they point to correct parts of the plan ... We just have a plan" | One consolidated set of planning documents with current section references; no history folder or replacement approval |
 | Lighthouse GitHub defaults, Lighthouse review defaults, [agent assignments](project.md#development-agent-assignments), native task definitions and local-development guidance | D14 owner-selected setup/review/model rules and project Codex-config removal | Local policy adoption only; repository resources, commits and implementation still require their own authorization |
 
 Implement the full local application: public-style registration/login, private projects, text-PDF ingestion, project-grounded answers and page navigation, independent saved chats, archive-only PDFs, chat deletion, whole-project purge, usage limits and local recovery. A local application may accept registrations through its interface without being published to the internet.
 
 The revised local-v1 proposal also includes invitation/link project imports, optional copied chats, revocable read-only transcript snapshots, archive/unarchive, per-chat source exclusions and a library PDF reader. There is no live collaboration or shared editable project. Hosting, cloud accounts, S3 deployment, custom domains, email delivery/verification/recovery services, production permissions, paid hosting benchmarks and release operations remain optional later work. Local storage implements the file-store interface; an actual S3 adapter is not needed to finish local v1. No OCR, individual PDF deletion, live collaboration, hosted vector store, answer streaming, or general web-search feature is added. Public snapshot mode is an access rule that can be tested locally; it does not require publishing the local application to the internet.
 
-The index's current artifact/decision targets are navigation links to the named sections. D1, D4 and D6 retain their original owner acceptance statements as continuing decision provenance, not as frozen approvals rebound to changed text. No old local object is needed to read this plan. D19 records the owner's later acceptance and implementation authority for T1 at the committed setup baseline; it does not authorize other tasks.
+The current intent/spec/plan are authoritative for their stated scope. Historical human decisions remain recoverable through the original decision-source links. D19 supplies acceptance and implementation authority for T1 at its committed setup baseline, without authorizing other tasks.
 
 This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorizes only T1 on 2026-10-25; T1 and its D20/D21 revisions are completed in PR #21, with owner approval/manual merge pending; T2–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
 
 ## Repository findings and prerequisites
 
-Read-only inspection on 2026-10-24 found Lighthouse records, with no application code, package scripts, migrations, tests, build definitions, remote or existing commits. There is no application convention to extend; the paths below are new proposed areas. Existing Codex settings are outside implementation scope.
+T1 established the Maven reactor, Java/React runtime shell, database-backed readiness and native verification commands; see [T1 progress](#t1-execution-progress) and the dependency pins below. Before dependent execution, recheck actual JDK26, project-local Node and Docker/Compose availability. Preserve global runtime/settings; the optional Node installer is project-local. Use the database container's client for backup/recovery rather than requiring a native PostgreSQL installation.
 
-| Tool | Observed state | Plan treatment |
-| --- | --- | --- |
-| Java | Default Java 26.0.1 | Use Java 26 for compilation, tests, backend runtime and the PDF-extractor child process; preserve the existing global default |
-| Maven | 3.9.16 available | Check in a Maven wrapper pinned to 3.9.16 |
-| Node/npm | Node 22.12.0; npm 10.9.0 | Use project Node 24.22.1 for the selected frontend tools; do not overwrite the global runtime |
-| Docker | CLI 29.8.1 available; engine not reachable during inspection | Start/resolve the local engine in the authorized build's preflight before database/browser integration checks; no daemon was started during planning |
-| PostgreSQL client | `psql` absent on PATH | Use the container's client for backup/recovery commands; no native PostgreSQL installation required |
-| AI credentials/account access | Not inspected or exercised | Offline adapter tests first; real evaluation needs a server-side credential and an authorized bounded call scope |
-
-Docker availability is an execution prerequisite, not a reason to leave this plan incomplete. Version listings establish available releases, not successful resolution/compilation; T1 supplies that compatibility check without changing the accepted design's major choices.
+The [2026-10-24 inspection](https://github.com/igrgin/ai-knowledge-base/blob/47b7d96cf3cbd9e714701f048f45f9323dcf6494/.Lighthouse/plan.md#repository-findings-and-prerequisites) is historical, including the then-unreachable Docker daemon and absence of application code. T1's recorded builds/integration results supersede those as current completion evidence. Feature-specific dependency compatibility remains its owning slice's work. Offline adapters need no provider account; real evaluation retains T14's separate credential and paid-call gates.
 
 ## Approach and affected files
 
@@ -61,11 +51,11 @@ Choose JDBC repositories and Flyway migrations for the application tables so own
 | `frontend/package.json`, `frontend/package-lock.json`, `frontend/.node-version` | Exact frontend dependencies, runtime pin and repeatable commands |
 | `frontend/src/features/`, `frontend/src/components/ui/`, `frontend/src/lib/` | Auth, project/PDF library, ingestion status, chat sources, citations/PDF.js, archive/unarchive, copy import/distribution, transcript publication and purge UI; shadcn components kept as project code |
 | `compose.yaml`, `.env.example`, `.gitignore` | Local pgvector database/persistent volume, documented configuration, ignored private data/secrets/build artifacts |
-| `scripts/` | Project-specific tool checks, local run/package/verify, multi-process scalability/cache evaluation, manual backup/restore and safe shutdown helpers |
+| `scripts/` | Optional project-local Node setup and genuinely necessary slice-specific scalability/backup/recovery tooling; native Maven/npm task definitions own routine run/build/test commands |
 | `backend/src/test/`, `pdf-extractor/src/test/`, `frontend/src/**/*.test.*`, `frontend/e2e/` | Tests around actual access, state, recovery and user behavior |
 | `test-fixtures/`, `evaluation/` | Generated PDFs/passages, known page facts, supported/unsupported/follow-up questions, quality results and reproducible scalability/cache reports with no private bodies |
 | `README.md`, `docs/local-development.md`, `docs/local-recovery.md`, `docs/architecture.md` | Setup, runtime roles, limits, local recovery, diagrams, measured embedding/performance findings and deferred multi-host prerequisites |
-| `docs/changes/20261023-ai-knowledge-base/plan.md`, `change.json`, later agreed contract records under `docs/contracts/` | Single-integrator progress/decision/contract records; this request edits planning metadata only |
+| `.Lighthouse/plan.md`, later agreed contract records under `docs/contracts/` when needed | Single-integrator current progress and shared contracts; original decisions and detailed execution evidence stay in native Git/PR records |
 
 The implementation may add files inside these areas as needed. Material departures from accepted behavior, source ownership, architecture or cost bounds return to the owner; ordinary naming and code organization do not require repeated decisions.
 
@@ -81,7 +71,7 @@ The npm registry lists PDF.js 6.4.299 as requiring Node >=22.13.0 or >=24; the i
 
 Sources read on 2026-10-24: [Spring Boot releases](https://docs.spring.io/spring-boot/index.html), [Spring AI compatibility](https://docs.spring.io/spring-ai/reference/getting-started.html), [PDFBox releases](https://pdfbox.apache.org/download.html); Maven Central metadata for [Boot](https://repo.maven.apache.org/maven2/org/springframework/boot/spring-boot-starter-parent/maven-metadata.xml), [Spring AI](https://repo.maven.apache.org/maven2/org/springframework/ai/spring-ai-bom/maven-metadata.xml), [PDFBox](https://repo.maven.apache.org/maven2/org/apache/pdfbox/pdfbox/maven-metadata.xml); npm registry records for [React](https://registry.npmjs.org/react/latest), [Vite](https://registry.npmjs.org/vite/latest), [TypeScript](https://registry.npmjs.org/typescript/latest), [PDF.js](https://registry.npmjs.org/pdfjs-dist/latest), [Playwright](https://registry.npmjs.org/@playwright/test/latest), [Vitest](https://registry.npmjs.org/vitest/latest), [shadcn](https://registry.npmjs.org/shadcn/latest), [Vite React plugin](https://registry.npmjs.org/@vitejs/plugin-react/latest); [Node releases](https://nodejs.org/dist/index.json), [pgvector image catalog](https://hub.docker.com/v2/repositories/pgvector/pgvector/tags?page_size=10&name=pg17).
 
-T1 verifies the core skeleton, runtime pins, database startup and packaging contract. Add and resolve feature-specific libraries in their owning slices, with peer/compile/integration checks then; do not front-load every model/viewer/parser dependency into the shared foundation. The integrator may select a compatible patch within the recorded families when a real incompatibility is found, recording the reason and final lock. A required change of accepted major architecture or behavior remains an owner decision. No dependency installation or compilation was performed during planning.
+T1 verifies the core skeleton, runtime pins, database startup and packaging contract. Add and resolve feature-specific libraries in their owning slices, with peer/compile/integration checks then; do not front-load every model/viewer/parser dependency into the shared foundation. The integrator may select a compatible patch within the recorded families when a real incompatibility is found, recording the reason and final lock. A required change of accepted major architecture or behavior remains an owner decision. T1 subsequently resolved and verified the core pins; feature-specific compatibility is checked in its owning slice.
 
 ## Vertical slices and dependency semantics
 
@@ -373,7 +363,7 @@ Each requirement maps to its owning vertical implementation and later integratio
 | C3 limits/languages/evaluation | Existing quotas/English-first criteria unchanged; feature tests and T13/T14 evidence before expansion |
 | C4 unfinished/failed archives | T6 owns processing state; T20 visibility/cancellation; T7 uses the same fences and T13 verifies combined cases |
 | C5 backup/provider retention | T11 local journal/restore; T16/T17 replay integration; T15 transparent retention; hosted backup terms remain later |
-| C6 review/operations/platform policy | D14 adopts the review policy and role/model rules; use its actual coverage/independence/correction requirements. Native GitHub controls and hosted operations remain unprovisioned; tests do not invent clearance |
+| C6 review/operations/platform policy | Use installed Lighthouse review guidance and selected project agent settings. Native GitHub protections are established; hosted controls remain deferred and require actual authority before operation |
 | C7 account email | T3 password sessions and in-app T16 invitations; no email service added; hosted verification/recovery later |
 | C8 dependency/model compatibility/access | Core checks T1, feature-library checks in its slice; T5 test adapters remain test-only; paid/account-quality limitations affect T14 only |
 | C9 unknown total workload/capacity | T13 reproducible experiments, T14 bounded provider evidence; no invented throughput promise or budget increase |
@@ -383,6 +373,8 @@ Each requirement maps to its owning vertical implementation and later integratio
 | Preserve instructions/settings/tools | Preserve current records and native definitions; T1 is delivered in the unmerged PR, later tasks remain pending, and the concurrency proposal is unapplied |
 
 ## Local command contract and verification
+
+Current profile/configuration rules are documented in [local development](../docs/local-development.md#configuration-and-profiles) and native `application*.yml`/test resources: shared static settings in the base file, local values in `dev`, required nonblank environment values without local fallbacks in `prod`, no implicit dev profile, and separate `test`/`lvl2test` resources excluded from runtime packages. Keep this split when extending native tests.
 
 D21 selects native tool commands for T1. CI performs environment/dependency setup and runs these two suites directly:
 
@@ -442,70 +434,28 @@ Counts/quotas, reservations, global admission and archive-grant changes are data
 
 ## Material decisions and unresolved work
 
-| Decision/input | Resolution or current limitation | Decision owner | Affected work |
-| --- | --- | --- | --- |
-| Requirements/design direction | Current R1–R29 and design sections consolidate Java 26, scalability, independent copies, snapshots, PDF viewing, automatic uploads, archive-only files and retrieval-only source toggles; original owner statements remain in the historical decision source | project-owner | R1–R29; current scoped revision for review |
-| Plan/implementation scope | D19 accepts the committed T1 increment and authorizes its implementation/review. T1 is implemented in PR #21; owner approval/merge remains pending. Other task definitions/gates are unchanged | project-owner | T1 completed as an unmerged implementation; T2–T20 pending and unauthorized |
-| Docker engine | CLI exists but daemon was unreachable; resolve before database/integration commands | project-owner/local machine operator | Execution preflight in T1; independent planning complete |
-| Project Node runtime | Select Node 24.22.1; installed Node 22.12.0 does not satisfy the chosen PDF.js version | project-owner/implementing agent within accepted local setup | T1 frontend build/packaged viewer; no global overwrite |
-| Dependency compatibility | Published pins inspected, compilation and browser integration not run | Implementing agent; project-owner for material changes | T1 resolution/lock check; patch adjustments recorded, major departures returned to owner |
-| Capacity proposals | Existing parser/disk/AI bounds unchanged. Implementation concurrency 2 is a separate unapplied proposal, with one migration integrator/reviewer at a time | project-owner | Future plan/dispatch decision; T5/T6/T13/T14 measurements |
-| Real API key/access/paid-call scope | Not inspected; keep secrets server-side; offline work first and real evaluation remains explicitly bounded | project-owner | T14 and real-AI completion claim only; no prerequisite for ordinary offline tests |
-| Model quality gate | Requires executed fixtures and evidence, not structural citation validation alone | project-owner/implementing agent within authorized evaluation | T14; no silent model/cost upgrade |
-| Project review policy | D14 adopts one fresh reviewer, separate bug/security/requirements coverage, blocking/advisory rules, two correction rounds and current-candidate refresh in the installed Lighthouse review guidance | project-owner | Apply during actual candidate review; no review assessment is fabricated by policy adoption |
-| Hosted operations/email/provider controls | Explicitly deferred, with owner/permissions to be resolved before release | project-owner; future platform administrator unresolved | Optional later hosting phase; not local v1 readiness |
-| Future traffic/corpus/service levels | No user target supplied; T13 reports the defined experiments and bottlenecks, not an invented throughput commitment | project-owner | C9; future sizing, concurrency increases, availability and larger budget |
-| Performance/cache choice | Required no-cache performance/embedding report; no cache prototype required. Any future cache/runtime addition follows measured benefit and scope/cost review | project-owner | C10, T13/T14 |
-| Source-context behavior | D12 retrieval-only exclusion unchanged, with prior answers/context/history retained | project-owner | C11 resolved; T20/T9/T13 tests |
-| Import/publication details | Independent-copy distribution is fixed when shared, with new shares for updates; fixed revocable chat snapshots selected. Quota/admission/copy/recovery details remain proposed here for review | project-owner | C12, T16/T19/T17/T13 |
+Only T1 and its D20/D21 refinements have implementation authority. T2–T20 remain pending and unauthorized; the full task definitions, gates and ownership above govern any later request. The specification owns current behavior and unresolved application-design concerns.
 
-D14 records accepted GitHub/review/model rules in the linked policies and removes the project Codex override in favor of the global Lighthouse installation. Development-agent billing and usage budgets are outside this plan; application AI controls are unchanged.
+| Input | Current disposition | Affected work |
+| --- | --- | --- |
+| Representative PDFs/questions | Use redistributable/generated fixtures; preferred owner material remains optional | T6/T13/T14 |
+| Languages and limits | English-first acceptance and existing configured bounds; expand only after evidence; preserve the specification's proposed numeric defaults and quality criteria | T6/T7/T14; specification limits/quality gate |
+| Capacity/concurrency | No traffic/corpus target was supplied; measure defined local experiments without claiming hosted throughput. Current concurrency is one; the [two-writer proposal](#proposed-concurrency-setting-change-not-applied) remains unapplied | T13/T14 and later sizing/dispatch decisions |
+| Real provider access and paid-call scope | Credentials/account access and bounded call authority remain unresolved; ordinary offline work is independent | T14 and real-AI readiness only |
+| Model quality | Execute recorded fixtures and numeric grounding/citation criteria; structural citation validation alone is insufficient | T14; T15 real-AI-ready claim |
+| Hosted operations/email/provider controls | Optional later phase; establish actual permissions, security/operating controls and recovery before dependent release actions | Hosted operations, not local-v1 readiness |
 
-This current plan is the only implementation task source. It preserves the owner's product decisions and the vertical-slice/start/completion/ownership structure, with the two-writer proposal still unapplied. D19 now authorizes only T1; its progress is tracked above. T2–T20 remain pending. The earlier reference cleanup supplied no implementation authority; the current T1 authority comes from the later original owner message. Hosting remains optional later.
+Deployment/model/usage allowance choices are separate from development-agent settings. Applicable [agent assignments](project.md#development-agent-assignments) stay project-local. Current native GitHub controls use `Tests` and manual user squash merging; provider state must be inspected before changing it.
 
 ## T1 execution progress
 
-- Authority: D19, 2026-10-25, scoped to T1 at baseline `b203ffd17063f65f06e0e4bea3cb49e9e68cdc44`.
-- Issue: [#1](https://github.com/igrgin/ai-knowledge-base/issues/1), linked branch `1-run-java-26-react-shell-and-local-database`.
-- Single application writer: GPT-6.1 Sol, medium; the integrator yields application writes during that assignment. The integrator alone updates plan and review evidence. A later Sol high reviewer receives a fresh report-only context after implementation yields.
-- Scope: runtime/build/React shell, local PostgreSQL and database-backed readiness, extractor packaging contract, deterministic commands and meaningful checks. T2 migration infrastructure, all domain features, AI calls, cloud hosting and multi-instance harness remain excluded.
-- Preflight: Java 26.0.1 and Maven 3.9.16 are present; global Node is 22.12.0 and must be preserved. Docker's daemon was initially unreachable; local startup and project-runtime compatibility are part of T1 execution.
-- Implementation candidate: `67fd957c3686bd8b0385a843a0cfc97482c9692e`, PR [#21](https://github.com/igrgin/ai-knowledge-base/pull/21), based on the setup commit above; source implementation completed and clean.
-- Actual compatibility: all accepted T1 pins resolved and built on Java 26.0.1, locally on macOS/arm64 and GitHub Linux/x64. The pinned database digest ran PostgreSQL 17.11/pgvector 0.8.7. Global Node 22.12.0 was preserved; Node 24.22.1 is project-local. No plan pin changed. New Tailwind/plugin 4.3.3 accepts Vite 8; an initial 4.1.18 candidate did not. Boot BOM resolved Spring JDBC 7.0.10, PostgreSQL JDBC 42.7.14, Jackson 3.1.7 and JUnit 6.0.3.
-- `./scripts/verify` passed Java/backend/extractor checks, locked frontend build, packaged Chromium readiness/retry, vector checks, database outage/recovery, persisted restart sentinel and backend restart. Development proxy and direct packaged run were also verified on alternate loopback ports; unrelated listeners on 8080/5173 were preserved. Owned development processes shut down cleanly.
-- CI: [Repository checks](https://github.com/igrgin/ai-knowledge-base/actions/runs/40141270696) and [Runtime checks](https://github.com/igrgin/ai-knowledge-base/actions/runs/40141270670) passed at the implementation candidate. Later metadata-only head CI is linked in the PR.
-- Independent review: one fresh Sol high reviewer, bugs/security/requirements all covered, no findings, `clear`, correction round 0; see [review record](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/review.md#comparison) and [current PR assessment](https://github.com/igrgin/ai-knowledge-base/pull/21#issuecomment-6390736664).
-- Scope limits: extractor only exposes its real version/build contract and rejects extraction arguments; no PDF extraction, domain tables, Flyway, authentication, AI, multi-instance harness or hosting is claimed.
-- Current disposition: T1 implementation completed; PR approval and manual merge remain the project owner's responsibility. T2–T20 remain pending and unauthorized. No merge authority is granted.
+T1 is **completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21)** at `7252f046b96f9a33e94f095f2b8b7790b76785ad`, from setup baseline `b203ffd17063f65f06e0e4bea3cb49e9e68cdc44`. D19 authorized its scope; D20/D21 refined documentation/profiles and native test commands. The user retains approval/manual merge; no later implementation authority follows.
 
-### T1 owner-directed README and profile revision
+Delivered scope: Java26/Maven and React/shadcn shell, persistent local pgvector, real database readiness, same-origin packaging, extractor version/build probe, shared/dev/prod/test/lvl2test profiles, and product/startup documentation. PDF extraction, domain tables/Flyway, authentication, AI, the multi-instance harness and hosting remain unimplemented. Implementation was single-writer, with integrator-owned shared records and a fresh report-only reviewer.
 
-D20 authorizes the current PR refinement without starting later tasks. README adopts the project/startup/build focus of `igrgin/voice-draft`, removes status/process sections and leaves future product-content scaffolding. Base `application.yml` owns static common settings. `dev` owns local overrides; `prod` requires environment-provided deployment values without local fallback defaults. Test configuration is under test resources: `test` for unit/basic checks and `lvl2test` for full Spring/Testcontainers/end-to-end checks. Launchers and CI select profiles explicitly; real integration checks belong to the latter. A narrow readiness Testcontainer check may establish this requested split without introducing T2 migrations/domain tables or a general fixture framework.
+Actual evidence: three browser tests and seven Java tests passed locally and on Linux; native dev/package launches, PostgreSQL/vector, outage/recovery, restart/persistence and extractor packaging were verified. Browser tests use explicit test-only readiness responses; real packaged-backend/database behavior is covered separately. The final-head [Tests run](https://github.com/igrgin/ai-knowledge-base/actions/runs/40156815793) passed. These are recorded results, not new execution claims.
 
-The shared review count is 1: owner-requested batch was reserved before edits and completed clear with the original empty finding set preserved. Revised-candidate evidence and independent review are recorded below. No merge, hosting, AI calls or concurrency increase is authorized.
-
-### D20 revision verification
-
-- Revised implementation: `a043cf1522be32250d9b9533370cd979e53d2d59`, same PR #21 and issue branch; owner approval/manual merge pending.
-- Profile files: main `application.yml` contains shared static health/pool/listen settings; `application-dev.yml` contains local datasource literals; `application-prod.yml` requires `SERVER_ADDRESS`, `SERVER_PORT`, `DATABASE_URL`, `DATABASE_USER`, `DATABASE_PASSWORD` without YAML fallback placeholders. A prod-only validator rejects missing/blank required inputs. No default profile implicitly selects dev.
-- `application-test.yml` and `application-lvl2test.yml` are test resources, excluded from the runtime JAR. Basic Surefire checks select `test`; explicit Maven `-Pintegration-tests` runs Failsafe `*IT` with `lvl2test`. Testcontainers PostgreSQL 2.0.5 and Failsafe 3.5.6 use Boot management. No accepted core pin changed.
-- Basic tests passed with an unreachable Docker socket; full Spring/pinned-pgvector readiness IT, complete package/browser/outage/recovery/persistence/restart checks, and a direct local dev launch passed. Runtime CI now explicitly verifies basic tests without Docker access. [Repository](https://github.com/igrgin/ai-knowledge-base/actions/runs/40143650017) and [Runtime](https://github.com/igrgin/ai-knowledge-base/actions/runs/40143649974) checks passed at the revised implementation.
-- The product/startup README follows the owner's Voice Draft reference, with no delivery status/process sections and only HTML scaffolding for future content. Deep engineering details remain in the local-development guide and Lighthouse records. Custom database settings use matching Compose `DB_*` and Spring `SPRING_DATASOURCE_*` overrides as documented.
-- Independent Sol high refresh covered bugs/security/requirements, found no findings and assessed round 1 clear. The reviewer independently verified prod blank-password rejection, complete environment binding, supplied unavailable-database HTTP 503, test resource/dependency exclusion and owned-process cleanup. No hosting or later feature was exercised or authorized.
-
-### T1 D21 CI and command simplification
-
-D21 replaces bespoke test/build orchestration with native Maven/npm test commands. CI sets up the environment/dependencies and runs the frontend/backend suites, without a repository-document/metadata gate or custom verification/package wrappers. Test-framework fixtures/lifecycle retain meaningful frontend behavior, real Spring/Testcontainers readiness, outage/restart and packaging checks where applicable; simpler commands must not silently substitute fake application behavior. Local instructions use standard tool commands; optional project-local runtime provisioning may remain if genuinely needed. The dev/prod/test/lvl2test split remains unchanged.
-
-Retire obsolete required-check names only once the replacement application test check has actually passed, preserving PR/admin/conversation/strict-update protections and manual owner merging. Remove proposed squash text from PR presentation/template, retaining the accepted plain commit convention and squash-only merge method. Round2 is reserved for this batch; all later task scopes remain unauthorized.
-
-### D21 verification and review outcome
-
-T1 implementation and this revision are completed in unmerged PR #21. The replacement single `Tests` workflow passed at `2227a489bb01da13732cf829902f9692ca6bc6a3`: [run 40156201638](https://github.com/igrgin/ai-knowledge-base/actions/runs/40156201638). Three frontend browser tests and seven Java tests passed locally and on Linux. Native dev and packaged launches also served actual readiness on free loopback ports while preserving unrelated listeners, development data and global Node. No app behavior, dependency version or D20 profile semantics changed.
-
-Both old workflows and eight orchestration/metadata scripts were removed; only optional `scripts/setup-node` remains. The former Maven distribution profile is unnecessary because standard backend resources consume the frontend build. Current setup/test commands and precise coverage are above; earlier script-based evidence in this plan is historical at its named candidate.
-
-One independent Sol high reviewer refreshed all three passes and assessed round 2 clear. F1 identified a known nonblocking stale command-heading pointer; the coordinator corrected it as part of final metadata reconciliation and the final refresh verifies it. The required native context is now `Tests`, after its successful run; all other branch protections remain intact. The accepted correction count remains 2, without reset. Owner approval/manual merge and all later task authority remain outstanding.
+Independent bugs/security/requirements review is clear. Historical correction count **2** is retained; F1 (a stale command-heading pointer) is addressed and verified. [PR assessment](https://github.com/igrgin/ai-knowledge-base/pull/21#issuecomment-6390736664) and [original review evidence](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/review.md#comparison) retain findings/dispositions. The [complete T1/D20/D21 execution record](https://github.com/igrgin/ai-knowledge-base/blob/47b7d96cf3cbd9e714701f048f45f9323dcf6494/.Lighthouse/plan.md#t1-execution-progress) preserves original candidates, commands, compatibility details and per-round evidence.
 
 ## Interactive AI evaluation task
 
