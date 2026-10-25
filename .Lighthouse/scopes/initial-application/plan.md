@@ -13,11 +13,11 @@ Only T1 and its D20/D21 refinements were authorized for implementation. T1 is co
 | [Requirements](spec.md#requirements) | R1–R29 | Current product behavior, constraints and acceptance/proposal distinctions |
 | [Design decisions](spec.md#design-decisions) | D-A–D-L; Invariants; Verification and quality gate | Architecture, lifecycle, privacy, source eligibility and evidence requirements |
 | [Intent](intent.md#desired-outcome) | Desired outcome and Constraints | Consolidated product purpose and owner-selected scope |
-| [Cost research](research/costs.md#owner-choices-and-delivery-phases) | Delivery phases and dated cost scenarios | Optional later hosting, application AI allowance proposal and retention boundaries; not permission to spend |
-| [Scalability research](research/scalability-evaluation.md#target-shape), [caching research](research/caching-evaluation.md#recommendation) | Supporting research and measurement guidance | Evidence behind the selected scalable, initially no-cache design |
+| [Cost research](../../research/costs.md#owner-choices-and-delivery-phases) | Delivery phases and dated cost scenarios | Optional later hosting, application AI allowance proposal and retention boundaries; not permission to spend |
+| [Scalability research](../../research/scalability-evaluation.md#target-shape), [caching research](../../research/caching-evaluation.md#recommendation) | Supporting research and measurement guidance | Evidence behind the selected scalable, initially no-cache design |
 | [Owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | Original source locators/selectors for D1–D14 | Continuing product/planning directions, including vertical slices; source provenance does not mean implementation permission |
 | `AGENTS.md`, `.Lighthouse/project.md` | Repository navigation and selected agent settings | Native task definitions own commands; Lighthouse supplies workflow/review defaults; application constraints and missing platform inputs remain in the specification |
-| Lighthouse GitHub defaults, Lighthouse review defaults, [agent assignments](project.md#development-agent-assignments), native task definitions and local-development guidance | D14 owner-selected setup/review/model rules and project Codex-config removal | Local policy adoption only; repository resources, commits and implementation still require their own authorization |
+| Lighthouse GitHub defaults, Lighthouse review defaults, [agent assignments](../../project.md#development-agent-assignments), native task definitions and local-development guidance | D14 owner-selected setup/review/model rules and project Codex-config removal | Local policy adoption only; repository resources, commits and implementation still require their own authorization |
 
 Implement the full local application: public-style registration/login, private projects, text-PDF ingestion, project-grounded answers and page navigation, independent saved chats, archive-only PDFs, chat deletion, whole-project purge, usage limits and local recovery. A local application may accept registrations through its interface without being published to the internet.
 
@@ -55,7 +55,7 @@ Choose JDBC repositories and Flyway migrations for the application tables so own
 | `backend/src/test/`, `pdf-extractor/src/test/`, `frontend/src/**/*.test.*`, `frontend/e2e/` | Tests around actual access, state, recovery and user behavior |
 | `test-fixtures/`, `evaluation/` | Generated PDFs/passages, known page facts, supported/unsupported/follow-up questions, quality results and reproducible scalability/cache reports with no private bodies |
 | `README.md`, `docs/local-development.md`, `docs/local-recovery.md`, `docs/architecture.md` | Setup, runtime roles, limits, local recovery, diagrams, measured embedding/performance findings and deferred multi-host prerequisites |
-| `.Lighthouse/plan.md`, later agreed contract records under `docs/contracts/` when needed | Single-integrator current progress and shared contracts; original decisions and detailed execution evidence stay in native Git/PR records |
+| `.Lighthouse/scopes/initial-application/plan.md`, later agreed contract records under `docs/contracts/` when needed | Single-integrator current progress and shared contracts; original decisions and detailed execution evidence stay in native Git/PR records |
 
 The implementation may add files inside these areas as needed. Material departures from accepted behavior, source ownership, architecture or cost bounds return to the owner; ordinary naming and code organization do not require repeated decisions.
 
@@ -374,7 +374,7 @@ Each requirement maps to its owning vertical implementation and later integratio
 
 ## Local command contract and verification
 
-Current profile/configuration rules are documented in [local development](../docs/local-development.md#configuration-and-profiles) and native `application*.yml`/test resources: shared static settings in the base file, local values in `dev`, required nonblank environment values without local fallbacks in `prod`, no implicit dev profile, and separate `test`/`lvl2test` resources excluded from runtime packages. Keep this split when extending native tests.
+Current profile/configuration rules are documented in [local development](../../../docs/local-development.md#configuration-and-profiles) and native `application*.yml`/test resources: shared static settings in the base file, local values in `dev`, required nonblank environment values without local fallbacks in `prod`, no implicit dev profile, and separate `test`/`lvl2test` resources excluded from runtime packages. Keep this split when extending native tests.
 
 D21 selects native tool commands for T1. CI performs environment/dependency setup and runs these two suites directly:
 
@@ -385,7 +385,7 @@ npm test --prefix frontend
 
 The frontend's normal `pretest` builds its production assets; Playwright owns its preview server and the test-only readiness responses for browser behavior. Maven runs basic `test`-profile checks, native Failsafe `lvl2test` integration checks, the actual packaged backend against pinned pgvector Testcontainers, and the packaged extractor launch contract. Backend resources consume `frontend/dist`, so build/test the frontend before full packaging/integration. Basic `./mvnw test` requires neither Docker nor full application startup.
 
-Local development uses native Maven `spring-boot:run` with explicit `dev` and frontend `npm run dev`. Packaging uses frontend `npm run build` followed by Maven `package`; direct `java -jar` selects the intended profile. See [the development guide](../docs/local-development.md#development-and-package) for exact commands and port/environment settings. Docker Compose manages the persistent local database. Only the optional self-contained project-local Node installer remains; CI does not invoke it. The custom verify/package/dev/run/smoke/metadata-check wrappers are retired.
+Local development uses native Maven `spring-boot:run` with explicit `dev` and frontend `npm run dev`. Packaging uses frontend `npm run build` followed by Maven `package`; direct `java -jar` selects the intended profile. See [the development guide](../../../docs/local-development.md#development-and-package) for exact commands and port/environment settings. Docker Compose manages the persistent local database. Only the optional self-contained project-local Node installer remains; CI does not invoke it. The custom verify/package/dev/run/smoke/metadata-check wrappers are retired.
 
 Later slices extend these native test/build definitions and add only task-specific capabilities actually needed: T11 backup/restore with deletion replay, T13 multi-instance/no-cache performance measurements, T14 separately authorized paid evaluation, and T15 integrated documentation/handoff. Their required behaviors remain unchanged; the earlier proposed wrapper filenames are not mandates. Ordinary tests make no paid AI calls. Test fixtures own disposable processes/containers and must preserve development data and unrelated listeners.
 
@@ -445,7 +445,7 @@ Only T1 and its D20/D21 refinements have implementation authority. T2–T20 rema
 | Model quality | Execute recorded fixtures and numeric grounding/citation criteria; structural citation validation alone is insufficient | T14; T15 real-AI-ready claim |
 | Hosted operations/email/provider controls | Optional later phase; establish actual permissions, security/operating controls and recovery before dependent release actions | Hosted operations, not local-v1 readiness |
 
-Deployment/model/usage allowance choices are separate from development-agent settings. Applicable [agent assignments](project.md#development-agent-assignments) stay project-local. Current native GitHub controls use `Tests` and manual user squash merging; provider state must be inspected before changing it.
+Deployment/model/usage allowance choices are separate from development-agent settings. Applicable [agent assignments](../../project.md#development-agent-assignments) stay project-local. Current native GitHub controls use `Tests` and manual user squash merging; provider state must be inspected before changing it.
 
 ## T1 execution progress
 

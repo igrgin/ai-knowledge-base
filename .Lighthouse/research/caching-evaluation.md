@@ -2,7 +2,7 @@
 
 ## Current planning references
 
-This is supporting research, not another implementation plan. Use the current [requirements](../spec.md#requirements), [design decisions](../spec.md#design-decisions) and single [task list](../plan.md#revised-task-list). The [performance checkpoint](../plan.md#offline-scalability-and-performanceembedding-checkpoint-in-t13) measures a no-cache baseline and embedding batching/reuse; no Caffeine or Redis prototype is required. Hosting remains optional later. No implementation or capacity result is claimed by this note.
+This is supporting research, not another implementation plan. Use the current [requirements](../scopes/initial-application/spec.md#requirements), [design decisions](../scopes/initial-application/spec.md#design-decisions) and single [task list](../scopes/initial-application/plan.md#revised-task-list). The [performance checkpoint](../scopes/initial-application/plan.md#offline-scalability-and-performanceembedding-checkpoint-in-t13) measures a no-cache baseline and embedding batching/reuse; no Caffeine or Redis prototype is required. Hosting remains optional later. No implementation or capacity result is claimed by this note.
 
 ## Recommendation
 
@@ -62,5 +62,5 @@ The owner subsequently required a scalable design and supplied no fixed traffic/
 ## Project sources
 
 - `spec.md`, especially R2, R5, R7, R10, R12, R13, R15, R17 and designs D-B, D-D, D-F and D-H.
-- [Current task list](../plan.md#revised-task-list), especially T5/T7 model work, T20 source rules, T18/T10 file/citation viewing, and T13/T14 measurement.
+- [Current task list](../scopes/initial-application/plan.md#revised-task-list), especially T5/T7 model work, T20 source rules, T18/T10 file/citation viewing, and T13/T14 measurement.
 - Current conversation request to evaluate Redis versus caching inside Spring Boot, 2026-10-24, `codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39`.

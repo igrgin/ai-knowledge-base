@@ -2,7 +2,7 @@
 
 ## Current planning references
 
-This is supporting research, not another implementation plan. Use the current [requirements](../spec.md#requirements), [design decisions](../spec.md#design-decisions) and single [task list](../plan.md#revised-task-list). The [performance checkpoint](../plan.md#offline-scalability-and-performanceembedding-checkpoint-in-t13) measures a no-cache baseline and embedding batching/reuse; no Caffeine or Redis prototype is required. Hosting remains optional later. No implementation or capacity result is claimed by this note.
+This is supporting research, not another implementation plan. Use the current [requirements](../scopes/initial-application/spec.md#requirements), [design decisions](../scopes/initial-application/spec.md#design-decisions) and single [task list](../scopes/initial-application/plan.md#revised-task-list). The [performance checkpoint](../scopes/initial-application/plan.md#offline-scalability-and-performanceembedding-checkpoint-in-t13) measures a no-cache baseline and embedding batching/reuse; no Caffeine or Redis prototype is required. Hosting remains optional later. No implementation or capacity result is claimed by this note.
 
 ## Owner requirement and recommendation
 
@@ -91,7 +91,7 @@ The generation cap deliberately stays global in the first multi-instance test: i
 
 ## Current task allocation
 
-Implementation ownership is defined only by the current [task list](../plan.md#revised-task-list), [contract gates](../plan.md#contract-gates-for-early-starts) and [file/schema ownership](../plan.md#file-and-schema-ownership). T6 establishes actual durable worker execution; T7 and T9 extend it. T5 owns shared provider accounting/admission, T20 source controls, T11 lifecycle recovery, and T13 integrated multi-instance/performance evidence. T16/T19 own independent copies and T17 transcript publication. These references replace the earlier task-placement suggestions; this research note carries no separate task state or execution authority.
+Implementation ownership is defined only by the current [task list](../scopes/initial-application/plan.md#revised-task-list), [contract gates](../scopes/initial-application/plan.md#contract-gates-for-early-starts) and [file/schema ownership](../scopes/initial-application/plan.md#file-and-schema-ownership). T6 establishes actual durable worker execution; T7 and T9 extend it. T5 owns shared provider accounting/admission, T20 source controls, T11 lifecycle recovery, and T13 integrated multi-instance/performance evidence. T16/T19 own independent copies and T17 transcript publication. These references replace the earlier task-placement suggestions; this research note carries no separate task state or execution authority.
 
 ## Project and request sources
 
