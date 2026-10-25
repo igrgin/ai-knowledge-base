@@ -82,6 +82,8 @@ Dependency family: Java 26, stable Spring Boot 4.1.x with Spring AI 2.0.x, Maven
 
 D20 refines configuration and testing within T1: keep static shared settings in base `application.yml`, local overrides in `application-dev.yml`, and required environment-provided deployment values in `application-prod.yml` without local fallbacks. Local launchers select `dev` explicitly; supplying production configuration does not authorize hosting. Keep `application-test.yml` and `application-lvl2test.yml` in test resources: `test` supports unit/basic checks, while `lvl2test` supports full Spring startup, real Testcontainers and end-to-end feature checks. Basic checks do not require Docker. The explicit Maven integration-test selection is separate from the Spring profile name.
 
+D21 simplifies T1 delivery tooling: CI sets up dependencies and directly runs the native frontend/backend test suites. Normal npm/Playwright and Maven/Failsafe fixtures own test build/startup/cleanup, preserving meaningful readiness, package, database and frontend behavior checks. Repository-document/PR-metadata CI and custom verification/package wrappers are retired. The D20 profile split and later product/scalability requirements are unchanged.
+
 ### D-B: Own the retrieval data in PostgreSQL
 
 Store account, project, document, page, chunk, chat, message and citation metadata alongside vectors in PostgreSQL. Store original PDFs in a private file-store abstraction: a local persistent directory in phase 1; an S3-compatible private bucket in the optional hosted phase. Files are never served as public assets.
