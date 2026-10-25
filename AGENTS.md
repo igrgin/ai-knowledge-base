@@ -1,6 +1,6 @@
 # Project instructions
 
-For Lighthouse delivery, amendments or resume, use the globally installed Lighthouse 0.2.0 skills and read the relevant current [intent](.Lighthouse/intent.md), [specification](.Lighthouse/spec.md) and [plan](.Lighthouse/plan.md). The user is the default decision-maker. Read the current scope before acting: T1 is implemented in unmerged PR #21; later tasks remain pending and unauthorized.
+For Lighthouse delivery, amendments or resume, use the globally installed Lighthouse 0.2.0 skills and read the relevant current [intent](.Lighthouse/intent.md), [specification](.Lighthouse/spec.md) and [plan](.Lighthouse/plan.md). The user is the default decision-maker. Read the current plan for task scope, progress and authorization.
 
 For issues, branches, worktrees, commits, PRs or cleanup, read [.Lighthouse/github.md](.Lighthouse/github.md). For review, agent/model assignment, concurrency or operational boundaries, read the applicable section of [.Lighthouse/project.md](.Lighthouse/project.md). Use original decision sources only when provenance or a conflict requires them; current records are the normal task input.
 

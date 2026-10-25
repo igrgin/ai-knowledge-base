@@ -1,6 +1,6 @@
 # GitHub workflow
 
-The project owner accepted the workflow in D14 and amended commit formatting in D15–D16 in [the change index](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). The repository and 20 task issues exist; the current Tests requirement and protections were inspected before migration. Original setup-only wording below describes the preserved setup baseline. The [current plan](plan.md#revised-task-list) remains the task source.
+The project owner accepted the workflow in D14 and amended commit formatting in D15–D16 in [the change index](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). The repository and 20 task issues exist; the Tests requirement and repository protections apply. Original setup-only wording below describes the preserved setup baseline. The [current plan](plan.md#revised-task-list) remains the task source.
 
 ## Repository and initial baseline
 
@@ -71,5 +71,3 @@ Tasks T1–T13 and T15–T20 are feature delivery/integrated-verification tasks.
 ## Worktree cleanup and record maintenance
 
 Retain checkouts until merging or user-directed disposition. Within authorized cleanup, use a recoverable native archive, preserve unique/dirty work, and never force-remove a dirty checkout. Serialize shared record writes. Owner-directed amendments and records-only reconciliation consume no finding-correction round, retain unaffected approvals, and never erase outstanding findings or reset their remaining allowance. The historical T1 count of 2 is preserved.
-
-The migration branch is records-only work with no new implementation issue; its `codex/lighthouse-0.2-migration` name is not a replacement issue branch. Issue implementation continues to use the established issue-number/title convention above. PR #21 remains untouched and unmerged. Active issue links may target the migration branch until the user integrates it; historical evidence uses immutable prior commit links.

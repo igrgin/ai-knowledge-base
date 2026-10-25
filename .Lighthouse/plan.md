@@ -2,10 +2,9 @@
 
 ## Current scope and sources
 
-Migrated to Lighthouse 0.2.0 on 2026-10-25 under the [user's migration instruction](codex://threads/01a170fe-e89b-7be3-a093-bad07cf053b8): “I approve the migration plan. Go ahead and migrate both projects to Lighthouse 0.2.0, preserving decisions and progress. Don’t merge PR #21 or start any new implementation work.” The preserved pre-migration content is commit `7252f046b96f9a33e94f095f2b8b7790b76785ad`. Original human statements and their covered scopes remain recoverable in the [historical decision source](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json); D1–D21 are legacy provenance identifiers, not an active decision index.
+Original human decisions and their covered scopes are in the [decision source](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use the current [plan](plan.md#revised-task-list) for task authority and progress.
 
-Current product direction, unresolved concerns, task gates and prior acceptance remain as stated in these documents. Only T1 and its D20/D21 refinements were authorized for implementation. T1 is completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2–T20 remain pending and unauthorized. The migration authorizes record, policy and issue-link/label reconciliation, not application implementation or merging. The archive amendment used in the Lighthouse discussion was an example, not a product decision for this project.
-
+Only T1 and its D20/D21 refinements were authorized for implementation. T1 is completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2–T20 remain pending and unauthorized.
 
 ## Sources and scope
 
@@ -303,7 +302,7 @@ These are alternatives, not permission to start every ready pair at once. The in
 
 ### Proposed concurrency-setting change, not applied
 
-The accepted project concurrency limit is 1, recorded in project.md. The proposed increase remains unapplied; migration does not change dispatch authority.
+The accepted project concurrency limit is 1, recorded in project.md. The proposed increase remains unapplied.
 
 A later proposal is **2 active implementation tasks/writers maximum**, with `project-owner` remaining accountable for shared records and one named integrator as their sole writer. The integrator counts within those two writers whenever implementing, editing shared code or integrating changes. Prefer one slice writer also holding the integrator role; two independent feature writers must yield a slot before a separate integrator writes/merges. Human milestone review and migration integration stay one at a time. More ready tasks wait. This is deliberately not a proposal to raise runtime AI/ingestion concurrency, which retains two global generations, one per chat and one ingestion/embedding pipeline.
 
@@ -510,10 +509,6 @@ One independent Sol high reviewer refreshed all three passes and assessed round 
 
 ## Interactive AI evaluation task
 
-T14 / issue #14 uses the `spike` intent label for a developer–agent evaluation and decision, with no implementation-agent handoff, mandatory branch or PR. Its existing start gates, completion prerequisites, model/fixture/version evidence and numerical grounding/citation criteria remain unchanged. Real calls still require a separately authorized credential and token/cost allowance. Do not execute this task during migration.
+T14 / issue #14 uses the `spike` intent label for a developer–agent evaluation and decision, with no implementation-agent handoff, mandatory branch or PR. Its existing start gates, completion prerequisites, model/fixture/version evidence and numerical grounding/citation criteria remain unchanged. Real calls still require a separately authorized credential and token/cost allowance.
 
 Agree the evaluation conclusion with the developer and post a final issue comment covering the question, actual evidence/cost/limits, agreed model or readiness decision, and follow-ups. Verify the comment before marking T14 complete. Keep any useful evaluation documentation deliberately. Required production tooling changes need their own feature/bug scope; prototype success does not establish application readiness. T15 still requires T14 evidence for a real-AI-ready claim; it remains a feature task because it includes runnable-package and integrated verification obligations, not documentation alone.
-
-## Migration disposition
-
-The primary checkout's migration branch starts at the reviewed T1 head; the original T1 worktree/branch and PR #21 remain unchanged. This records-only migration consumes no implementation-finding correction round. T1's historical count remains 2 and F1 remains addressed. The migration has its own scoped review; it does not extend T1's technical assessment to changed files without inspection. Merge/integration of migration work into main follows the user's manual disposition of PR #21, with no direct push to main or agent merge.

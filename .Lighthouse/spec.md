@@ -2,12 +2,7 @@
 
 ## Current scope and sources
 
-Migrated to Lighthouse 0.2.0 on 2026-10-25 under the [user's migration instruction](codex://threads/01a170fe-e89b-7be3-a093-bad07cf053b8): “I approve the migration plan. Go ahead and migrate both projects to Lighthouse 0.2.0, preserving decisions and progress. Don’t merge PR #21 or start any new implementation work.” The preserved pre-migration content is commit `7252f046b96f9a33e94f095f2b8b7790b76785ad`. Original human statements and their covered scopes remain recoverable in the [historical decision source](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json); D1–D21 are legacy provenance identifiers, not an active decision index.
-
-Current product direction, unresolved concerns, task gates and prior acceptance remain as stated in these documents. Only T1 and its D20/D21 refinements were authorized for implementation. T1 is completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2–T20 remain pending and unauthorized. The migration authorizes record, policy and issue-link/label reconciliation, not application implementation or merging. The archive amendment used in the Lighthouse discussion was an example, not a product decision for this project.
-
-
-This specification covers local v1, its scalable architecture, and an optional later hosted demo. D4–D5 preserve the original acceptance and Java 26 amendment. D7 records the scalable architecture direction. D8–D12 clarify project-copy sharing, public read-only chat snapshots, file viewing, reversible archive and automatic later uploads. D11 restores archive-only handling for individual PDFs; the performance checkpoint now prioritizes measured bottlenecks and embedding reuse without a required cache experiment. Detailed experiments below do not establish measured capacity or service-level commitments. No application implementation, provisioning, or paid API experiment is part of this stage.
+Original human decisions and their covered scopes are in the [decision source](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use the current [plan](plan.md#revised-task-list) for task authority and progress.
 
 ## Sources
 
