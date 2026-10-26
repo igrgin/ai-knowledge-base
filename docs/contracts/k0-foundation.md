@@ -14,11 +14,30 @@ Each HTTP attempt also gets a new server-generated correlation UUID from `Reques
 
 ## Safe MVC errors
 
-The accepted T2 amendment uses JSON with exactly `code`, `message` and `requestId` for handled Spring MVC exceptions. `requestId` matches the server-generated `X-Request-ID`. The response carries an explicit HTTP status; protocol headers such as `Allow` are preserved. The code identifies an application or request failure independently from that status, and several codes may share a status. Application error definitions use typed, stable codes without importing HTTP types; the web layer maps each error to its response status. Never synthesize `HTTP_<status>` codes or use exception text as the public message.
+Handled Spring MVC failures return JSON with exactly `code`, `message` and `requestId`. The server-generated `requestId` matches `X-Request-ID`. `com.aiknowledgebase.shared.ErrorCode` defines the stable codes and safe messages without importing HTTP or Spring types. Application consumers throw `ApplicationException(ErrorCode)`; `shared.web.ApiExceptionHandler` maps each code to an explicit HTTP status. The web adapter selects framework codes by exception kind, never by status. `INVALID_REQUEST` and `REQUEST_BODY_UNREADABLE` deliberately share HTTP 400 while identifying different corrections.
 
-Messages must explain what failed and, where possible, how to correct the request. Clients use codes for logic and may display safe messages, but must not parse message text; they tolerate unknown codes with a safe fallback. The initial catalogue covers foundation/request errors only and avoids a different code for every malformed field. Feature owners add errors when different client behavior is needed. The implementation/catalogue is being amended in PR #23; the former status-derived catalogue is superseded.
+| Code | HTTP status | Safe public message |
+| --- | --- | --- |
+| `INVALID_REQUEST` | 400 | The request contains missing or invalid values. Check the required fields and value formats. |
+| `REQUEST_BODY_UNREADABLE` | 400 | The request body could not be read. Send a valid body in the documented format. |
+| `RESOURCE_NOT_FOUND` | 404 | The requested resource is unavailable. Check the address or return to your resource list. |
+| `METHOD_NOT_ALLOWED` | 405 | This request method is not supported. Use a method listed in the Allow header. |
+| `UNSUPPORTED_MEDIA_TYPE` | 415 | The request content type is not supported. Use a documented Content-Type. |
+| `RESPONSE_TYPE_NOT_ACCEPTABLE` | 406 | The requested response format is not supported. Use a documented Accept type. |
+| `REQUEST_TOO_LARGE` | 413 | The request exceeds the allowed size. Reduce its size and try again. |
+| `REQUEST_TIMED_OUT` | 503 | The server could not finish the request in time. Check its outcome before retrying. |
+| `FRAMEWORK_REQUEST_REJECTED` | Framework-provided; 400 for direct application use | The server could not complete this request. Check the API requirements and response status before retrying. |
+| `INTERNAL_ERROR` | 500 | The server could not complete the request. Try again later; if it persists, contact support with the request ID. |
 
-Never expose SQL, exception details, stack traces, submitted values, file paths, credentials, document/chat content or another owner's resource existence in a body. Cross-owner lookups use the same HTTP status, application code and safe message as missing resources. Unexpected-failure logs contain only correlation UUID and exception class. Authentication/security filters are T3-owned and must reuse this response shape; MVC advice does not handle filter-level failures. Actuator health retains its response contract. Servlet/container rejections outside MVC remain outside this handler's coverage.
+Ordinary missing/invalid parameters, binding and input-validation failures use `INVALID_REQUEST`; malformed/unreadable bodies use `REQUEST_BODY_UNREADABLE`. Missing MVC routes/static resources use `RESOURCE_NOT_FOUND`. Later resource owners must throw the same `RESOURCE_NOT_FOUND` for missing and cross-owner lookups. The consumer fixtures demonstrate identical status/code/message behavior; actual ownership enforcement remains feature-owned.
+
+Known method, media negotiation, upload-size and async-timeout failures use their named mappings above. Server-side conversion, missing path-variable configuration, response serialization and return-value validation failures use `INTERNAL_ERROR`; a path value missing after conversion remains `INVALID_REQUEST`. Unknown Spring `ErrorResponse`/`ErrorResponseException` failures, including `ResponseStatusException`, use `FRAMEWORK_REQUEST_REJECTED` while retaining their framework-provided status and protocol headers (for example `Allow`, `Accept`, `Retry-After`). Features use typed application errors rather than status exceptions to obtain a deliberate application code. Unhandled exceptions return safe HTTP 500 `INTERNAL_ERROR`.
+
+Messages never include submitted values, exception details, private data or credentials. Unexpected-failure logging includes only correlation ID and exception class. Committed responses are not rewritten; Spring's unusable async-response handling remains in place. Protocol headers are preserved. This MVC advice does not claim coverage of servlet-container failures or future security-filter responses.
+
+Clients use codes for logic and may display messages, but must not parse message text. They tolerate unknown codes with a safe fallback and use HTTP status for general protocol behavior. Feature owners extend this small catalogue only when different client behavior is needed; no actual authentication, project or AI features are supplied by these conventions.
+
+Authentication/security-filter responses remain T3-owned and must reuse this public shape when introduced. Actuator health retains its existing response contract.
 
 ## JDBC transactions
 
