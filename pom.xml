@@ -29,6 +29,10 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <skipTests>${skipUnitTests}</skipTests>
+          <excludes>
+            <exclude>**/*ITests.java</exclude>
+            <exclude>**/*$*</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
@@ -65,8 +69,11 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
             <configuration>
+              <includes>
+                <include>**/*ITests.java</include>
+              </includes>
               <systemPropertyVariables>
-                <spring.profiles.active>lvl2test</spring.profiles.active>
+                <spring.profiles.active>itest</spring.profiles.active>
               </systemPropertyVariables>
             </configuration>
             <executions>

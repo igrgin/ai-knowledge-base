@@ -44,9 +44,9 @@ Keep the current modules: module selection and test-level selection are independ
 | Basic and integration, Surefire/Failsafe | `./mvnw -Pintegration-tests verify` |
 | Integration only, Failsafe | `./mvnw -Pintegration-tests -DskipUnitTests=true verify` |
 
-`skipUnitTests` is mapped only to Surefire. Its default follows `skipTests`, preserving the pinned plugins' global `-DskipTests=true` behavior when no explicit `skipUnitTests` override is given. `-DskipITs=true` skips Failsafe execution. Integration-only `verify` still compiles and packages before launching packaged-JAR tests. Maven's `integration-tests` build profile is distinct from the Spring `test` and `lvl2test` configuration profiles.
+`skipUnitTests` is mapped only to Surefire. Its default follows `skipTests`, preserving the pinned plugins' global `-DskipTests=true` behavior when no explicit `skipUnitTests` override is given. `-DskipITs=true` skips Failsafe execution. Integration-only `verify` still compiles and packages before launching packaged-JAR tests. Maven's `integration-tests` build profile is distinct from the Spring `test` and `itest` configuration profiles.
 
-The backend currently has zero Java tests; selecting it does not invent coverage. Extractor has one Surefire test (`ExtractorLaunchTest`) and one Failsafe test (`ExtractorPackageIT`). Browser tests remain in the native npm suite. The [development guide](../../docs/local-development.md#native-tests) owns ongoing command instructions.
+The backend currently has zero Java tests; selecting it does not invent coverage. Extractor has one Surefire test (`ExtractorLaunchTest`) and one Failsafe test (`ExtractorPackageITests`). Browser tests remain in the native npm suite. The [development guide](../../docs/local-development.md#native-tests) owns ongoing command instructions.
 
 ## Whether to add feature modules
 
@@ -77,4 +77,6 @@ Verified matrix (JDK 26, Maven Wrapper 3.9.16; every command exited 0):
 | Whole reactor | `-DskipTests=true`, integration profile | 0; both plugins skipped |
 | Whole reactor | `-DskipITs=true`, integration profile | 1 Surefire; Failsafe skipped |
 
-The effective POM also confirms Surefire/Failsafe 3.5.6 and preserves the backend Surefire Spring `test` property merged with the new skip setting, plus Failsafe's Spring `lvl2test` property. No YAML, dependency/plugin version or CI command changed. No frontend rerun, Docker or paid calls were needed for this POM-only test-selection change.
+The effective POM also confirms Surefire/Failsafe 3.5.6 and preserves the backend Surefire Spring `test` property merged with the new skip setting, plus Failsafe's Spring `itest` property. No YAML, dependency/plugin version or CI command changed. No frontend rerun, Docker or paid calls were needed for this POM-only test-selection change.
+
+Test/profile names in this note follow the current integration-test naming; linked Git revisions retain the original spelling. Its recorded execution results are historical, and the development guide owns current commands.
