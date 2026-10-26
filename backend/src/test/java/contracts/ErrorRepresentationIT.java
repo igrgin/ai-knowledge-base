@@ -12,27 +12,35 @@ import com.aiknowledgebase.shared.ApplicationException;
 import com.aiknowledgebase.shared.ErrorCode;
 import com.aiknowledgebase.support.PostgresIntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest(classes = {KnowledgeBaseApplication.class, ErrorRepresentationIT.HttpConsumer.class},
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("lvl2test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ErrorRepresentationIT extends PostgresIntegrationTest {
+    @LocalServerPort private int port;
+
+    @DynamicPropertySource
+    static void databaseProperties(DynamicPropertyRegistry registry) {
+        freshDatabase().registerProperties(registry);
+    }
+
     @Test
     void restrictiveAcceptKeepsJsonErrorsAndProtocolHeadersWithoutChangingSuccessRepresentations() throws Exception {
-        Database database = freshDatabase();
-        try (var app = new SpringApplicationBuilder(KnowledgeBaseApplication.class, HttpConsumer.class)
-                .web(WebApplicationType.SERVLET)
-                .run("--spring.profiles.active=lvl2test", "--spring.main.banner-mode=off",
-                        "--spring.datasource.url=" + database.url(),
-                        "--spring.datasource.username=" + database.username(),
-                        "--spring.datasource.password=" + database.password());
-             HttpClient client = HttpClient.newHttpClient()) {
-            String base = "http://127.0.0.1:" + app.getEnvironment().getRequiredProperty("local.server.port");
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            String base = "http://127.0.0.1:" + port;
             var negotiation = send(client, base, "/api/http-contract/json", "GET", "text/plain");
             assertError(negotiation, 406, ErrorCode.RESPONSE_TYPE_NOT_ACCEPTABLE);
             assertEquals("application/json", negotiation.headers().firstValue("Accept").orElseThrow());
@@ -72,7 +80,7 @@ class ErrorRepresentationIT extends PostgresIntegrationTest {
                 UUID.fromString(body.path("requestId").asString()));
     }
 
-    // Registered explicitly above; this package is outside production component scanning.
+    // Registered explicitly in @SpringBootTest; this package is outside production component scanning.
     @RestController
     static class HttpConsumer {
         @GetMapping(value = "/api/http-contract/json", produces = MediaType.APPLICATION_JSON_VALUE)

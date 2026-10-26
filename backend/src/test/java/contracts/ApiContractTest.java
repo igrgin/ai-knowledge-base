@@ -1,10 +1,8 @@
 package contracts;
 
-import java.security.Principal;
 import java.util.UUID;
 
 import com.aiknowledgebase.shared.ApplicationException;
-import com.aiknowledgebase.shared.AuthenticatedActor;
 import com.aiknowledgebase.shared.ErrorCode;
 import com.aiknowledgebase.shared.web.ApiExceptionHandler;
 import com.aiknowledgebase.shared.web.RequestIdFilter;
@@ -45,25 +43,20 @@ class ApiContractTest {
     }
 
     @Test
-    void consumerUsesAuthenticatedAccountAndUuidResourceAndOperationIds() throws Exception {
-        UUID accountId = UUID.randomUUID();
+    void consumerUsesUuidResourceAndOperationIds() throws Exception {
         UUID resourceId = UUID.randomUUID();
         UUID operationRequestId = UUID.randomUUID();
-        AuthenticatedActor actor = new AuthenticatedActor(accountId);
 
         MvcResult result = mvc.perform(get("/api/contract/{resourceId}", resourceId)
-                        .principal(actor).param("requestId", operationRequestId.toString())
+                        .param("requestId", operationRequestId.toString())
                         .header(RequestIdFilter.HEADER, "untrusted-client-value"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountId").value(accountId.toString()))
                 .andExpect(jsonPath("$.resourceId").value(resourceId.toString()))
                 .andExpect(jsonPath("$.requestId").value(operationRequestId.toString()))
                 .andReturn();
 
         UUID correlationId = UUID.fromString(result.getResponse().getHeader(RequestIdFilter.HEADER));
         assertNotEquals(operationRequestId, correlationId);
-        assertEquals(accountId.toString(), actor.getName());
-        assertThrows(NullPointerException.class, () -> new AuthenticatedActor(null));
     }
 
     @Test
@@ -211,8 +204,8 @@ class ApiContractTest {
     @RestController
     static class ContractConsumer {
         @GetMapping("/api/contract/{resourceId}")
-        Ids identifiers(Principal principal, @PathVariable UUID resourceId, @RequestParam UUID requestId) {
-            return new Ids(((AuthenticatedActor) principal).accountId(), resourceId, requestId);
+        Ids identifiers(@PathVariable UUID resourceId, @RequestParam UUID requestId) {
+            return new Ids(resourceId, requestId);
         }
 
         @GetMapping("/api/contract/missing")
@@ -277,6 +270,6 @@ class ApiContractTest {
         }
     }
 
-    record Ids(UUID accountId, UUID resourceId, UUID requestId) {
+    record Ids(UUID resourceId, UUID requestId) {
     }
 }

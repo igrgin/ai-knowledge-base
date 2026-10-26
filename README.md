@@ -69,7 +69,7 @@ npm test --prefix frontend                        # Builds UI; browser tests sta
 
 Run the frontend command first: its production build is included in the backend package. Linux may need Playwright's `--with-deps` option when installing Chromium. `./mvnw test` runs only the basic Java tests, without Docker or a full application startup. Use `-pl backend`, `-pl pdf-extractor` or `-pl backend,pdf-extractor` to select Java modules; see [test-level selection](docs/local-development.md#native-tests) for integration-only commands.
 
-Frontend browser tests isolate readiness success, failure and retry with test-only network mocks. Java tests cover the shared UUID/principal/error conventions, real PostgreSQL migrations and restart persistence, transaction rollback, failed-migration safety, and the extractor child process and built package. Database integration tests require Docker and use isolated disposable databases on a random port. Tests do not call AI providers.
+Frontend browser tests isolate readiness success, failure and retry with test-only network mocks. Java tests cover the shared UUID/error conventions, real PostgreSQL migrations and restart persistence, transaction rollback, failed-migration safety, and the extractor child process and built package. Database integration tests require Docker and use isolated disposable databases on a random port. Tests do not call AI providers.
 
 ## Scope
 
