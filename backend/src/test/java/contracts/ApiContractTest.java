@@ -132,7 +132,7 @@ class ApiContractTest {
 
     @Test
     void unknownFrameworkFailuresKeepStatusAndRetryHeaderWithoutExposingDetails() throws Exception {
-        MvcResult result = mvc.perform(get("/api/contract/framework"))
+        MvcResult result = mvc.perform(get("/api/contract/framework").accept(MediaType.TEXT_PLAIN))
                 .andExpect(status().isTooManyRequests()).andExpect(header().string("Retry-After", "60"))
                 .andReturn();
         assertError(result, "FRAMEWORK_REQUEST_REJECTED", ErrorCode.FRAMEWORK_REQUEST_REJECTED.message());
@@ -156,12 +156,49 @@ class ApiContractTest {
     @Test
     void committedFrameworkAndUnexpectedResponsesAreNotRewritten() throws Exception {
         for (String path : new String[]{"committed-framework", "committed-unexpected", "committed-application"}) {
-            mvc.perform(get("/api/contract/" + path)).andExpect(status().isAccepted())
+            mvc.perform(get("/api/contract/" + path).accept(MediaType.TEXT_PLAIN))
+                    .andExpect(status().isAccepted()).andExpect(header().doesNotExist("Content-Type"))
                     .andExpect(content().string("already-written"));
         }
     }
 
+    @Test
+    void unacceptableSuccessFormatStillReturnsTheJsonErrorEnvelope() throws Exception {
+        MvcResult result = mvc.perform(get("/api/contract/representation/json").accept(MediaType.TEXT_PLAIN))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(header().string("Accept", MediaType.APPLICATION_JSON_VALUE)).andReturn();
+        assertError(result, "RESPONSE_TYPE_NOT_ACCEPTABLE", ErrorCode.RESPONSE_TYPE_NOT_ACCEPTABLE.message());
+    }
+
+    @Test
+    void restrictiveAcceptDoesNotDiscardOtherHandledErrorBodiesOrProtocolHeaders() throws Exception {
+        MvcResult application = mvc.perform(get("/api/contract/missing").accept(MediaType.TEXT_PLAIN))
+                .andExpect(status().isNotFound()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        assertError(application, "RESOURCE_NOT_FOUND", ErrorCode.RESOURCE_NOT_FOUND.message());
+        MvcResult method = mvc.perform(post("/api/contract/failure").accept(MediaType.TEXT_PLAIN))
+                .andExpect(status().isMethodNotAllowed()).andExpect(header().string("Allow", "GET"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
+        assertError(method, "METHOD_NOT_ALLOWED", ErrorCode.METHOD_NOT_ALLOWED.message());
+        MvcResult unexpected = mvc.perform(get("/api/contract/failure").accept(MediaType.TEXT_PLAIN))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
+        assertError(unexpected, "INTERNAL_ERROR", ErrorCode.INTERNAL_ERROR.message());
+    }
+
+    @Test
+    void successfulResponsesKeepTheirDeclaredRepresentations() throws Exception {
+        mvc.perform(get("/api/contract/representation/json").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("{\"status\":\"ok\"}"));
+        mvc.perform(get("/api/contract/representation/text").accept(MediaType.TEXT_PLAIN))
+                .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+                .andExpect(content().string("ok"));
+    }
+
     private void assertError(MvcResult result, String code, String message) throws Exception {
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, result.getResponse().getContentType());
         JsonNode error = json.readTree(result.getResponse().getContentAsString());
         assertEquals(3, error.size());
         assertEquals(code, error.path("code").asString());
@@ -222,6 +259,16 @@ class ApiContractTest {
                 case "application" -> throw new ApplicationException(ErrorCode.INVALID_REQUEST);
                 default -> throw new IllegalStateException("private-document-text");
             }
+        }
+
+        @GetMapping(value = "/api/contract/representation/json", produces = MediaType.APPLICATION_JSON_VALUE)
+        java.util.Map<String, String> json() {
+            return java.util.Map.of("status", "ok");
+        }
+
+        @GetMapping(value = "/api/contract/representation/text", produces = MediaType.TEXT_PLAIN_VALUE)
+        String text() {
+            return "ok";
         }
 
         @GetMapping("/api/contract/failure")

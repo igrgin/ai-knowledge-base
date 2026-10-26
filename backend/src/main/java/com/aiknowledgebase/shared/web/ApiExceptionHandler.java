@@ -10,6 +10,7 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -77,8 +78,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         if (request.getResponse() != null && request.getResponse().isCommitted()) {
             return null;
         }
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.putAll(headers);
+        // Errors have one explicit representation, even when Accept excludes JSON.
+        responseHeaders.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(new ApiError(code.name(), code.message(),
-                RequestIdFilter.requestId(request.getRequest())), headers, status);
+                RequestIdFilter.requestId(request.getRequest())), responseHeaders, status);
     }
 
     private ErrorCode frameworkCode(Exception exception) {
