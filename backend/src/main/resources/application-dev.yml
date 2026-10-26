@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:54329/knowledge_base?connectTimeout=2&socketTimeout=3
+    username: knowledge_base
+    password: local-development-only
