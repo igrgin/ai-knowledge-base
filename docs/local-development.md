@@ -38,7 +38,7 @@ APP_PORT=18081 FRONTEND_PORT=15173 npm run dev --prefix frontend
 
 Stop the processes with Ctrl-C. They run directly through their standard tools; there is no combined launcher. Backend Java edits require a restart; Vite reloads frontend changes.
 
-Package the Maven reactor; backend packaging installs locked frontend dependencies and builds fresh assets:
+Package the Maven reactor; backend packaging installs locked frontend dependencies and builds fresh assets. The default command also runs browser tests, so complete [browser setup](#native-tests) first. Use `./mvnw -DskipTests=true package` when test execution is intentionally skipped:
 
 ```sh
 ./mvnw package

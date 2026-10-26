@@ -49,7 +49,7 @@ npm run dev --prefix frontend
 
 Open [localhost:5173](http://127.0.0.1:5173). Stop each app with Ctrl-C; `docker compose stop db` stops its database while preserving the named volume.
 
-To build and run the single-origin package:
+To build and run the single-origin package, first complete the [browser setup](#test-and-build) because `package` runs the browser tests. Use `./mvnw -DskipTests=true package` to build fresh assets/package without test execution:
 
 ```sh
 ./mvnw package
