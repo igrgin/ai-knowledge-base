@@ -93,6 +93,16 @@ The explicit Maven `integration-tests` build profile activates Failsafe `*IT` in
 - Surefire runs `ExtractorLaunchTest`, which checks the extractor Java child contract. `./mvnw test` needs no Docker/full startup.
 - Extractor Failsafe runs `ExtractorPackageIT`, launching the actual built JAR with the same Java runtime and bounded heap to check its probe and unsupported-argument exit.
 
+Select modules and test levels independently from the repository root. Omit `-pl` to run the whole reactor, use `-pl backend` or `-pl pdf-extractor` for one Java module, or `-pl backend,pdf-extractor` for both Java modules. Dependency versions remain shared through the BOM and plugin versions through the root parent.
+
+| Test level | Native Maven command (add the desired `-pl` selection) |
+| --- | --- |
+| Basic tests only (Surefire) | `./mvnw test` |
+| Basic and integration tests (Surefire + Failsafe) | `./mvnw -Pintegration-tests verify` |
+| Integration tests only (Failsafe) | `./mvnw -Pintegration-tests -DskipUnitTests=true verify` |
+
+For example, `./mvnw -pl pdf-extractor -Pintegration-tests -DskipUnitTests=true verify` builds the extractor JAR and runs only `ExtractorPackageIT`. `verify` still performs the earlier compilation/package phases; the flag skips Surefire test execution. `-DskipITs=true` skips Failsafe execution, and `-DskipTests=true` skips both test plugins with the pinned Surefire/Failsafe 3.5.6. Leave `skipUnitTests` unset when using the global skip flag; explicitly setting it overrides Surefire's inherited default from `skipTests`.
+
 There are no backend Java tests at present. Readiness, same-origin frontend serving and database lifecycle remain runtime features without automated backend coverage. Extractor tests terminate only their own children and do not call AI providers. User development data/listeners remain untouched.
 
 CI has one `Tests` job: environment/dependency setup, `npm test --prefix frontend`, then `./mvnw -B -Pintegration-tests verify`. No repository/document/PR metadata checks or custom build/test wrappers run there.
