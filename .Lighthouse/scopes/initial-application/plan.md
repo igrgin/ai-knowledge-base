@@ -4,7 +4,7 @@
 
 The current [intent](intent.md), [specification](spec.md) and [plan](plan.md#revised-task-list) define this scope. Original owner directions came from the [planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39); the plan records task authority and progress.
 
-Only T1 and its D20/D21 refinements were authorized for implementation. T1 is completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2–T20 remain pending and unauthorized.
+T1 and its later refinements are completed in merged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21). The owner authorized T2 in the current T2 conversation on 2026-10-26: “Let's start T2. Use the agreed agent assignments and review process, keep concurrency at 1, and show me the PR before merging.” T2 starts from merged `main` at `6a3a319876ba69f05c958cc52a4378cbdb9b441c`; T3–T20 remain pending and unauthorized. The user retains the merge decision.
 
 ## Sources and scope
 
@@ -25,7 +25,7 @@ The revised local-v1 proposal also includes invitation/link project imports, opt
 
 The current intent/spec/plan are authoritative for their stated scope. In the [planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39) on 2026-10-25 (D19), the owner said: “I approve starting implementation with T1. Use the agreed agent assignments and review process, keep concurrency at 1, and present the PR to me before merging.” This accepts and authorizes T1 at setup baseline `b203ffd17063f65f06e0e4bea3cb49e9e68cdc44`, without authorizing other tasks or merging.
 
-This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorizes only T1 on 2026-10-25; T1 and its D20/D21 revisions are completed in PR #21, with owner approval/manual merge pending; T2–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
+This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorized T1 on 2026-10-25; PR #21 is now merged. The current request authorizes T2 only; T3–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
 
 ## Repository findings and prerequisites
 
@@ -77,7 +77,7 @@ T1 verifies the core skeleton, runtime pins, database startup and packaging cont
 
 ## Vertical slices and dependency semantics
 
-The D13 reassessment preserved pending tasks; D19 now authorizes **T1 only**, whose implementation and D20/D21 revisions are **completed** in PR #21 (not merged). T2–T20 remain pending and unauthorized. `maxParallelTasks` is still **1**, so execution remains one implementation writer at a time unless a later owner decision authorizes a change. Parallel opportunities below describe the dependency structure, not permission to dispatch agents. No application code, runtime configuration, policy or product requirement is changed by this plan.
+The D13 reassessment preserved pending tasks; T1 and its refinements are completed in merged PR #21. The current request authorizes **T2 only**; T3–T20 remain pending and unauthorized. `maxParallelTasks` is still **1**, so execution remains one implementation writer at a time unless a later owner decision authorizes a change. Parallel opportunities below describe the dependency structure, not permission to dispatch agents. No application code, runtime configuration, policy or product requirement is changed by this plan.
 
 Stable IDs T1–T17 remain in use. T2 provides only the small persistence/contract foundation. T18 owns library PDF reading, T19 extends project import with copied chats, and T20 owns archive/unarchive and chat source controls. All corresponding product behavior is retained in the current slices.
 
@@ -116,7 +116,7 @@ A task in the start column denotes its completion; a K gate denotes the narrower
 | Task | Demonstrable result | Requirement IDs | Can start after | Must exist before completion | Assigned writer | State | Intent label | Issue / branch |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | completed | feature | [#1](https://github.com/igrgin/ai-knowledge-base/issues/1); `1-run-java-26-react-shell-and-local-database` (created) |
-| T2 | Migrate/restart a minimal database and verify shared contract conventions | R18, R23 | T1 | T1 | Foundation owner | pending | feature | [#2](https://github.com/igrgin/ai-knowledge-base/issues/2); `2-add-minimal-persistence-and-contract-conventions` (planned; not created) |
+| T2 | Migrate/restart a minimal database and verify shared contract conventions | R18, R23 | T1 | T1 | Foundation owner | in_progress | feature | [#2](https://github.com/igrgin/ai-knowledge-base/issues/2); `2-add-minimal-persistence-and-contract-conventions` (created) |
 | T3 | Register, log in/out and retain an authenticated session after restart | R1, R2, R16, R18, R23 | T2 | T2 | Identity slice owner | pending | feature | [#3](https://github.com/igrgin/ai-knowledge-base/issues/3); `3-register-log-in-and-retain-authenticated-sessions` (planned; not created) |
 | T4 | Create/list/open/rename private projects through the UI | R2, R3, R6, R17 | T3 | T3 | Project slice owner | pending | feature | [#4](https://github.com/igrgin/ai-knowledge-base/issues/4); `4-create-and-manage-private-projects` (planned; not created) |
 | T5 | See AI availability/budget status and enforce bounded, idempotent provider spending | R12, R16, R17, R23 | T2 and K0 | T3 | Usage/model slice owner | pending | feature | [#5](https://github.com/igrgin/ai-knowledge-base/issues/5); `5-show-ai-availability-and-enforce-provider-spending-limits` (planned; not created) |
@@ -372,7 +372,7 @@ Each requirement maps to its owning vertical implementation and later integratio
 | C10 no-cache performance | T7/T16 reuse ready embeddings; T13 report mandatory, cache prototype optional only with evidence |
 | C11 retrieval-only exclusion | D12 settled behavior; T20 filter/T9 bounded prior context, T13 checks; no transitive history-filter graph |
 | C12 import/publication operating limits | T16 reuses existing quota/admission/jobs; T17 bounds views; T19 extends one copy pipeline; T13 measures before hosting |
-| Preserve instructions/settings/tools | Preserve current records and native definitions; T1 is delivered in the unmerged PR, later tasks remain pending, and the concurrency proposal is unapplied |
+| Preserve instructions/settings/tools | Preserve current records and native definitions; T1 is merged, T2 is authorized, later tasks remain pending, and the concurrency proposal is unapplied |
 
 ## Local command contract and verification
 
@@ -438,7 +438,7 @@ Counts/quotas, reservations, global admission and archive-grant changes are data
 
 ## Material decisions and unresolved work
 
-Only T1 and its D20/D21 refinements have implementation authority. T2–T20 remain pending and unauthorized; the full task definitions, gates and ownership above govern any later request. The specification owns current behavior and unresolved application-design concerns.
+T1 and its refinements are merged; the current request grants T2 implementation authority only. T3–T20 remain pending and unauthorized; the full task definitions, gates and ownership above govern any later request. The specification owns current behavior and unresolved application-design concerns.
 
 | Input | Current disposition | Affected work |
 | --- | --- | --- |
@@ -453,7 +453,7 @@ Deployment/model/usage allowance choices are separate from development-agent set
 
 ## T1 execution progress
 
-T1 is **completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21)** at `7252f046b96f9a33e94f095f2b8b7790b76785ad`, from setup baseline `b203ffd17063f65f06e0e4bea3cb49e9e68cdc44`. D19 authorized its scope; D20/D21 refined documentation/profiles and native test commands. The user retains approval/manual merge; no later implementation authority follows.
+T1 is **completed in merged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21)**, squash commit `6a3a319876ba69f05c958cc52a4378cbdb9b441c`. D19 authorized its scope; D20/D21 and the later owner amendment refined documentation/profiles, native tests and shared dependency management. Its historical candidate `7252f046b96f9a33e94f095f2b8b7790b76785ad` started from setup baseline `b203ffd17063f65f06e0e4bea3cb49e9e68cdc44`. The current T2 request supplies separate implementation authority.
 
 Delivered scope: Java26/Maven and React/shadcn shell, persistent local pgvector, real database readiness, same-origin packaging, extractor version/build probe, shared/dev/prod/test/lvl2test profiles, and product/startup documentation. PDF extraction, domain tables/Flyway, authentication, AI, the multi-instance harness and hosting remain unimplemented. Implementation was single-writer, with integrator-owned shared records and a fresh report-only reviewer.
 
@@ -468,3 +468,11 @@ Earlier independent bugs/security/requirements review was clear. Historical corr
 T14 / issue #14 uses the `spike` intent label for a developer–agent evaluation and decision, with no implementation-agent handoff, mandatory branch or PR. Its existing start gates, completion prerequisites, model/fixture/version evidence and numerical grounding/citation criteria remain unchanged. Real calls still require a separately authorized credential and token/cost allowance.
 
 Agree the evaluation conclusion with the developer and post a final issue comment covering the question, actual evidence/cost/limits, agreed model or readiness decision, and follow-ups. Verify the comment before marking T14 complete. Keep any useful evaluation documentation deliberately. Required production tooling changes need their own feature/bug scope; prototype success does not establish application readiness. T15 still requires T14 evidence for a real-AI-ready claim; it remains a feature task because it includes runnable-package and integrated verification obligations, not documentation alone.
+
+## T2 execution progress
+
+T2 is **in_progress** on `2-add-minimal-persistence-and-contract-conventions`, based on merged T1 commit `6a3a319876ba69f05c958cc52a4378cbdb9b441c`. The current owner request authorizes implementation, sequential assigned agents and a PR for inspection; no merge, paid calls, hosting or later slice is authorized. Concurrency remains **1**.
+
+Approach: add Boot-managed Flyway/PostgreSQL support through the existing backend/BOM structure; introduce only a minimal migration and a reusable pinned PostgreSQL `lvl2test` fixture; verify clean migration, application restart with the same database and data retention, and safe migration failure. Establish K0 UUID ID/principal/error and short JDBC transaction conventions with consumer checks, publishing the contract under `docs/contracts/`. Identity/session/domain tables and durable job/storage frameworks remain feature-owned. Preserve the owner's T1 removal of the custom production validator and broad `ReadinessIT`; T2 introduces focused migration/contract checks only.
+
+The integrator owns plan/contract publication and integration. Implementation uses GPT-6.1 Sol at high effort for migrations, followed by a fresh report-only GPT-6.1 Sol reviewer at high effort covering bugs, security and requirements. Only one agent executes at a time; the integrator waits during delegated work. Initial review/correction count: not started / **0**. Candidate, actual checks and review evidence will be recorded in the PR.
