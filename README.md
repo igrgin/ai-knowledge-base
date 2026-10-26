@@ -15,14 +15,14 @@ A learning and portfolio project for exploring text PDFs through grounded AI con
 
 ## How it works
 
-The React shell asks the Spring Boot backend for readiness. The backend checks a real PostgreSQL connection and reports whether the workspace runtime is available. In the package, the backend serves both the frontend and its readiness endpoint from the same origin.
+Flyway applies versioned database migrations when the backend starts, currently enabling pgvector without domain tables. The React shell asks the Spring Boot backend for readiness. The backend checks a real PostgreSQL connection and reports whether the workspace runtime is available. In the package, the backend serves both the frontend and its readiness endpoint from the same origin.
 
 | Layer | Stack |
 | --- | --- |
 | Browser | React 19, TypeScript, Vite 8, shadcn/ui |
 | Backend | Java 26, Spring Boot 4.1, Maven Wrapper |
 | Database | PostgreSQL 17, pgvector, Docker Compose |
-| Tests | JUnit, Playwright |
+| Tests | JUnit, Testcontainers/PostgreSQL, Playwright |
 
 ## Run locally
 
@@ -64,12 +64,12 @@ Open [localhost:8080](http://127.0.0.1:8080). For occupied ports or custom datab
 ```sh
 npx --prefix frontend playwright install chromium  # Once per browser version
 npm test --prefix frontend                        # Builds UI; browser tests start their own preview
-./mvnw -Pintegration-tests verify                 # Basic + extractor package integration tests
+./mvnw -Pintegration-tests verify                 # Basic + database/extractor integration tests
 ```
 
 Run the frontend command first: its production build is included in the backend package. Linux may need Playwright's `--with-deps` option when installing Chromium. `./mvnw test` runs only the basic Java tests, without Docker or a full application startup. Use `-pl backend`, `-pl pdf-extractor` or `-pl backend,pdf-extractor` to select Java modules; see [test-level selection](docs/local-development.md#native-tests) for integration-only commands.
 
-Frontend browser tests isolate readiness success, failure and retry with test-only network mocks. Java tests cover the extractor child process and its actual built package. Backend readiness and database lifecycle currently have no automated integration tests. Tests do not call AI providers.
+Frontend browser tests isolate readiness success, failure and retry with test-only network mocks. Java tests cover the shared UUID/principal/error conventions, real PostgreSQL migrations and restart persistence, transaction rollback, failed-migration safety, and the extractor child process and built package. Database integration tests require Docker and use isolated disposable databases on a random port. Tests do not call AI providers.
 
 ## Scope
 

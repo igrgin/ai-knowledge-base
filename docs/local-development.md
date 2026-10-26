@@ -2,7 +2,7 @@
 
 ## Tools
 
-Use Java 26 (`JAVA_HOME` must point to it when configured), Maven Wrapper 3.9.16 and Node 24.22.1/npm 11.19.1. Docker with Compose is required for the local database. The automated tests run without Docker. No global tool installation is changed by the repository.
+Use Java 26 (`JAVA_HOME` must point to it when configured), Maven Wrapper 3.9.16 and Node 24.22.1/npm 11.19.1. Docker with Compose is required for the local database; a running Docker engine is also required for backend integration tests. Basic Java and frontend tests run without Docker. No global tool installation is changed by the repository.
 
 The only optional helper is `./scripts/setup-node`: a self-contained installer that verifies the official Node archive SHA-256 and extracts under ignored `.local/tools`. It needs Python 3, curl and tar. Add the resulting platform directory to PATH; for example:
 
@@ -52,7 +52,7 @@ The backend JAR includes `frontend/dist` as static resources. The separate `pdf-
 java -Xmx256m -jar pdf-extractor/target/pdf-extractor-0.1.0-SNAPSHOT.jar --version
 ```
 
-`docker compose stop db` and `docker compose down` preserve the named `ai-knowledge-base_database` volume. Do not remove user volumes to fix startup. Fresh-volume initialization enables pgvector; there are no application migrations/tables. Changing initialization credentials does not rewrite an existing database.
+`docker compose stop db` and `docker compose down` preserve the named `ai-knowledge-base_database` volume. Do not remove user volumes to fix startup. Flyway runs the versioned migrations during backend startup. Flyway creates its schema history and V1 enables pgvector; there are no domain tables. An existing local volume with pgvector already enabled is supported. Startup fails if the database is unavailable or a migration fails; a running application still reports later database outages through readiness. Changing initialization credentials does not rewrite an existing database.
 
 ## Configuration and profiles
 
@@ -62,10 +62,10 @@ java -Xmx256m -jar pdf-extractor/target/pdf-extractor-0.1.0-SNAPSHOT.jar --versi
 | --- | --- |
 | `dev` | Main resources; local datasource literals; explicitly select in native run commands |
 | `prod` | Main resources; requires SERVER_ADDRESS, SERVER_PORT, DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD; no fallback values |
-| `test` | Test resources; reserved basic-test profile, selected by backend Surefire |
-| `lvl2test` | Test resources; reserved application integration profile, selected by Maven Failsafe |
+| `test` | Test resources; basic-test profile, selected by backend Surefire |
+| `lvl2test` | Test resources; application integration profile, selected by Maven Failsafe |
 
-Prod resolves deployment values through Spring configuration placeholders without fallback values; it overrides base bind settings and uses no dev credentials. Test YAMLs are absent from the distributed runtime. The test profiles remain scaffolding for future backend tests; there is no custom deployment validator.
+Prod resolves deployment values through Spring configuration placeholders without fallback values; it overrides base bind settings and uses no dev credentials. Test YAMLs are absent from the distributed runtime. Backend basic tests use standalone MVC consumers, while integration tests start the application against isolated real PostgreSQL databases. There is no custom deployment validator.
 
 `.env.example` lists local Compose `DB_*` and Java `SPRING_DATASOURCE_*` variables. Compose reads `.env`; Java reads exported environment values. Nothing sources/evaluates `.env`. For custom local database settings, export matching values for both:
 
@@ -90,7 +90,8 @@ npm test --prefix frontend
 
 The explicit Maven `integration-tests` build profile activates Failsafe `*IT` in both Java modules with Spring profile `lvl2test`. This is distinct from the Spring runtime profile. Run the frontend build/test first so the backend package includes the current browser assets.
 
-- Surefire runs `ExtractorLaunchTest`, which checks the extractor Java child contract. `./mvnw test` needs no Docker/full startup.
+- Backend Surefire runs `ApiContractTest`, checking UUID/principal consumption, safe errors and server-generated request IDs with test-only MVC endpoints. Extractor Surefire runs `ExtractorLaunchTest`, checking the Java child contract. `./mvnw test` needs no Docker/full startup.
+- Backend Failsafe runs `PersistenceIT` using the reusable `PostgresIntegrationTest` fixture. It starts the same pinned pgvector/PostgreSQL image as Compose on a random port and creates a fresh database per test. It checks clean migration, adoption of an existing vector extension, actual vector support, application restart/data retention, JDBC commit/rollback and connection release, and failed-migration startup/DDL rollback/data preservation. The restart path also checks the production MVC error envelope over HTTP on a random loopback port. The suite fails rather than silently skipping when Docker is unavailable.
 - Extractor Failsafe runs `ExtractorPackageIT`, launching the actual built JAR with the same Java runtime and bounded heap to check its probe and unsupported-argument exit.
 
 Select modules and test levels independently from the repository root. Omit `-pl` to run the whole reactor, use `-pl backend` or `-pl pdf-extractor` for one Java module, or `-pl backend,pdf-extractor` for both Java modules. Dependency versions remain shared through the BOM and plugin versions through the root parent.
@@ -103,7 +104,7 @@ Select modules and test levels independently from the repository root. Omit `-pl
 
 For example, `./mvnw -pl pdf-extractor -Pintegration-tests -DskipUnitTests=true verify` builds the extractor JAR and runs only `ExtractorPackageIT`. `verify` still performs the earlier compilation/package phases; the flag skips Surefire test execution. `-DskipITs=true` skips Failsafe execution, and `-DskipTests=true` skips both test plugins with the pinned Surefire/Failsafe 3.5.6. Leave `skipUnitTests` unset when using the global skip flag; explicitly setting it overrides Surefire's inherited default from `skipTests`.
 
-There are no backend Java tests at present. Readiness, same-origin frontend serving and database lifecycle remain runtime features without automated backend coverage. Extractor tests terminate only their own children and do not call AI providers. User development data/listeners remain untouched.
+The database fixture owns only its disposable test container and databases; it does not connect to the development volume or bind a fixed host port. Consumer tables and the intentionally broken V2 migration live only in test sources. Extractor tests terminate only their own children. Tests do not call AI providers or alter user development data/listeners.
 
 CI has one `Tests` job: environment/dependency setup, `npm test --prefix frontend`, then `./mvnw -B -Pintegration-tests verify`. No repository/document/PR metadata checks or custom build/test wrappers run there.
 
@@ -111,4 +112,10 @@ CI has one `Tests` job: environment/dependency setup, `npm test --prefix fronten
 
 Core pins remain Boot 4.1.2, Java 26, Maven 3.9.16, Node 24.22.1, React 19.3.1, TypeScript 7.0.2, Vite 8.3.5/plugin 6.1.2 and Playwright 1.64.1. Compose pins pgvector 0.8.7/PostgreSQL 17 by image manifest digest.
 
-The reactor includes a standalone `bom` module (`ai-knowledge-base-bom`) that imports Spring Boot's dependency BOM 4.1.2. Backend and PDF extractor explicitly import the shared BOM; their root parent retains Spring Boot's starter parent for Java/build/plugin defaults, including Failsafe 3.5.6. The BOM has no project parent, avoiding an import/parent cycle, and adds no runtime dependencies. Keep the Boot dependency BOM and starter-parent versions aligned when upgrading. Backend test dependencies were removed with its tests; the extractor retains JUnit. `./mvnw dependency:tree` shows resolved Java dependencies.
+The reactor includes a standalone `bom` module (`ai-knowledge-base-bom`) that imports Spring Boot's dependency BOM 4.1.2. Backend and PDF extractor explicitly import the shared BOM; their root parent retains Spring Boot's starter parent for Java/build/plugin defaults, including Failsafe 3.5.6. The BOM has no project parent, avoiding an import/parent cycle, and adds no runtime dependencies. Keep the Boot dependency BOM and starter-parent versions aligned when upgrading. Backend Flyway and test dependencies use the same Boot BOM: Flyway 12.4.0, Testcontainers 2.0.5 and JUnit 6.0.3. The extractor retains JUnit. `./mvnw dependency:tree` shows resolved Java dependencies.
+
+## Persistence and shared contracts
+
+Flyway is the only schema migration mechanism. Add feature-owned SQL under `backend/src/main/resources/db/migration/` with an integrator-assigned `V<number>__description.sql`; keep applied migrations unchanged and introduce a new additive version for changes. Do not enable automatic baselining or clean an existing database to fix a failure. Inspect and correct the failing migration/configuration while preserving stored data. The database user must be allowed to enable the installed `vector` extension on first startup.
+
+[K0 foundation conventions](contracts/k0-foundation.md) define UUID identity/resource/operation IDs, the authenticated-principal shape, safe MVC errors, and short JDBC transactions. Feature owners add their own tables and publish consumer-reviewed contracts when a real interface is needed. No identity/session, resource ownership, operation deduplication or job processing feature is supplied by this foundation.
