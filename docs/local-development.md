@@ -2,7 +2,7 @@
 
 ## Tools
 
-Use Java 26 (`JAVA_HOME` must point to it when configured), Maven Wrapper 3.9.16 and Node 24.22.1/npm 11.19.1. Docker with Compose is required for the local database and backend integration tests. No global tool installation is changed by the repository.
+Use Java 26 (`JAVA_HOME` must point to it when configured), Maven Wrapper 3.9.16 and Node 24.22.1/npm 11.19.1. Docker with Compose is required for the local database. The automated tests run without Docker. No global tool installation is changed by the repository.
 
 The only optional helper is `./scripts/setup-node`: a self-contained installer that verifies the official Node archive SHA-256 and extracts under ignored `.local/tools`. It needs Python 3, curl and tar. Add the resulting platform directory to PATH; for example:
 
@@ -62,10 +62,10 @@ java -Xmx256m -jar pdf-extractor/target/pdf-extractor-0.1.0-SNAPSHOT.jar --versi
 | --- | --- |
 | `dev` | Main resources; local datasource literals; explicitly select in native run commands |
 | `prod` | Main resources; requires SERVER_ADDRESS, SERVER_PORT, DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD; no fallback values |
-| `test` | Test resources; basic configuration checks without a web application or Docker |
-| `lvl2test` | Test resources; actual full Spring/package integration tests with the real pinned database |
+| `test` | Test resources; reserved basic-test profile, selected by backend Surefire |
+| `lvl2test` | Test resources; reserved application integration profile, selected by Maven Failsafe |
 
-The prod-only validator rejects missing/blank deployment values. Prod overrides base bind values and cannot inherit dev credentials. Test YAMLs and Testcontainers dependencies are absent from the distributed runtime. Production configuration checks bind supplied values locally without hosting anything.
+Prod resolves deployment values through Spring configuration placeholders without fallback values; it overrides base bind settings and uses no dev credentials. Test YAMLs are absent from the distributed runtime. The test profiles remain scaffolding for future backend tests; there is no custom deployment validator.
 
 `.env.example` lists local Compose `DB_*` and Java `SPRING_DATASOURCE_*` variables. Compose reads `.env`; Java reads exported environment values. Nothing sources/evaluates `.env`. For custom local database settings, export matching values for both:
 
@@ -88,16 +88,17 @@ npm test --prefix frontend
 
 `npm test` uses npm's normal `pretest` build hook, then Playwright starts/stops its own Vite preview on loopback 15175. Three isolated browser tests cover successful readiness and retry, HTTP503-to-success recovery, and connection failure. These mocks exist only in Playwright; application code always calls the real readiness endpoint.
 
-The explicit Maven `integration-tests` build profile activates Failsafe `*IT` in both Java modules with Spring profile `lvl2test`. This is distinct from the Spring runtime profile. Run the frontend build/test first because the packaged-backend test verifies that actual HTML and JS assets are served from its origin.
+The explicit Maven `integration-tests` build profile activates Failsafe `*IT` in both Java modules with Spring profile `lvl2test`. This is distinct from the Spring runtime profile. Run the frontend build/test first so the backend package includes the current browser assets.
 
-- Surefire basic tests use Spring `test`: production missing/complete environment binding, no implicit dev configuration, plus the extractor Java child contract. `./mvnw test` needs no Docker/full startup.
-- Backend Failsafe starts the actual Java 26 packaged application with external test-only `lvl2test` configuration and an owned pinned pgvector Testcontainer. It verifies same-origin HTML/JS, real HTTP readiness, vector SQL, database stop/recovery, a SQL sentinel surviving an ordinary container restart, and application-process restart.
-- Extractor Failsafe launches the actual built JAR with the same Java runtime and bounded heap, checking its probe and unsupported-argument exit.
+- Surefire runs `ExtractorLaunchTest`, which checks the extractor Java child contract. `./mvnw test` needs no Docker/full startup.
+- Extractor Failsafe runs `ExtractorPackageIT`, launching the actual built JAR with the same Java runtime and bounded heap to check its probe and unsupported-argument exit.
 
-Browser rendering is tested independently from real database/process behavior; there is no combined browser/database orchestrator. Tests do not call AI providers. Testcontainers owns cleanup, and the application IT terminates only its child. User development data/listeners remain untouched.
+There are no backend Java tests at present. Readiness, same-origin frontend serving and database lifecycle remain runtime features without automated backend coverage. Extractor tests terminate only their own children and do not call AI providers. User development data/listeners remain untouched.
 
 CI has one `Tests` job: environment/dependency setup, `npm test --prefix frontend`, then `./mvnw -B -Pintegration-tests verify`. No repository/document/PR metadata checks or custom build/test wrappers run there.
 
 ## Compatibility
 
-Core pins remain Boot 4.1.2, Java 26, Maven 3.9.16, Node 24.22.1, React 19.3.1, TypeScript 7.0.2, Vite 8.3.5/plugin 6.1.2 and Playwright 1.64.1. Compose and Testcontainers use the same pgvector 0.8.7/PostgreSQL 17 image manifest digest. Testcontainers 2.0.5 and Failsafe 3.5.6 come from the Boot BOM. `./mvnw dependency:tree` shows resolved Java dependencies. No dependency version changed for the command simplification.
+Core pins remain Boot 4.1.2, Java 26, Maven 3.9.16, Node 24.22.1, React 19.3.1, TypeScript 7.0.2, Vite 8.3.5/plugin 6.1.2 and Playwright 1.64.1. Compose pins pgvector 0.8.7/PostgreSQL 17 by image manifest digest.
+
+The reactor includes a standalone `bom` module (`ai-knowledge-base-bom`) that imports Spring Boot's dependency BOM 4.1.2. Backend and PDF extractor explicitly import the shared BOM; their root parent retains Spring Boot's starter parent for Java/build/plugin defaults, including Failsafe 3.5.6. The BOM has no project parent, avoiding an import/parent cycle, and adds no runtime dependencies. Keep the Boot dependency BOM and starter-parent versions aligned when upgrading. Backend test dependencies were removed with its tests; the extractor retains JUnit. `./mvnw dependency:tree` shows resolved Java dependencies.

@@ -22,7 +22,7 @@ The React shell asks the Spring Boot backend for readiness. The backend checks a
 | Browser | React 19, TypeScript, Vite 8, shadcn/ui |
 | Backend | Java 26, Spring Boot 4.1, Maven Wrapper |
 | Database | PostgreSQL 17, pgvector, Docker Compose |
-| Tests | JUnit, Testcontainers, Playwright |
+| Tests | JUnit, Playwright |
 
 ## Run locally
 
@@ -64,12 +64,12 @@ Open [localhost:8080](http://127.0.0.1:8080). For occupied ports or custom datab
 ```sh
 npx --prefix frontend playwright install chromium  # Once per browser version
 npm test --prefix frontend                        # Builds UI; browser tests start their own preview
-./mvnw -Pintegration-tests verify                 # Basic + real database/package integration tests
+./mvnw -Pintegration-tests verify                 # Basic + extractor package integration tests
 ```
 
 Run the frontend command first: its production build is included in the backend package. Linux may need Playwright's `--with-deps` option when installing Chromium. `./mvnw test` runs only the basic Java tests, without Docker or a full application startup.
 
-Frontend browser tests isolate readiness success, failure and retry with test-only network mocks. Backend integration tests use the real packaged Spring application and PostgreSQL to verify same-origin frontend assets, readiness, outage/recovery, retained data and application restart. Extractor tests launch its actual Java package. Tests do not call AI providers.
+Frontend browser tests isolate readiness success, failure and retry with test-only network mocks. Java tests cover the extractor child process and its actual built package. Backend readiness and database lifecycle currently have no automated integration tests. Tests do not call AI providers.
 
 ## Scope
 
