@@ -20,9 +20,19 @@
     <java.version>26</java.version>
     <skipTests>false</skipTests>
     <skipUnitTests>${skipTests}</skipUnitTests>
+    <skipFrontendTests>${skipTests}</skipFrontendTests>
     <project.build.outputTimestamp>2026-10-25T00:00:00Z</project.build.outputTimestamp>
   </properties>
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.6.4</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

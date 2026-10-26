@@ -28,7 +28,5 @@ jobs:
         run: |
           npm ci --prefix frontend
           npx --prefix frontend playwright install --with-deps chromium
-      - name: Frontend tests
-        run: npm test --prefix frontend
-      - name: Backend tests
+      - name: Verify application
         run: ./mvnw -B -Pintegration-tests verify
