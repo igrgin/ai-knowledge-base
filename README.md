@@ -52,7 +52,6 @@ Open [localhost:5173](http://127.0.0.1:5173). Stop each app with Ctrl-C; `docker
 To build and run the single-origin package:
 
 ```sh
-npm run build --prefix frontend
 ./mvnw package
 java -jar backend/target/backend-0.1.0-SNAPSHOT.jar --spring.profiles.active=dev
 ```
@@ -62,12 +61,12 @@ Open [localhost:8080](http://127.0.0.1:8080). For occupied ports or custom datab
 ## Test and build
 
 ```sh
+npm ci --prefix frontend
 npx --prefix frontend playwright install chromium  # Once per browser version
-npm test --prefix frontend                        # Builds UI; browser tests start their own preview
-./mvnw -Pintegration-tests verify                 # Basic + database/extractor integration tests
+./mvnw -Pintegration-tests verify                   # Java basic/integration + browser tests
 ```
 
-Run the frontend command first: its production build is included in the backend package. Linux may need Playwright's `--with-deps` option when installing Chromium. `./mvnw test` runs only the basic Java tests, without Docker or a full application startup. Use `-pl backend`, `-pl pdf-extractor` or `-pl backend,pdf-extractor` to select Java modules; see [test-level selection](docs/local-development.md#native-tests) for integration-only commands.
+Maven installs locked frontend dependencies, builds current assets before packaging, and runs the browser suite once. Node/npm must be on PATH; browser installation remains a separate setup step. Linux may need Playwright's `--with-deps` option when installing Chromium. `./mvnw test` runs Java basic and browser tests without Docker or a full application startup. Native `npm test --prefix frontend` remains available for frontend-only work and builds the UI first. Use `-pl backend`, `-pl pdf-extractor` or `-pl backend,pdf-extractor` to select modules; the extractor alone needs no Node. See [test-level selection](docs/local-development.md#native-tests) for skip and integration-only commands.
 
 Frontend browser tests isolate readiness success, failure and retry with test-only network mocks. Java tests cover the shared UUID/error conventions, real PostgreSQL migrations and restart persistence, transaction rollback, failed-migration safety, and the extractor child process and built package. Integration test classes use the `*ITests` suffix and Spring profile `itest`. Database integration tests require Docker and use isolated disposable databases on a random port. Tests do not call AI providers.
 

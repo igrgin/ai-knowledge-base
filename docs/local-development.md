@@ -38,10 +38,9 @@ APP_PORT=18081 FRONTEND_PORT=15173 npm run dev --prefix frontend
 
 Stop the processes with Ctrl-C. They run directly through their standard tools; there is no combined launcher. Backend Java edits require a restart; Vite reloads frontend changes.
 
-Build the frontend before packaging the Maven reactor:
+Package the Maven reactor; backend packaging installs locked frontend dependencies and builds fresh assets:
 
 ```sh
-npm run build --prefix frontend
 ./mvnw package
 SERVER_PORT=18081 java -jar backend/target/backend-0.1.0-SNAPSHOT.jar --spring.profiles.active=dev
 ```
@@ -82,13 +81,18 @@ export SPRING_DATASOURCE_USERNAME="$DB_USER" SPRING_DATASOURCE_PASSWORD="$DB_PAS
 ```sh
 npm ci --prefix frontend
 npx --prefix frontend playwright install chromium
-npm test --prefix frontend
 ./mvnw -Pintegration-tests verify
 ```
 
-`npm test` uses npm's normal `pretest` build hook, then Playwright starts/stops its own Vite preview on loopback 15175. Three isolated browser tests cover successful readiness and retry, HTTP503-to-success recovery, and connection failure. These mocks exist only in Playwright; application code always calls the real readiness endpoint.
+Prepare Chromium once per Playwright version using the first two commands; Linux may require `playwright install --with-deps chromium`. Maven does not install Node, browsers or OS packages.
 
-The explicit Maven `integration-tests` build profile activates Failsafe `*ITests` in both Java modules with Spring profile `itest`. Surefire excludes `*ITests` so basic tests remain Docker-free. The Maven profile is distinct from the Spring runtime profile. Run the frontend build/test first so the backend package includes the current browser assets.
+Its backend module runs `npm ci --engine-strict --include=dev` at `initialize`, `npm run build` at `generate-resources`, and `npm --ignore-scripts test` at `test`. The existing package test script runs once; suppressing pre/post hooks here avoids a second build.
+
+Native `npm test --prefix frontend` remains the frontend-only command: its normal `pretest` hook builds once. Future essential test setup must live in the main test script or Playwright configuration.
+
+Playwright starts/stops its own Vite preview on loopback 15175. Three isolated browser tests cover successful readiness and retry, HTTP503-to-success recovery, and connection failure. These mocks exist only in Playwright; application code always calls the real readiness endpoint.
+
+The explicit Maven `integration-tests` build profile activates Failsafe `*ITests` in both Java modules with Spring profile `itest`. Surefire excludes `*ITests` so basic tests remain Docker-free. The Maven profile is distinct from the Spring runtime profile. The backend builds frontend assets before resource copying, including when tests are skipped. Its npm executions are absent from the extractor and BOM. Backend selection therefore requires the project Node/npm on PATH even for Java-only tests; strict engine and lockfile checks fail the Maven build on drift.
 
 - Backend Surefire runs `ApiContractTest`, checking UUID resource/operation consumption, safe errors and server-generated request IDs with test-only MVC endpoints. Extractor Surefire runs `ExtractorLaunchTest`, checking the Java child contract. `./mvnw test` needs no Docker/full startup.
 - Backend Failsafe runs `PersistenceITests` and `ExistingVectorITests` with nonweb `@SpringBootTest` contexts, checking clean migration/vector support, UUID persistence, transaction commit/rollback/release, and adoption of a vector extension installed before application startup. `PostgresIntegrationTest` supplies the same pinned pgvector/PostgreSQL image as Compose on a random port. Each Boot test class creates its own database through `@DynamicPropertySource` and closes/removes its cached context with `@DirtiesContext` after the class, so a context cannot be reused against a stopped container. `PersistenceLifecycleITests` creates a fresh database per test and controls application startup explicitly to check restart/data retention and failed-migration startup/DDL rollback/data preservation. Its restart path also checks the production missing-route error envelope over HTTP on random loopback ports. The suite fails rather than silently skipping when Docker is unavailable.
@@ -97,17 +101,25 @@ The explicit Maven `integration-tests` build profile activates Failsafe `*ITests
 
 Select modules and test levels independently from the repository root. Omit `-pl` to run the whole reactor, use `-pl backend` or `-pl pdf-extractor` for one Java module, or `-pl backend,pdf-extractor` for both Java modules. Dependency versions remain shared through the BOM and plugin versions through the root parent.
 
-| Test level | Native Maven command (add the desired `-pl` selection) |
+| Selection | Native command |
 | --- | --- |
-| Basic tests only (Surefire) | `./mvnw test` |
-| Basic and integration tests (Surefire + Failsafe) | `./mvnw -Pintegration-tests verify` |
-| Integration tests only (Failsafe) | `./mvnw -Pintegration-tests -DskipUnitTests=true verify` |
+| Java basic + browser tests, no Docker | `./mvnw test` |
+| Java basic + browser + Java integration tests | `./mvnw -Pintegration-tests verify` |
+| Backend basic + browser tests | `./mvnw -pl backend test` |
+| Extractor basic only, no Node required | `./mvnw -pl pdf-extractor test` |
+| Java basic only; frontend assets still built | `./mvnw -DskipFrontendTests=true test` |
+| Browser tests via Maven, no Java test execution | `./mvnw -pl backend -DskipUnitTests=true test` |
+| Java integration only; frontend assets still built | `./mvnw -Pintegration-tests -DskipUnitTests=true -DskipFrontendTests=true verify` |
+| Basic/browser checks and packages, no Java integration | `./mvnw -Pintegration-tests -DskipITs=true verify` |
+| Package without Java/browser test execution | `./mvnw -DskipTests=true package` |
 
-For example, `./mvnw -pl pdf-extractor -Pintegration-tests -DskipUnitTests=true verify` builds the extractor JAR and runs only `ExtractorPackageITests`. `verify` still performs the earlier compilation/package phases; the flag skips Surefire test execution. `-DskipITs=true` skips Failsafe execution, and `-DskipTests=true` skips both test plugins with the pinned Surefire/Failsafe 3.5.6. Leave `skipUnitTests` unset when using the global skip flag; explicitly setting it overrides Surefire's inherited default from `skipTests`.
+`verify` still performs earlier compilation/package phases. `skipUnitTests` controls Java Surefire only, `skipITs` controls Failsafe only, and `skipFrontendTests` controls browser execution only. Both `skipUnitTests` and `skipFrontendTests` default to `skipTests`; leave narrower flags unset for a global skip, since explicit overrides win. `maven.test.skip` is not the browser skip contract. For example, `./mvnw -pl pdf-extractor -Pintegration-tests -DskipUnitTests=true verify` builds the extractor JAR and runs only `ExtractorPackageITests`.
+
+`./mvnw clean` removes Maven targets plus generated frontend `dist`, `test-results`, `playwright-report` and root `*.tsbuildinfo`. It preserves source, manifests/lockfiles, `node_modules`, npm/browser caches, local runtimes and private application data. The next `npm ci` recreates `node_modules`. Do not run two Maven invocations against this checkout's frontend concurrently: they share generated files and preview port 15175.
 
 The database fixture owns only its disposable test container and databases; it does not connect to the development volume or bind a fixed host port. Consumer tables and the intentionally broken V2 migration live only in test sources. Extractor tests terminate only their own children. Tests do not call AI providers or alter user development data/listeners.
 
-CI has one `Tests` job: environment/dependency setup, `npm test --prefix frontend`, then `./mvnw -B -Pintegration-tests verify`. No repository/document/PR metadata checks or custom build/test wrappers run there.
+CI has one `Tests` job: Java/Node setup, `npm ci` and Playwright browser/OS dependency preparation, then the single `./mvnw -B -Pintegration-tests verify` entry point. There is one frontend build and browser run. The preparation install and Maven install both run deliberately; npm download caching helps, while each install validates the lockfile. No repository/document/PR metadata checks or custom build/test wrappers run there.
 
 ## Compatibility
 
