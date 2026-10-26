@@ -15,9 +15,9 @@ import org.springframework.test.context.DynamicPropertySource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = KnowledgeBaseApplication.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ActiveProfiles("lvl2test")
+@ActiveProfiles("itest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class ExistingVectorIT extends PostgresIntegrationTest {
+class ExistingVectorITests extends PostgresIntegrationTest {
     @Autowired private Flyway flyway;
     @Autowired private JdbcClient jdbc;
 

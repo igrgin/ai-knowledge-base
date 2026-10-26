@@ -25,11 +25,11 @@ import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {KnowledgeBaseApplication.class, ErrorRepresentationIT.HttpConsumer.class},
+@SpringBootTest(classes = {KnowledgeBaseApplication.class, ErrorRepresentationITests.HttpConsumer.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("lvl2test")
+@ActiveProfiles("itest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class ErrorRepresentationIT extends PostgresIntegrationTest {
+class ErrorRepresentationITests extends PostgresIntegrationTest {
     @LocalServerPort private int port;
 
     @DynamicPropertySource

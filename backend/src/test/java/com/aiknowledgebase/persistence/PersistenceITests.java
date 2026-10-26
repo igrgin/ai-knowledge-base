@@ -21,9 +21,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = KnowledgeBaseApplication.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ActiveProfiles("lvl2test")
+@ActiveProfiles("itest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class PersistenceIT extends PostgresIntegrationTest {
+class PersistenceITests extends PostgresIntegrationTest {
     @Autowired private JdbcClient jdbc;
     @Autowired private Flyway flyway;
     @Autowired private PlatformTransactionManager transactionManager;

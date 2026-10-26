@@ -23,7 +23,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PersistenceLifecycleIT extends PostgresIntegrationTest {
+class PersistenceLifecycleITests extends PostgresIntegrationTest {
     @Test
     void cleanMigrationThenApplicationRestartKeepsSchemaAndCommittedUuidData() throws Exception {
         Database database = freshDatabase();
@@ -91,7 +91,7 @@ class PersistenceLifecycleIT extends PostgresIntegrationTest {
 
     private ConfigurableApplicationContext start(Database database, WebApplicationType webType, String... extraArgs) {
         List<String> args = new ArrayList<>(List.of(
-                "--spring.profiles.active=lvl2test", "--spring.main.banner-mode=off",
+                "--spring.profiles.active=itest", "--spring.main.banner-mode=off",
                 "--spring.datasource.url=" + database.url(),
                 "--spring.datasource.username=" + database.username(),
                 "--spring.datasource.password=" + database.password()));

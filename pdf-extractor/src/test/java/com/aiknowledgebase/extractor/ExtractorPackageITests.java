@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ExtractorPackageIT {
+class ExtractorPackageITests {
     @Test
     void packagedChildUsesJava26AndRejectsUnsupportedExtraction() throws Exception {
         String java = Path.of(System.getProperty("java.home"), "bin", "java").toString();
