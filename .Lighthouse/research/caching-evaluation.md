@@ -61,6 +61,6 @@ The owner subsequently required a scalable design and supplied no fixed traffic/
 
 ## Project sources
 
-- `spec.md`, especially R2, R5, R7, R10, R12, R13, R15, R17 and designs D-B, D-D, D-F and D-H.
+- [Current specification](../scopes/initial-application/spec.md), especially R2, R5, R7, R10, R12, R13, R15, R17 and designs D-B, D-D, D-F and D-H.
 - [Current task list](../scopes/initial-application/plan.md#revised-task-list), especially T5/T7 model work, T20 source rules, T18/T10 file/citation viewing, and T13/T14 measurement.
 - Current conversation request to evaluate Redis versus caching inside Spring Boot, 2026-10-24, `codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39`.

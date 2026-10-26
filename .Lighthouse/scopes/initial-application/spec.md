@@ -11,7 +11,7 @@ These links identify the current documents and relevant sections. The planning c
 | Source | Current section or identifying information | Relevant content |
 | --- | --- | --- |
 | [Intent](intent.md#desired-outcome) | Desired outcome and Constraints | Current consolidated product purpose and owner-selected behavior |
-| [Planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39) | D1–D13 owner directions | Continuing owner directions and explicit later replacements; no alternative plan copies |
+| [Planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39) | 2026-10-24 acceptance (D4): “I accept the requirements and design. Use lighthouse-plan to create an implementation plan for the local v1, keeping hosting optional for later.” | Design/planning authority with later scoped owner amendments reflected below; no implementation permission |
 | [Cost research](../../research/costs.md#owner-choices-and-delivery-phases) | Owner choices, local/optional hosted phases and dated calculations | Budget scenarios and provider/retention caveats; not spending authority |
 | [Scalability research](../../research/scalability-evaluation.md#target-shape) | Target shape and Proposed experiments | Supporting primary sources and measurable growth-path experiments |
 | [Caching research](../../research/caching-evaluation.md#recommendation) | Recommendation and Measurement and follow-up | No-cache baseline, persisted embedding reuse and optional evidence-based optimization |

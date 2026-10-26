@@ -2,7 +2,7 @@
 
 ## Development-agent assignments
 
-The owner selected these project settings under D14 in the [planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39).
+The owner selected these project settings in the [planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39) on 2026-10-24 (D14): “For agents though, I accept the proposed assignments.” The same message limits this to assignments: “Like just let's have the assignments be assignments and that's it.”
 
 | Role | Assignment | Workload adjustment |
 | --- | --- | --- |

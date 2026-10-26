@@ -94,4 +94,4 @@ The proposed deployment region is Europe for app/database/files. This does not a
 
 ## Owner choices
 
-`project-owner` has selected optional later managed hosting, the $15–20 monthly target, and archive-only individual PDF handling. Proposed quotas, backup retention, AI model quality gates, and any account-email workflow remain identified in `spec.md`. Budget allocations are design choices, not authorization to create resources or incur charges.
+`project-owner` has selected optional later managed hosting, the $15–20 monthly target, and archive-only individual PDF handling. Proposed quotas, backup retention, AI model quality gates, and any account-email workflow remain identified in the [current specification](../scopes/initial-application/spec.md). Budget allocations are design choices, not authorization to create resources or incur charges.
