@@ -2,7 +2,7 @@
 
 ## Development-agent assignments
 
-The owner selected these project settings under D14 in the [historical decision index in Git](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). The index was removed from the current records; this link preserves the original decision provenance.
+The owner selected these project settings under D14 in the [planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39).
 
 | Role | Assignment | Workload adjustment |
 | --- | --- | --- |

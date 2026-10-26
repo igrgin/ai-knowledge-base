@@ -2,16 +2,16 @@
 
 ## Current scope and sources
 
-`change.json` was removed from the current records. Original human decisions and their covered scopes remain available in its [historical version in Git](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use the current [plan](plan.md#revised-task-list) for task authority and progress.
+The current [intent](intent.md), [specification](spec.md) and [plan](plan.md#revised-task-list) define this scope. Original owner directions came from the [planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39); the plan records task authority and progress.
 
 ## Sources
 
-These links identify the current documents and relevant sections. The linked historical decision source retains the original owner-message sources; source navigation does not manufacture approval of later edits or authorize implementation.
+These links identify the current documents and relevant sections. The planning conversation supplies the original owner directions; source navigation does not manufacture approval of later edits or authorize implementation.
 
 | Source | Current section or identifying information | Relevant content |
 | --- | --- | --- |
 | [Intent](intent.md#desired-outcome) | Desired outcome and Constraints | Current consolidated product purpose and owner-selected behavior |
-| [Historical owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | Removed index at a fixed Git commit; D1–D13, with original conversation locators/selectors | Continuing owner directions and explicit later replacements; no alternative plan copies |
+| [Planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39) | D1–D13 owner directions | Continuing owner directions and explicit later replacements; no alternative plan copies |
 | [Cost research](../../research/costs.md#owner-choices-and-delivery-phases) | Owner choices, local/optional hosted phases and dated calculations | Budget scenarios and provider/retention caveats; not spending authority |
 | [Scalability research](../../research/scalability-evaluation.md#target-shape) | Target shape and Proposed experiments | Supporting primary sources and measurable growth-path experiments |
 | [Caching research](../../research/caching-evaluation.md#recommendation) | Recommendation and Measurement and follow-up | No-cache baseline, persisted embedding reuse and optional evidence-based optimization |
@@ -357,4 +357,4 @@ All concerns belong to `project-owner` unless the owner names an actual platform
 | C11: retrieval-only exclusion verification | Resolved product choice under D12; actual behavior still needs tests | Keep bounded prior conversation context and history/citations; filter only fresh retrieval, explain that earlier discussion may influence answers, and fence stale retrieved-source publication. No transitive context-filter graph | project-owner | R28, D-D/D-L, T8/T9/T13 |
 | C12: import/publication operating limits | Quotas exist but copy cost and link-import/public-view rates are unmeasured | Copy within existing account/global limits; bound queues/rates, use explicit owner actions and idempotency; measure T13 before hosted exposure. In-app invitations avoid a mail-service dependency | project-owner | R26–R27, T16/T17/T13; hosted operations remain later |
 
-Original acceptances remain recoverable in the historical decision source linked above. D7–D11 provide the scoped architecture/product directions incorporated here. C11 is resolved by D12; remaining implementation details, including C12, are ready for owner review; no full-document acceptance is inferred from answers to individual questions. D19 subsequently accepts and authorizes the bounded T1 increment at the committed setup baseline. Its implementation/review evidence is in the current plan; T2–T20 remain pending and unauthorized. No broader plan acceptance is inferred. Hosting is optional later; no publication, deployment or paid work is authorized by these records.
+Original acceptances are recorded in the planning conversation linked above. D7–D11 provide the scoped architecture/product directions incorporated here. C11 is resolved by D12; remaining implementation details, including C12, are ready for owner review; no full-document acceptance is inferred from answers to individual questions. D19 subsequently accepts and authorizes the bounded T1 increment at the committed setup baseline. Its implementation/review evidence is in the current plan; T2–T20 remain pending and unauthorized. No broader plan acceptance is inferred. Hosting is optional later; no publication, deployment or paid work is authorized by these records.

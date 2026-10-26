@@ -2,7 +2,7 @@
 
 ## Current scope and sources
 
-`change.json` was removed from the current records. Original human decisions and their covered scopes remain available in its [historical version in Git](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use the current [plan](plan.md#revised-task-list) for task authority and progress.
+The current [intent](intent.md), [specification](spec.md) and [plan](plan.md#revised-task-list) define this scope. Original owner directions came from the [planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39); the plan records task authority and progress.
 
 ## Problem
 
@@ -47,4 +47,4 @@ No OCR, non-PDF ingestion, individual file delete, live project collaboration, w
 
 ## Open questions and dispositions
 
-Product choices are consolidated above and in the [specification](spec.md). Remaining technical concerns are in [the specification's concerns](spec.md#concerns); fixtures, capacity evidence, provider access and task authority are tracked in the [plan](plan.md#material-decisions-and-unresolved-work). Original human decisions remain in the historical decision source linked above.
+Product choices are consolidated above and in the [specification](spec.md). Remaining technical concerns are in [the specification's concerns](spec.md#concerns); fixtures, capacity evidence, provider access and task authority are tracked in the [plan](plan.md#material-decisions-and-unresolved-work). Original owner directions are recorded in the planning conversation linked above.

@@ -2,7 +2,7 @@
 
 ## Current scope and sources
 
-`change.json` was removed from the current records. Original human decisions and their covered scopes remain available in its [historical version in Git](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use the current [plan](plan.md#revised-task-list) for task authority and progress.
+The current [intent](intent.md), [specification](spec.md) and [plan](plan.md#revised-task-list) define this scope. Original owner directions came from the [planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39); the plan records task authority and progress.
 
 Only T1 and its D20/D21 refinements were authorized for implementation. T1 is completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2–T20 remain pending and unauthorized.
 
@@ -15,7 +15,7 @@ Only T1 and its D20/D21 refinements were authorized for implementation. T1 is co
 | [Intent](intent.md#desired-outcome) | Desired outcome and Constraints | Consolidated product purpose and owner-selected scope |
 | [Cost research](../../research/costs.md#owner-choices-and-delivery-phases) | Delivery phases and dated cost scenarios | Optional later hosting, application AI allowance proposal and retention boundaries; not permission to spend |
 | [Scalability research](../../research/scalability-evaluation.md#target-shape), [caching research](../../research/caching-evaluation.md#recommendation) | Supporting research and measurement guidance | Evidence behind the selected scalable, initially no-cache design |
-| [Historical owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | Removed index at a fixed Git commit; original source locators/selectors for D1–D14 | Continuing product/planning directions, including vertical slices; source provenance does not mean implementation permission |
+| [Planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39) | D1–D14 owner directions | Continuing product/planning directions, including vertical slices; source provenance does not mean implementation permission |
 | `AGENTS.md`, `.Lighthouse/settings/project.md` | Repository navigation and selected agent settings | Native task definitions own commands; Lighthouse supplies workflow/review defaults; application constraints and missing platform inputs remain in the specification |
 | Lighthouse GitHub defaults, Lighthouse review defaults, [agent assignments](../../settings/project.md#development-agent-assignments), native task definitions and local-development guidance | D14 owner-selected setup/review/model rules and project Codex-config removal | Local policy adoption only; repository resources, commits and implementation still require their own authorization |
 
@@ -23,7 +23,7 @@ Implement the full local application: public-style registration/login, private p
 
 The revised local-v1 proposal also includes invitation/link project imports, optional copied chats, revocable read-only transcript snapshots, archive/unarchive, per-chat source exclusions and a library PDF reader. There is no live collaboration or shared editable project. Hosting, cloud accounts, S3 deployment, custom domains, email delivery/verification/recovery services, production permissions, paid hosting benchmarks and release operations remain optional later work. Local storage implements the file-store interface; an actual S3 adapter is not needed to finish local v1. No OCR, individual PDF deletion, live collaboration, hosted vector store, answer streaming, or general web-search feature is added. Public snapshot mode is an access rule that can be tested locally; it does not require publishing the local application to the internet.
 
-The current intent/spec/plan are authoritative for their stated scope. Historical human decisions remain recoverable through the original decision-source links. D19 supplies acceptance and implementation authority for T1 at its committed setup baseline, without authorizing other tasks.
+The current intent/spec/plan are authoritative for their stated scope. The planning conversation supplies the original owner directions. D19 supplies acceptance and implementation authority for T1 at its committed setup baseline, without authorizing other tasks.
 
 This is the single current implementation plan. It consolidates the owner directions in D1–D13. Stable IDs T1–T17 and split slices T18–T20 describe the current work; task numbers do not imply execution order. Repository/issue setup is complete. D19 authorizes only T1 on 2026-10-25; T1 and its D20/D21 revisions are completed in PR #21, with owner approval/manual merge pending; T2–T20 remain pending and unauthorized. The current concurrency limit remains 1; no hosting or paid work is authorized.
 
