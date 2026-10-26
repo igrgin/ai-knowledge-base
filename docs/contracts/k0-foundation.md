@@ -14,7 +14,7 @@ Each HTTP attempt also gets a new server-generated correlation UUID from `Reques
 
 ## Safe MVC errors
 
-Handled Spring MVC failures return JSON with exactly `code`, `message` and `requestId`. The server-generated `requestId` matches `X-Request-ID`. `com.aiknowledgebase.shared.ErrorCode` defines the stable codes and safe messages without importing HTTP or Spring types. Application consumers throw `ApplicationException(ErrorCode)`; `shared.web.ApiExceptionHandler` maps each code to an explicit HTTP status. The web adapter selects framework codes by exception kind, never by status. `INVALID_REQUEST` and `REQUEST_BODY_UNREADABLE` deliberately share HTTP 400 while identifying different corrections.
+Handled Spring MVC failures return `application/json` with exactly `code`, `message` and `requestId`, including when the request Accept header excludes JSON; success-response negotiation is unaffected. The server-generated `requestId` matches `X-Request-ID`. `com.aiknowledgebase.shared.ErrorCode` defines the stable codes and safe messages without importing HTTP or Spring types. Application consumers throw `ApplicationException(ErrorCode)`; `shared.web.ApiExceptionHandler` maps each code to an explicit HTTP status. The web adapter selects framework codes by exception kind, never by status. `INVALID_REQUEST` and `REQUEST_BODY_UNREADABLE` deliberately share HTTP 400 while identifying different corrections.
 
 | Code | HTTP status | Safe public message |
 | --- | --- | --- |
