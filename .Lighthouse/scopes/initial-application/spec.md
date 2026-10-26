@@ -2,7 +2,7 @@
 
 ## Current scope and sources
 
-Original human decisions and their covered scopes are in the [decision source](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use the current [plan](plan.md#revised-task-list) for task authority and progress.
+`change.json` was removed from the current records. Original human decisions and their covered scopes remain available in its [historical version in Git](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use the current [plan](plan.md#revised-task-list) for task authority and progress.
 
 ## Sources
 
@@ -11,7 +11,7 @@ These links identify the current documents and relevant sections. The linked his
 | Source | Current section or identifying information | Relevant content |
 | --- | --- | --- |
 | [Intent](intent.md#desired-outcome) | Desired outcome and Constraints | Current consolidated product purpose and owner-selected behavior |
-| [Owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | D1–D13, with original conversation locators/selectors | Continuing owner directions and explicit later replacements; no alternative plan copies |
+| [Historical owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | Removed index at a fixed Git commit; D1–D13, with original conversation locators/selectors | Continuing owner directions and explicit later replacements; no alternative plan copies |
 | [Cost research](../../research/costs.md#owner-choices-and-delivery-phases) | Owner choices, local/optional hosted phases and dated calculations | Budget scenarios and provider/retention caveats; not spending authority |
 | [Scalability research](../../research/scalability-evaluation.md#target-shape) | Target shape and Proposed experiments | Supporting primary sources and measurable growth-path experiments |
 | [Caching research](../../research/caching-evaluation.md#recommendation) | Recommendation and Measurement and follow-up | No-cache baseline, persisted embedding reuse and optional evidence-based optimization |

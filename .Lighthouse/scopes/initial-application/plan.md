@@ -2,7 +2,7 @@
 
 ## Current scope and sources
 
-Original human decisions and their covered scopes are in the [decision source](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use the current [plan](plan.md#revised-task-list) for task authority and progress.
+`change.json` was removed from the current records. Original human decisions and their covered scopes remain available in its [historical version in Git](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json). Use the current [plan](plan.md#revised-task-list) for task authority and progress.
 
 Only T1 and its D20/D21 refinements were authorized for implementation. T1 is completed in unmerged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2–T20 remain pending and unauthorized.
 
@@ -15,7 +15,7 @@ Only T1 and its D20/D21 refinements were authorized for implementation. T1 is co
 | [Intent](intent.md#desired-outcome) | Desired outcome and Constraints | Consolidated product purpose and owner-selected scope |
 | [Cost research](../../research/costs.md#owner-choices-and-delivery-phases) | Delivery phases and dated cost scenarios | Optional later hosting, application AI allowance proposal and retention boundaries; not permission to spend |
 | [Scalability research](../../research/scalability-evaluation.md#target-shape), [caching research](../../research/caching-evaluation.md#recommendation) | Supporting research and measurement guidance | Evidence behind the selected scalable, initially no-cache design |
-| [Owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | Original source locators/selectors for D1–D14 | Continuing product/planning directions, including vertical slices; source provenance does not mean implementation permission |
+| [Historical owner decision references](https://github.com/igrgin/ai-knowledge-base/blob/7252f046b96f9a33e94f095f2b8b7790b76785ad/docs/changes/20261023-ai-knowledge-base/change.json) | Removed index at a fixed Git commit; original source locators/selectors for D1–D14 | Continuing product/planning directions, including vertical slices; source provenance does not mean implementation permission |
 | `AGENTS.md`, `.Lighthouse/settings/project.md` | Repository navigation and selected agent settings | Native task definitions own commands; Lighthouse supplies workflow/review defaults; application constraints and missing platform inputs remain in the specification |
 | Lighthouse GitHub defaults, Lighthouse review defaults, [agent assignments](../../settings/project.md#development-agent-assignments), native task definitions and local-development guidance | D14 owner-selected setup/review/model rules and project Codex-config removal | Local policy adoption only; repository resources, commits and implementation still require their own authorization |
 
@@ -274,7 +274,7 @@ This matrix restricts ownership rather than granting blanket access to shared pa
 3. Before merging, rebase on the integration baseline, assign the final unused version/name, and rerun clean-schema plus upgrade-from-baseline checks. An unapplied/disposable-branch migration may be renumbered; an applied integrated/non-disposable migration is immutable. Never enable out-of-order execution or rewrite applied history to repair a collision. One integration writer serializes this step, so merging a higher migration cannot silently strand a lower version.
 4. A foreign key to another slice's table is a real migration prerequisite. For example T5 can develop after K0, but its user ownership migration cannot complete before T3's identity migration; project UI completion is irrelevant. T20 needs T6 document and T8 chat schemas. T9 needs vector/history/source schema. This is separate from preferred UI order.
 5. Cross-owner table/interface changes require the provider owner and integrator to agree on the extension and impacted consumers. Keep the API contract and consumer checks in the same integration batch; no concurrent edits to common DTO/build/config files.
-6. Update slice state/evidence and the contract checkpoint only after its actual UI/API/database/test completion criteria pass. A branch with tests against adapters alone stays incomplete until real completion prerequisites are wired. The integrator alone updates `plan.md`/`change.json`; other writers report evidence and proposed edits.
+6. Update slice state/evidence and the contract checkpoint only after its actual UI/API/database/test completion criteria pass. A branch with tests against adapters alone stays incomplete until real completion prerequisites are wired. The integrator alone updates `plan.md` and shared contract records; other writers report evidence and proposed edits.
 
 ### Parallel opportunities and actual limits
 
