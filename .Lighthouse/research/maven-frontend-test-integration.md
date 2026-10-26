@@ -8,7 +8,7 @@ Use `org.codehaus.mojo:exec-maven-plugin:3.6.4` in **`backend/pom.xml` only** to
 
 This is the smallest fit for this repository: the backend already packages frontend assets; running both their producer and consumer in that module makes the lifecycle ordering explicit. npm scripts remain the frontend behavior authority. There are no new shell orchestration scripts, Java test wrappers, test categories or Maven modules. The tradeoff is that selecting `backend` includes the frontend, and Maven requires the project's Node/npm on PATH. Frontend-only development/tests retain their native npm commands.
 
-The proposed plugin version is a released Maven Central version, verified against [Central metadata](https://repo.maven.apache.org/maven2/org/codehaus/mojo/exec-maven-plugin/maven-metadata.xml) and its [published POM](https://repo.maven.apache.org/maven2/org/codehaus/mojo/exec-maven-plugin/3.6.4/exec-maven-plugin-3.6.4.pom). Official documentation identifies the same version and minimum Maven 3.6.3/JDK 8 requirements; the repository's Maven 3.9.16/Java 26 exceed those minimums. This establishes declared prerequisites, not tested Java 26 compatibility. [Plugin requirements](https://www.mojohaus.org/exec-maven-plugin/plugin-info.html)
+The selected plugin version is a released Maven Central version, verified against [Central metadata](https://repo.maven.apache.org/maven2/org/codehaus/mojo/exec-maven-plugin/maven-metadata.xml) and its [published POM](https://repo.maven.apache.org/maven2/org/codehaus/mojo/exec-maven-plugin/3.6.4/exec-maven-plugin-3.6.4.pom). Official documentation identifies the same version and minimum Maven 3.6.3/JDK 8 requirements; the repository's Maven 3.9.16/Java 26 exceed those minimums. This establishes declared prerequisites, not tested Java 26 compatibility. [Plugin requirements](https://www.mojohaus.org/exec-maven-plugin/plugin-info.html)
 
 ## Repository evidence
 
@@ -32,7 +32,7 @@ Maven executes phases in sequence through the requested phase. `generate-resourc
 
 For an explicit `npm test` invocation, `--ignore-scripts` still runs the requested test script but suppresses pre/post hooks. Scope the option to this Maven test execution; do not set it globally or apply it to dependency installation. Native `npm test --prefix frontend` keeps its normal pretest build. Future essential test setup must live in the main test script or Playwright configuration, rather than a suppressed hook. [npm script options](https://docs.npmjs.com/cli/v11/commands/npm-run/#ignore-scripts)
 
-Illustrative additions, **not a ready-tested patch**: put the property default in the root POM, the plugin version in root `pluginManagement`, and the actual executions in the backend. Do not put executions in the shared root plugin list, where they would be inherited by the extractor.
+The adopted configuration puts the property default in the root POM, the plugin version in root `pluginManagement`, and the actual executions in the backend. The POMs own the implementation; T2's plan/PR own actual verification evidence. Do not put executions in the shared root plugin list, where they would be inherited by the extractor.
 
 ```xml
 <!-- root properties; the existing skipTests default remains -->
@@ -159,4 +159,4 @@ Required validation, **not performed in this research**:
 | Local macOS and CI Linux | PATH resolution, exact runtimes, browser dependencies and cleanup work; Java 26/plugin compatibility demonstrated |
 | CI change | One `Tests` context remains green; standalone frontend verification removed and Maven logs show one frontend build and suite |
 
-No dependencies were installed, no tests/builds or application processes were run, and no paid calls were made for this note. Research read repository files, upstream documentation/source and Maven Central metadata. Plugin/runtime integration, output cleanup and the illustrative POM still need execution evidence during authorized implementation. The owner adopted reuse of the existing Node setup. Provisioning a second runtime or adding a frontend Maven module remains an unselected alternative.
+No dependencies were installed, no tests/builds or application processes were run, and no paid calls were made for this note. Research read repository files, upstream documentation/source and Maven Central metadata. Implementation execution evidence for plugin/runtime integration, cleanup and selection belongs in T2's current plan/PR; this research note alone does not establish readiness. The owner adopted reuse of the existing Node setup. Provisioning a second runtime or adding a frontend Maven module remains an unselected alternative.
