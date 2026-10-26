@@ -149,8 +149,9 @@ class PersistenceIT extends PostgresIntegrationTest {
             assertEquals(404, response.statusCode());
             var body = JsonMapper.builder().build().readTree(response.body());
             assertEquals(3, body.size());
-            assertEquals("NOT_FOUND", body.path("code").asString());
-            assertEquals("Not Found", body.path("message").asString());
+            assertEquals("RESOURCE_NOT_FOUND", body.path("code").asString());
+            assertEquals("The requested resource is unavailable. Check the address or return to your resource list.",
+                    body.path("message").asString());
             assertEquals(UUID.fromString(response.headers().firstValue("X-Request-ID").orElseThrow()),
                     UUID.fromString(body.path("requestId").asString()));
         }
