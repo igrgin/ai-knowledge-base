@@ -14,18 +14,11 @@ Each HTTP attempt also gets a new server-generated correlation UUID from `Reques
 
 ## Safe MVC errors
 
-The shared `ApiExceptionHandler` returns JSON with exactly `code`, `message` and `requestId` for handled Spring MVC exceptions. `requestId` matches `X-Request-ID`. The HTTP status remains authoritative; supported MVC protocol headers such as `Allow` are retained.
+The accepted T2 amendment uses JSON with exactly `code`, `message` and `requestId` for handled Spring MVC exceptions. `requestId` matches the server-generated `X-Request-ID`. The response carries an explicit HTTP status; protocol headers such as `Allow` are preserved. The code identifies an application or request failure independently from that status, and several codes may share a status. Application error definitions use typed, stable codes without importing HTTP types; the web layer maps each error to its response status. Never synthesize `HTTP_<status>` codes or use exception text as the public message.
 
-| Status | Code | Safe default message |
-| --- | --- | --- |
-| 400 | `BAD_REQUEST` | `Bad Request` |
-| 401 | `UNAUTHENTICATED` | `Unauthorized` |
-| 403 | `FORBIDDEN` | `Forbidden` |
-| 404 | `NOT_FOUND` | `Not Found` |
-| 500 | `INTERNAL_ERROR` | `Internal Server Error` |
-| Other MVC status | `HTTP_<status>` | Standard HTTP reason phrase, or `Request failed` |
+Messages must explain what failed and, where possible, how to correct the request. Clients use codes for logic and may display safe messages, but must not parse message text; they tolerate unknown codes with a safe fallback. The initial catalogue covers foundation/request errors only and avoids a different code for every malformed field. Feature owners add errors when different client behavior is needed. The implementation/catalogue is being amended in PR #23; the former status-derived catalogue is superseded.
 
-Malformed UUIDs are 400. Known status exceptions retain their status but do not return their exception reason. Unexpected exceptions return 500. Never expose SQL, exception details, stack traces, submitted values, file paths, credentials, document/chat content or another owner's resource existence in the body. Cross-owner lookups use the same safe 404 as missing resources. Unexpected-failure logs contain only correlation UUID and exception class, not exception text or stack traces. Authentication/security filters are feature-owned; when T3 adds them, their rejection handlers must reuse this public shape because MVC advice does not handle filter-level failures. Actuator health retains its own existing response contract. Servlet/container rejections outside MVC are not covered by this handler.
+Never expose SQL, exception details, stack traces, submitted values, file paths, credentials, document/chat content or another owner's resource existence in a body. Cross-owner lookups use the same HTTP status, application code and safe message as missing resources. Unexpected-failure logs contain only correlation UUID and exception class. Authentication/security filters are T3-owned and must reuse this response shape; MVC advice does not handle filter-level failures. Actuator health retains its response contract. Servlet/container rejections outside MVC remain outside this handler's coverage.
 
 ## JDBC transactions
 
