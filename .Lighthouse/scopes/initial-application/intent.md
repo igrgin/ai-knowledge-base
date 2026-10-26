@@ -1,6 +1,8 @@
 # Intent for an AI knowledge base with PDF chat
 
-This is the current consolidated intent. It carries the owner's continuing decisions and later changes together in one document. Detailed behavior is in [Requirements](spec.md#requirements); implementation work is in the single [Revised task list](plan.md#revised-task-list). Original owner statements remain identified in `change.json`; they are decision provenance, not alternative plans to implement.
+## Current scope and sources
+
+The current [intent](intent.md), [specification](spec.md) and [plan](plan.md#revised-task-list) define this scope. Original owner directions came from the [planning conversation](codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39); the plan records task authority and progress.
 
 ## Problem
 
@@ -38,7 +40,6 @@ Build a learning and portfolio application that lets people organize text PDFs i
 - Keep the $15–20/month target before tax/domain costs for an optional small hosted demo. Larger capacity and hosting need separate assessment/authorization. Credentials or a budget target do not authorize spending.
 - Retain files and citations through archive and chat deletion. Do not provide individual PDF deletion or an automatic orphan purge. Whole-project removal, backup expiry and independent provider retention are distinct; recovery must not revive deleted projects or revoked shares.
 - Existing file/page/token, account, AI and quality bounds remain in [Limits and user experience](spec.md#limits-and-user-experience) and [Verification and quality gate](spec.md#verification-and-quality-gate).
-- The owner adopted the [review policy](../../policies/review.md), [GitHub workflow](../../policies/github-workflow.md) and [agent assignments](../../policies/development-agents.md) through D14. Lighthouse is globally installed. Operations/platform controls remain to be configured before their dependent actions; D19 subsequently authorizes T1 only; later task implementation remains unauthorized.
 
 ## Exclusions
 
@@ -46,24 +47,4 @@ No OCR, non-PDF ingestion, individual file delete, live project collaboration, w
 
 ## Open questions and dispositions
 
-Product choices are settled through the owner statements referenced in `change.json`. Remaining inputs are implementation evidence or later operational choices, not competing product plans.
-
-| Input | Current disposition | Owner and affected work |
-| --- | --- | --- |
-| Representative PDFs/questions | Use redistributable/generated fixtures; preferred owner material remains optional | project-owner; T6/T13/T14 fixtures |
-| Languages and limits | English-first acceptance and the existing configured bounds; expand only after evidence | project-owner; current specification and T6/T7/T14 |
-| Sharing/archive/context semantics | Fixed independent project copies; revocable transcript snapshots; old-chat archive eligibility and retrieval-only per-chat exclusions, as stated above | Resolved product choices; T16/T19/T17/T20/T9 |
-| Traffic/corpus capacity | No user target supplied; perform reproducible local experiments and report measured limits | project-owner; T13/T14, future hosting |
-| Provider access and paid scope | Test adapters stay test-only; actual provider evaluation needs credentials and bounded authority | project-owner; T14 only |
-| GitHub/review/operations setup | D14 adopts GitHub/review/model rules and global Lighthouse use; D17 setup is complete; D19 authorizes T1 only; later operations and releases remain separately gated | project-owner; setup/review/release work |
-
-## Sources
-
-| Source | Identifying information | Current content |
-| --- | --- | --- |
-| `codex://threads/01a1699d-af41-71f0-a5e7-c75152955b39` | Owner messages and replies recorded as D1–D14 in `change.json` | Product purpose/stack, optional hosting/budget, final PDF lifecycle, Java 26, scalability, sharing, source context and vertical-slice planning directions |
-| [Requirements and design](spec.md#requirements) | Current R1–R29 and design sections | Detailed behavior, invariants, interfaces, constraints and verification |
-| [Implementation plan](plan.md#revised-task-list) | Current T1–T20 with start/completion gates | One implementation plan, reuse, ownership and conditional parallel-work proposal |
-| `docs/lighthouse-adoption.md`, `lighthouse.json` | Project ownership and configured policy/control sources | `project-owner` owns the decision roles; actual platform identities are not inferred |
-
-Implementation, publication, deployment and paid calls remain separate actions requiring their applicable owner authority. This cleanup does not record a new approval of those actions.
+Product choices are consolidated above and in the [specification](spec.md). Remaining technical concerns are in [the specification's concerns](spec.md#concerns); fixtures, capacity evidence, provider access and task authority are tracked in the [plan](plan.md#material-decisions-and-unresolved-work). Original owner directions are recorded in the planning conversation linked above.
