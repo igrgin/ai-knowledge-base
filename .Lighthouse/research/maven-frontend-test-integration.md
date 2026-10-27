@@ -136,6 +136,8 @@ Backend-only Java test execution consequently still requires Node/build tooling.
 
 A separate frontend module listed before backend gives sequential ordering but does not establish a dependency edge for parallel scheduling or `-pl backend -am`. A sound module design would produce a real frontend artifact consumed by backend and replace the sibling-directory resource coupling; this is a larger packaging change. Do not introduce a POM dependency merely to force ordering. Maven honors instantiated dependencies and related graph edges, not dependencyManagement entries alone. The recommended backend-local binding avoids this issue. Do not run two Maven invocations against the same frontend directory concurrently: both could replace `node_modules`/`dist` and contend for preview port 15175. [Reactor sorting](https://maven.apache.org/guides/mini/guide-multiple-modules.html#reactor-sorting)
 
+Suite counts in this research refer to its baseline; the adopted [test-scope reduction](java-spring-test-scope-review.md) and current development guide own the later inventory.
+
 ## Implementation and validation
 
 Implement within the accepted T2 amendment and governing records:
