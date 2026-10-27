@@ -46,16 +46,20 @@ class ApiContractTest {
 
     @Test
     void unexpectedFailureDoesNotDiscloseSqlCredentialsOrPrivateContent() throws Exception {
+        UUID clientCorrelationId = UUID.randomUUID();
         MvcResult first = mvc.perform(get("/api/contract/failure").accept(MediaType.TEXT_PLAIN)
-                        .header(RequestIdFilter.HEADER, "untrusted-client-value"))
+                        .header(RequestIdFilter.HEADER, clientCorrelationId.toString()))
                 .andExpect(status().isInternalServerError()).andReturn();
         MvcResult second = mvc.perform(get("/api/contract/failure").accept(MediaType.TEXT_PLAIN)
-                        .header(RequestIdFilter.HEADER, "untrusted-client-value"))
+                        .header(RequestIdFilter.HEADER, clientCorrelationId.toString()))
                 .andExpect(status().isInternalServerError()).andReturn();
         assertError(first, "INTERNAL_ERROR", ErrorCode.INTERNAL_ERROR.message());
         assertError(second, "INTERNAL_ERROR", ErrorCode.INTERNAL_ERROR.message());
-        assertNotEquals(first.getResponse().getHeader(RequestIdFilter.HEADER),
-                second.getResponse().getHeader(RequestIdFilter.HEADER));
+        UUID firstCorrelationId = UUID.fromString(first.getResponse().getHeader(RequestIdFilter.HEADER));
+        UUID secondCorrelationId = UUID.fromString(second.getResponse().getHeader(RequestIdFilter.HEADER));
+        assertNotEquals(clientCorrelationId, firstCorrelationId);
+        assertNotEquals(clientCorrelationId, secondCorrelationId);
+        assertNotEquals(firstCorrelationId, secondCorrelationId);
     }
 
     @Test
