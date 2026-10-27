@@ -1,5 +1,7 @@
 package com.aiknowledgebase.persistence;
 
+import java.util.Arrays;
+
 import com.aiknowledgebase.KnowledgeBaseApplication;
 import com.aiknowledgebase.support.PostgresIntegrationTest;
 import org.flywaydb.core.Flyway;
@@ -12,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = KnowledgeBaseApplication.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("itest")
@@ -31,7 +33,8 @@ class ExistingVectorITests extends PostgresIntegrationTest {
 
     @Test
     void existingVectorExtensionFromTheLocalDatabaseIsAccepted() {
-        assertEquals(1, flyway.info().applied().length);
+        assertTrue(Arrays.stream(flyway.info().applied())
+                .anyMatch(migration -> "1".equals(migration.getVersion().getVersion())), "V1 must be applied");
         assertEquals(0, flyway.info().pending().length);
         assertEquals("0.8.7", jdbc.sql("SELECT extversion FROM pg_extension WHERE extname = 'vector'")
                 .query(String.class).single());

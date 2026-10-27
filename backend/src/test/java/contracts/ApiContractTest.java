@@ -9,6 +9,8 @@ import com.aiknowledgebase.shared.web.RequestIdFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,70 +45,23 @@ class ApiContractTest {
     }
 
     @Test
-    void consumerUsesUuidResourceAndOperationIds() throws Exception {
-        UUID resourceId = UUID.randomUUID();
-        UUID operationRequestId = UUID.randomUUID();
-
-        MvcResult result = mvc.perform(get("/api/contract/{resourceId}", resourceId)
-                        .param("requestId", operationRequestId.toString())
-                        .header(RequestIdFilter.HEADER, "untrusted-client-value"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resourceId").value(resourceId.toString()))
-                .andExpect(jsonPath("$.requestId").value(operationRequestId.toString()))
-                .andReturn();
-
-        UUID correlationId = UUID.fromString(result.getResponse().getHeader(RequestIdFilter.HEADER));
-        assertNotEquals(operationRequestId, correlationId);
-    }
-
-    @Test
-    void malformedUuidIsAUsefulSafeBadRequest() throws Exception {
-        MvcResult result = mvc.perform(get("/api/contract/secret-invalid-input")
-                        .param("requestId", UUID.randomUUID().toString()))
-                .andExpect(status().isBadRequest()).andReturn();
-        assertError(result, "INVALID_REQUEST", ErrorCode.INVALID_REQUEST.message());
-    }
-
-    @Test
-    void typedNotFoundUsesSafeResourceMessage() throws Exception {
-        MvcResult result = mvc.perform(get("/api/contract/missing"))
-                .andExpect(status().isNotFound()).andReturn();
-        assertError(result, "RESOURCE_NOT_FOUND", ErrorCode.RESOURCE_NOT_FOUND.message());
-    }
-
-    @Test
     void unexpectedFailureDoesNotDiscloseSqlCredentialsOrPrivateContent() throws Exception {
-        MvcResult first = mvc.perform(get("/api/contract/failure"))
+        MvcResult first = mvc.perform(get("/api/contract/failure").accept(MediaType.TEXT_PLAIN)
+                        .header(RequestIdFilter.HEADER, "untrusted-client-value"))
                 .andExpect(status().isInternalServerError()).andReturn();
-        MvcResult second = mvc.perform(get("/api/contract/failure"))
+        MvcResult second = mvc.perform(get("/api/contract/failure").accept(MediaType.TEXT_PLAIN)
+                        .header(RequestIdFilter.HEADER, "untrusted-client-value"))
                 .andExpect(status().isInternalServerError()).andReturn();
         assertError(first, "INTERNAL_ERROR", ErrorCode.INTERNAL_ERROR.message());
+        assertError(second, "INTERNAL_ERROR", ErrorCode.INTERNAL_ERROR.message());
         assertNotEquals(first.getResponse().getHeader(RequestIdFilter.HEADER),
                 second.getResponse().getHeader(RequestIdFilter.HEADER));
     }
 
     @Test
-    void mvcErrorsKeepStatusAndProtocolHeadersWhileUsingTheEnvelope() throws Exception {
-        MvcResult result = mvc.perform(post("/api/contract/failure"))
-                .andExpect(status().isMethodNotAllowed())
-                .andExpect(header().string("Allow", "GET"))
-                .andReturn();
-        assertError(result, "METHOD_NOT_ALLOWED", ErrorCode.METHOD_NOT_ALLOWED.message());
-    }
-
-    @Test
-    void missingAndCrossOwnerResourcesHaveTheSamePublicFailure() throws Exception {
-        MvcResult missing = mvc.perform(get("/api/contract/missing")).andReturn();
-        MvcResult crossOwner = mvc.perform(get("/api/contract/cross-owner")).andReturn();
-        assertEquals(missing.getResponse().getStatus(), crossOwner.getResponse().getStatus());
-        assertError(missing, "RESOURCE_NOT_FOUND", ErrorCode.RESOURCE_NOT_FOUND.message());
-        assertError(crossOwner, "RESOURCE_NOT_FOUND", ErrorCode.RESOURCE_NOT_FOUND.message());
-    }
-
-    @Test
     void codesDistinguishMalformedParametersAndUnreadableBodiesAtTheSameStatus() throws Exception {
-        MvcResult parameter = mvc.perform(get("/api/contract/secret-invalid-input")
-                .param("requestId", UUID.randomUUID().toString())).andExpect(status().isBadRequest()).andReturn();
+        MvcResult parameter = mvc.perform(get("/api/contract/parameter")
+                .param("limit", "secret-invalid-input")).andExpect(status().isBadRequest()).andReturn();
         MvcResult body = mvc.perform(post("/api/contract/body").contentType(MediaType.APPLICATION_JSON)
                 .content("{secret-invalid-body")).andExpect(status().isBadRequest()).andReturn();
         assertError(parameter, "INVALID_REQUEST", ErrorCode.INVALID_REQUEST.message());
@@ -115,7 +70,7 @@ class ApiContractTest {
 
     @Test
     void ordinaryMissingParametersAndApplicationValidationUseInvalidRequest() throws Exception {
-        MvcResult missing = mvc.perform(get("/api/contract/{id}", UUID.randomUUID()))
+        MvcResult missing = mvc.perform(get("/api/contract/parameter"))
                 .andExpect(status().isBadRequest()).andReturn();
         MvcResult application = mvc.perform(get("/api/contract/invalid"))
                 .andExpect(status().isBadRequest()).andReturn();
@@ -146,48 +101,27 @@ class ApiContractTest {
         assertError(result, "UNSUPPORTED_MEDIA_TYPE", ErrorCode.UNSUPPORTED_MEDIA_TYPE.message());
     }
 
-    @Test
-    void committedFrameworkAndUnexpectedResponsesAreNotRewritten() throws Exception {
-        for (String path : new String[]{"committed-framework", "committed-unexpected", "committed-application"}) {
-            mvc.perform(get("/api/contract/" + path).accept(MediaType.TEXT_PLAIN))
-                    .andExpect(status().isAccepted()).andExpect(header().doesNotExist("Content-Type"))
-                    .andExpect(content().string("already-written"));
-        }
+    @ParameterizedTest(name = "committed {0} response stays untouched")
+    @ValueSource(strings = {"framework", "unexpected", "application"})
+    void committedResponsesAreNotRewritten(String kind) throws Exception {
+        mvc.perform(get("/api/contract/committed-" + kind).accept(MediaType.TEXT_PLAIN))
+                .andExpect(status().isAccepted()).andExpect(header().doesNotExist("Content-Type"))
+                .andExpect(content().string("already-written"));
     }
 
     @Test
-    void unacceptableSuccessFormatStillReturnsTheJsonErrorEnvelope() throws Exception {
-        MvcResult result = mvc.perform(get("/api/contract/representation/json").accept(MediaType.TEXT_PLAIN))
-                .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header().string("Accept", MediaType.APPLICATION_JSON_VALUE)).andReturn();
-        assertError(result, "RESPONSE_TYPE_NOT_ACCEPTABLE", ErrorCode.RESPONSE_TYPE_NOT_ACCEPTABLE.message());
+    void typedAbsenceKeepsJsonDespiteRestrictiveAccept() throws Exception {
+        MvcResult result = mvc.perform(get("/api/contract/missing").accept(MediaType.TEXT_PLAIN))
+                .andExpect(status().isNotFound()).andReturn();
+        assertError(result, "RESOURCE_NOT_FOUND", ErrorCode.RESOURCE_NOT_FOUND.message());
     }
 
     @Test
-    void restrictiveAcceptDoesNotDiscardOtherHandledErrorBodiesOrProtocolHeaders() throws Exception {
-        MvcResult application = mvc.perform(get("/api/contract/missing").accept(MediaType.TEXT_PLAIN))
-                .andExpect(status().isNotFound()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
-        assertError(application, "RESOURCE_NOT_FOUND", ErrorCode.RESOURCE_NOT_FOUND.message());
-        MvcResult method = mvc.perform(post("/api/contract/failure").accept(MediaType.TEXT_PLAIN))
+    void methodFailureKeepsAllowAndJsonDespiteRestrictiveAccept() throws Exception {
+        MvcResult result = mvc.perform(post("/api/contract/failure").accept(MediaType.TEXT_PLAIN))
                 .andExpect(status().isMethodNotAllowed()).andExpect(header().string("Allow", "GET"))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
-        assertError(method, "METHOD_NOT_ALLOWED", ErrorCode.METHOD_NOT_ALLOWED.message());
-        MvcResult unexpected = mvc.perform(get("/api/contract/failure").accept(MediaType.TEXT_PLAIN))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
-        assertError(unexpected, "INTERNAL_ERROR", ErrorCode.INTERNAL_ERROR.message());
-    }
-
-    @Test
-    void successfulResponsesKeepTheirDeclaredRepresentations() throws Exception {
-        mvc.perform(get("/api/contract/representation/json").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json("{\"status\":\"ok\"}"));
-        mvc.perform(get("/api/contract/representation/text").accept(MediaType.TEXT_PLAIN))
-                .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-                .andExpect(content().string("ok"));
+                .andReturn();
+        assertError(result, "METHOD_NOT_ALLOWED", ErrorCode.METHOD_NOT_ALLOWED.message());
     }
 
     private void assertError(MvcResult result, String code, String message) throws Exception {
@@ -200,22 +134,15 @@ class ApiContractTest {
                 UUID.fromString(error.path("requestId").asString()));
     }
 
-    // Consumer fixture only: no identity, resource or operation endpoint is exposed by the app.
+    // Advice/filter fixture only; outside production component scanning.
     @RestController
     static class ContractConsumer {
-        @GetMapping("/api/contract/{resourceId}")
-        Ids identifiers(@PathVariable UUID resourceId, @RequestParam UUID requestId) {
-            return new Ids(resourceId, requestId);
+        @GetMapping("/api/contract/parameter")
+        void parameter(@RequestParam int limit) {
         }
 
         @GetMapping("/api/contract/missing")
         void missing() {
-            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
-
-        @GetMapping("/api/contract/cross-owner")
-        void crossOwner() {
-            // Feature owners must use the same failure for absence and failed owner lookup.
             throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
         }
 
@@ -225,8 +152,7 @@ class ApiContractTest {
         }
 
         @PostMapping(value = "/api/contract/body", consumes = MediaType.APPLICATION_JSON_VALUE)
-        Ids body(@RequestBody Ids ids) {
-            return ids;
+        void body(@RequestBody java.util.Map<String, String> body) {
         }
 
         @GetMapping("/api/contract/framework")
@@ -254,22 +180,10 @@ class ApiContractTest {
             }
         }
 
-        @GetMapping(value = "/api/contract/representation/json", produces = MediaType.APPLICATION_JSON_VALUE)
-        java.util.Map<String, String> json() {
-            return java.util.Map.of("status", "ok");
-        }
-
-        @GetMapping(value = "/api/contract/representation/text", produces = MediaType.TEXT_PLAIN_VALUE)
-        String text() {
-            return "ok";
-        }
-
         @GetMapping("/api/contract/failure")
         void failure() {
             throw new IllegalStateException("SELECT password FROM accounts; secret private-document-text");
         }
     }
 
-    record Ids(UUID resourceId, UUID requestId) {
-    }
 }

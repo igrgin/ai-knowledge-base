@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.aiknowledgebase.KnowledgeBaseApplication;
-import com.aiknowledgebase.shared.ApplicationException;
 import com.aiknowledgebase.shared.ErrorCode;
 import com.aiknowledgebase.support.PostgresIntegrationTest;
 import org.junit.jupiter.api.Test;
@@ -38,19 +37,27 @@ class ErrorRepresentationITests extends PostgresIntegrationTest {
     }
 
     @Test
-    void restrictiveAcceptKeepsJsonErrorsAndProtocolHeadersWithoutChangingSuccessRepresentations() throws Exception {
+    void incompatibleAcceptReturnsJson406WithProtocolHeaderAndServerCorrelation() throws Exception {
         try (HttpClient client = HttpClient.newHttpClient()) {
             String base = "http://127.0.0.1:" + port;
             var negotiation = send(client, base, "/api/http-contract/json", "GET", "text/plain");
             assertError(negotiation, 406, ErrorCode.RESPONSE_TYPE_NOT_ACCEPTABLE);
             assertEquals("application/json", negotiation.headers().firstValue("Accept").orElseThrow());
+        }
+    }
 
-            assertError(send(client, base, "/api/http-contract/missing", "GET", "text/plain"),
+    @Test
+    void productionMissingRouteUsesTheWiredErrorEnvelope() throws Exception {
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            assertError(send(client, "http://127.0.0.1:" + port, "/api/k0-no-such-route", "GET", "application/json"),
                     404, ErrorCode.RESOURCE_NOT_FOUND);
-            var method = send(client, base, "/api/http-contract/json", "POST", "text/plain");
-            assertError(method, 405, ErrorCode.METHOD_NOT_ALLOWED);
-            assertTrue(method.headers().firstValue("Allow").orElseThrow().contains("GET"));
+        }
+    }
 
+    @Test
+    void successfulResponsesKeepTheirDeclaredRepresentations() throws Exception {
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            String base = "http://127.0.0.1:" + port;
             var json = send(client, base, "/api/http-contract/json", "GET", "application/json");
             assertEquals(200, json.statusCode());
             assertEquals("application/json", json.headers().firstValue("Content-Type").orElseThrow());
@@ -91,11 +98,6 @@ class ErrorRepresentationITests extends PostgresIntegrationTest {
         @GetMapping(value = "/api/http-contract/text", produces = MediaType.TEXT_PLAIN_VALUE)
         String text() {
             return "ok";
-        }
-
-        @GetMapping("/api/http-contract/missing")
-        void missing() {
-            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
         }
     }
 }
