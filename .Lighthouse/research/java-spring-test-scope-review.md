@@ -1,0 +1,90 @@
+# Java and Spring test scope review
+
+Research date: **2026-10-27, Europe/Zagreb**. Baseline: `3ab5532d8efe8a2069a54c1fe608a2ce9f3c2ed0`, branch `2-add-minimal-persistence-and-contract-conventions`, unmerged [PR #23](https://github.com/igrgin/ai-knowledge-base/pull/23). **Adopted for T2 implementation.** In the current conversation on 2026-10-27 the owner said: “Adopt this test reduction plan and implement it in T2’s existing PR. Update K0 and the plan, use the agreed agents and review process, keep concurrency at 1, and show me the updated PR before merging.” This note preserves the baseline audit and accepted reduction approach; current code, K0, plan and PR own implementation/verification status.
+
+## Assessment
+
+We are overtesting some foundation demonstrations, but the number **22** alone does not indicate a large or unhealthy suite. The weakest tests exercise invented future consumers: UUID echo endpoints, two endpoints deliberately throwing the same exception, and a generic transaction callback. They cannot prove the future authorization, idempotency or external-call boundaries their names might suggest. Meanwhile, our custom error adapter, actual application wiring and database upgrade paths have real regression risks today.
+
+The owner adopted reduction of repetition and speculative fixtures. Keep focused evidence for the current migration/error/packaging contracts. Later feature tests should replace the artificial demonstrations with actual owned behavior, rather than retaining both indefinitely. No fixed test-count target, coverage percentage or test-per-class rule is recommended.
+
+The accepted [plan](../scopes/initial-application/plan.md#t2-execution-progress) and [K0](../../docs/contracts/k0-foundation.md) explicitly require consumer error/transaction checks and preserving several assertions in prior amendments. Their existence was therefore **not a compliance defect** at the audited baseline. The accepted amendment supersedes those consumer-demonstration obligations in the current records while preserving their conventions; historical verification remains historical evidence.
+
+## What the primary sources establish
+
+Spring supports different boundaries. Standalone MockMvc manually registers controllers and infrastructure; configuration-based tests additionally verify the application's MVC configuration. Spring recommends additional integration verification when using standalone tests. This supports our test-only advice/filter consumers, provided we retain a small wiring check. It does not prescribe duplicating every example through HTTP. [Spring Framework setup options](https://docs.spring.io/spring-framework/reference/testing/mockmvc/setup-options.html)
+
+Boot offers slices such as `@WebMvcTest`; `@SpringBootTest(NONE)` loads Boot without a server and `RANDOM_PORT` starts one. MockMvc does not cover all servlet-container behavior. Real HTTP server transactions also do not roll back with a test-thread `@Transactional` annotation. Use the boundary needed by the behavior. [Boot testing applications](https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html)
+
+Spring caches equivalent contexts; dynamic-property methods affect their cache identity and `@DirtiesContext` evicts them. Testcontainers' static JUnit containers live across methods and stop at class completion. Our class-specific databases/context eviction avoid cached contexts pointing to stopped databases. Removing eviction to make tests faster would require a coherent fixture-lifetime change. [Spring context caching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html), [Testcontainers JUnit lifecycle](https://java.testcontainers.org/test_framework_integration/junit_5/)
+
+JUnit parameterization runs a method with different arguments and reports invocations separately. It reduces repeated source, not necessarily executed cases or runtime. Use it for genuinely equivalent data cases, not to hide unrelated scenarios inside a giant method. [JUnit 6.0.3 parameterized tests](https://docs.junit.org/6.0.3/writing-tests/parameterized-classes-and-tests.html)
+
+Andrew Trenk's original Google guidance favors public behavior over implementation details because behavior-oriented assertions survive internal changes. That is useful judgment, not a mandate against integration tests or SQL assertions. [Google Testing Blog, 2013](https://testing.googleblog.com/2013/08/testing-on-toilet-test-behavior-not.html)
+
+The recommendations below are this review's application of those facts to our code; the sources do not mandate our particular test inventory.
+
+## Current inventory and proposed disposition
+
+There are **15 standalone MVC methods, five backend integration methods in four classes, and two extractor methods**: 16 basic + 6 integration = 22 Java methods. Several methods contain multiple requests/assertions, so this is not 22 independent behaviors. The three browser checks are separate.
+
+In the following tables, “drop” identifies the adopted removal, reconciled in current K0/plan obligations. “Keep” identifies behavior to preserve, not a requirement to preserve the current method or fixture.
+
+All methods in the first table are in [ApiContractTest](../../backend/src/test/java/contracts/ApiContractTest.java). Current owner: T2 web contract.
+
+| Method | Actual purpose and recommendation |
+| --- | --- |
+| `consumerUsesUuidResourceAndOperationIds` | **Drop UUID echo.** It mostly tests Spring binding/Jackson, not our persistence/deduplication. Move its useful untrusted-header/correlation assertion to a retained error/filter case. Actual IDs belong to T3/T4/T5 and operation owners. |
+| `malformedUuidIsAUsefulSafeBadRequest` | **Consolidate** with `codesDistinguish…`; same malformed input request. Keep one representative mapping/privacy assertion. |
+| `typedNotFoundUsesSafeResourceMessage` | **Consolidate** with the restrictive-Accept application error case; both exercise our same mapping. |
+| `unexpectedFailureDoesNotDiscloseSqlCredentialsOrPrivateContent` | **Keep.** Our catch-all must omit details and generate a new correlation ID per attempt. Retain malicious detail input and correlation assertions. |
+| `mvcErrorsKeepStatusAndProtocolHeadersWhileUsingTheEnvelope` | **Consolidate** with the restrictive-Accept 405 case, retaining `Allow`; same owned exception path. |
+| `missingAndCrossOwnerResourcesHaveTheSamePublicFailure` | **Drop artificial cross-owner endpoint.** Both fixture methods throw identical exceptions without identity lookup. T3 supplies authentication; T4 and each resource owner prove two-account denial; T13 checks integration. |
+| `codesDistinguishMalformedParametersAndUnreadableBodiesAtTheSameStatus` | **Keep** representative same-400/different-code cases: tests our exception-kind policy rather than status-derived codes. |
+| `ordinaryMissingParametersAndApplicationValidationUseInvalidRequest` | **Simplify/consolidate** with the invalid-request cases above; retain distinct application and MVC entry paths without repeating full scenarios. |
+| `unknownFrameworkFailuresKeepStatusAndRetryHeaderWithoutExposingDetails` | **Keep.** Our fallback deliberately preserves 429/`Retry-After` while suppressing private details. |
+| `frameworkFallbackCodeIsIndependentOfStatus` | **Keep**, optionally a second named data case with the prior fallback test. Same 404 as typed absence must still yield a different code. |
+| `unsupportedContentTypeKeepsSupportedTypeHeader` | **Keep.** Our adapter must preserve 415/`Accept` while replacing the body. |
+| `committedFrameworkAndUnexpectedResponsesAreNotRewritten` | **Keep/simplify** the committed-response guard; its three entry paths may be named parameter cases. No new combinatorial framework. |
+| `unacceptableSuccessFormatStillReturnsTheJsonErrorEnvelope` | **Consolidate into the retained real-HTTP F1 regression.** This repeats its exact 406 scenario. Keep temporarily if useful during edits, then choose one permanent owner. |
+| `restrictiveAcceptDoesNotDiscardOtherHandledErrorBodiesOrProtocolHeaders` | **Keep** the distinct application/framework/unexpected dispatch paths; absorb ordinary 404/405 cases above. Avoid repeating the same matrix over HTTP. |
+| `successfulResponsesKeepTheirDeclaredRepresentations` | **Consolidate into real HTTP** success checks: those already verify the fix does not force successful JSON/plain-text responses to the error representation. |
+
+| File and method | Actual purpose and recommendation |
+| --- | --- |
+| [PersistenceITests](../../backend/src/test/java/com/aiknowledgebase/persistence/PersistenceITests.java), `cleanMigrationAndJdbcConsumerCommitRollbackAndRelease` | **Drop generic transaction consumer after amendment**; retain clean migration/vector evidence in restart coverage. The callback is test code, not an application service, and mostly proves Spring/JDBC rollback/resource cleanup. T3/T4 own actual transactional state changes; T5/T6/T9 own releasing locks/connections before external calls. This can remove the otherwise redundant Boot/container class. |
+| [ExistingVectorITests](../../backend/src/test/java/com/aiknowledgebase/persistence/ExistingVectorITests.java), `existingVectorExtensionFromTheLocalDatabaseIsAccepted` | **Keep/simplify.** Protects the real T1-to-T2 upgrade: extension exists **without Flyway history**. A restart after V1 has run is different. Remove the exact total-migration count; retain successful adoption/vector availability. |
+| [PersistenceLifecycleITests](../../backend/src/test/java/com/aiknowledgebase/persistence/PersistenceLifecycleITests.java), `cleanMigrationThenApplicationRestartKeepsSchemaAndCommittedUuidData` | **Keep/simplify.** Our Boot/Flyway configuration must preserve committed data across context restart. One small sentinel table/row suffices until real domain persistence replaces it. Use nonweb contexts for both starts; remove exact public-table inventory and repeated migration counts, retaining meaningful history/data checks and useful vector execution once. Move its HTTP 404 assertion to the web wiring test. |
+| Same file, `brokenMigrationPreventsStartupRollsBackDdlAndPreservesExistingData` | **Keep focused safety boundary.** Failed migration must block this application's startup and preserve existing data/recovery. The small partial-DDL assertion is reasonable direct safety evidence, despite relying on Flyway/PostgreSQL; no exhaustive migration-engine tests are needed. |
+| [ErrorRepresentationITests](../../backend/src/test/java/contracts/ErrorRepresentationITests.java), `restrictiveAcceptKeepsJsonErrorsAndProtocolHeadersWithoutChangingSuccessRepresentations` | **Keep/narrow.** Own the real 406/F1 regression, representative protocol header, correlation/wiring and unaffected successes. Absorb real missing-route 404 from restart coverage; remove duplicate typed-404/405 matrices already owned by MVC tests. Uses Boot/real PostgreSQL under the accepted integration convention even though these requests do not use SQL. |
+| [ExtractorLaunchTest](../../pdf-extractor/src/test/java/com/aiknowledgebase/extractor/ExtractorLaunchTest.java), `childUsesTheCurrentJavaRuntimeAndRejectsExtraction` | **Drop or narrow** the classpath duplicate; recommend drop when packaged verification is retained. It does not test extraction. Loss: no extractor execution at `test` before packaging; document that tradeoff. |
+| [ExtractorPackageITests](../../pdf-extractor/src/test/java/com/aiknowledgebase/extractor/ExtractorPackageITests.java), `packagedChildUsesJava26AndRejectsUnsupportedExtraction` | **Keep.** Executable manifest/JAR/runtime/exit behavior is a real delivery boundary absent from the classpath launch. T6 replaces “extraction unavailable” with actual parser/error/timeout contracts. |
+
+The [browser suite](../../frontend/e2e/shell.spec.ts) checks `shows readiness and checks again`, `shows database failure and recovers when retry succeeds`, and `reports a network failure without claiming readiness`. **Keep all three for now.** They cover the React success/retry, non-2xx and rejected-fetch paths; mocked readiness does not verify JDBC or backend readiness. They do not duplicate MVC error-envelope tests. T12 can retire the shell-specific checks when replacing that UI. Reintroducing the owner-removed backend readiness/configuration tests is outside this proposal.
+
+## Prioritized T2 reduction plan
+
+1. **Amend the test obligations first when adopting the change.** Reconcile K0's explicit consumer promises, T2's preservation wording, specification interfaces and local-development inventory. Keep UUID/trusted-identity/short-transaction conventions as guidance. No future-consumer framework needs to remain just to illustrate them.
+2. **Remove the lowest-value demonstrations:** UUID echo, fake cross-owner comparison and generic transaction consumer; preserve correlation and clean-migration evidence elsewhere. Replace exact “only history table”/“exactly one migration” assertions with V1/extension and migration-completion outcomes that permit later additive migrations. An exact version check can remain where intentionally asserting the pinned fixture, but repeating it everywhere adds little.
+3. **Consolidate existing error scenarios by owned behavior.** Preserve exception-kind distinctions, safe messages, headers, committed guard and one actual-HTTP F1/wiring regression. F1 was a real empty-body 406 found during T2 review, recorded in the [plan](../scopes/initial-application/plan.md#t2-execution-progress); dropping every restrictive-Accept test would lose useful regression protection. Make persistence restart nonweb and let `ErrorRepresentationITests` own real HTTP/missing-route verification; a servlet restart adds no needed persistence boundary. SQL remains appropriate at migration/restart boundaries: there is no real domain API there yet.
+4. **Keep packaging verification and remove classpath overlap** if accepting the narrower basic-test scope. Keep existing Maven `test`/`integration-tests verify` selection and browser commands; add no category or custom runner.
+
+These changes deliberately remove proof of generic UUID conversion/transaction mechanics, not existing authorization protection: no real authorization exists yet. Risks that must stay covered now are migration adoption, committed-data retention/failure safety, application error wiring and packaged launch. A single shared `respond` helper does not make every exception classification identical, so consolidation must preserve distinct mappings rather than merely lower the reported count.
+
+Existing response assertions do not independently test log output, future security-filter errors or servlet-container failures. The current advice explicitly has a narrower scope. Retain that limitation in readiness claims; assigning security-filter verification to T3 is a real handoff, not coverage already supplied by the fake controller.
+
+## Policy for later features
+
+Choose the cheapest boundary that can detect the owned regression. Use plain JUnit for substantial rules/calculations/state transitions; focused MVC tests for request mapping, validation, advice and filter integration; real PostgreSQL for owned SQL, constraints, atomic updates and races; and a small Boot/HTTP check for actual wiring. Standalone MockMvc and `@WebMvcTest` are both valid choices with different configuration coverage. Do not automatically require both, or a full `@SpringBootTest` for each class. Ordinary application integration still follows the accepted Boot convention.
+
+Give each behavior a primary owner. A controller test need not re-prove every service rule. A browser test proves user-visible flow, not every SQL constraint. When a real consumer arrives, replace its redundant foundation demonstration. Parameterize equivalent input cases, retain readable failure names and avoid catch-all test bundles. Add representative regression tests for actual bugs.
+
+Deferral must retain meaningful feature verification: T3 authentication/security-filter responses, T4 and resource owners' two-user access denial, T5 spending/idempotency/concurrent admission, T6 extraction/restart/leases, T11 purge/restore/deletion fences, T20 source races, and T13 cross-instance integration remain required. A generic rollback test cannot substitute for any of them. Do not postpone focused feature correctness until T13; T13 adds integrated evidence.
+
+Measure maintenance failures and runtime before further optimization. Existing local reports show MVC 0.653 s, HTTP integration 6.860 s, ordinary persistence 1.483 s, adoption 1.333 s, lifecycle 2.708 s and extractor methods about 0.1 s each. These are **unverified existing report samples**, not this review's benchmark or a full-build timing; container/dependency/build overhead and report provenance limit comparisons. Removing a Boot fixture is likely more consequential than removing a few MVC assertions, but no measured savings are claimed.
+
+## Method and limits
+
+Read repository guidance, role assignments, current intent, relevant specification/plan/K0 records, native development commands/POMs, every Java test and fixture, all Java production code, relevant YAML/migration, and the React shell/browser suite. Checked the local branch/head and prior review evidence recorded in the plan. Read current official Spring Boot/Framework, pinned JUnit guidance and Testcontainers documentation plus the original Google article linked above.
+
+No tests, installations, paid calls or failure probes were executed. Existing reports and recorded CI passes were inspected as historical evidence; current remote PR/CI status was not refreshed. Earlier temporary Maven selection/lock/build/browser-failure probes were delivery verification experiments, **not permanent suites the user must maintain**. Only this research note was added; code, accepted records, PR state and merge authority are unchanged.
