@@ -2,6 +2,8 @@
 
 Research date: **2026-10-27, Europe/Zagreb**. Baseline: `3ab5532d8efe8a2069a54c1fe608a2ce9f3c2ed0`, branch `2-add-minimal-persistence-and-contract-conventions`, unmerged [PR #23](https://github.com/igrgin/ai-knowledge-base/pull/23). **Adopted for T2 implementation.** In the current conversation on 2026-10-27 the owner said: “Adopt this test reduction plan and implement it in T2’s existing PR. Update K0 and the plan, use the agreed agents and review process, keep concurrency at 1, and show me the updated PR before merging.” This note preserves the baseline audit and accepted reduction approach; current code, K0, plan and PR own implementation/verification status.
 
+This baseline audit's keep recommendations for synthetic migration/restart/failure checks and general HTTP smoke checks were superseded by the owner-accepted feature-focused reduction on 2026-10-29. Current [K0](../../docs/contracts/k0-foundation.md#migrations-and-integration-fixtures) and [plan](../scopes/initial-application/plan.md#feature-focused-test-reduction) own the resulting obligations. The historical analysis below is preserved.
+
 ## Assessment
 
 We are overtesting some foundation demonstrations, but the number **22** alone does not indicate a large or unhealthy suite. The weakest tests exercise invented future consumers: UUID echo endpoints, two endpoints deliberately throwing the same exception, and a generic transaction callback. They cannot prove the future authorization, idempotency or external-call boundaries their names might suggest. Meanwhile, our custom error adapter, actual application wiring and database upgrade paths have real regression risks today.

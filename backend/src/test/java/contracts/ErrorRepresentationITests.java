@@ -39,41 +39,13 @@ class ErrorRepresentationITests extends PostgresIntegrationTest {
     @Test
     void incompatibleAcceptReturnsJson406WithProtocolHeaderAndServerCorrelation() throws Exception {
         try (HttpClient client = HttpClient.newHttpClient()) {
-            String base = "http://127.0.0.1:" + port;
-            var negotiation = send(client, base, "/api/http-contract/json", "GET", "text/plain");
+            var negotiation = client.send(HttpRequest.newBuilder(
+                            URI.create("http://127.0.0.1:" + port + "/api/http-contract/json"))
+                    .header("Accept", "text/plain").header("X-Request-ID", "untrusted-client-value")
+                    .GET().build(), HttpResponse.BodyHandlers.ofString());
             assertError(negotiation, 406, ErrorCode.RESPONSE_TYPE_NOT_ACCEPTABLE);
             assertEquals("application/json", negotiation.headers().firstValue("Accept").orElseThrow());
         }
-    }
-
-    @Test
-    void productionMissingRouteUsesTheWiredErrorEnvelope() throws Exception {
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            assertError(send(client, "http://127.0.0.1:" + port, "/api/k0-no-such-route", "GET", "application/json"),
-                    404, ErrorCode.RESOURCE_NOT_FOUND);
-        }
-    }
-
-    @Test
-    void successfulResponsesKeepTheirDeclaredRepresentations() throws Exception {
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            String base = "http://127.0.0.1:" + port;
-            var json = send(client, base, "/api/http-contract/json", "GET", "application/json");
-            assertEquals(200, json.statusCode());
-            assertEquals("application/json", json.headers().firstValue("Content-Type").orElseThrow());
-            assertEquals("ok", JsonMapper.builder().build().readTree(json.body()).path("status").asString());
-            var text = send(client, base, "/api/http-contract/text", "GET", "text/plain");
-            assertEquals(200, text.statusCode());
-            assertTrue(text.headers().firstValue("Content-Type").orElseThrow().startsWith("text/plain"));
-            assertEquals("ok", text.body());
-        }
-    }
-
-    private HttpResponse<String> send(HttpClient client, String base, String path, String method, String accept)
-            throws Exception {
-        return client.send(HttpRequest.newBuilder(URI.create(base + path))
-                .header("Accept", accept).header("X-Request-ID", "untrusted-client-value")
-                .method(method, HttpRequest.BodyPublishers.noBody()).build(), HttpResponse.BodyHandlers.ofString());
     }
 
     private void assertError(HttpResponse<String> response, int status, ErrorCode code) throws Exception {
@@ -93,11 +65,6 @@ class ErrorRepresentationITests extends PostgresIntegrationTest {
         @GetMapping(value = "/api/http-contract/json", produces = MediaType.APPLICATION_JSON_VALUE)
         Map<String, String> json() {
             return Map.of("status", "ok");
-        }
-
-        @GetMapping(value = "/api/http-contract/text", produces = MediaType.TEXT_PLAIN_VALUE)
-        String text() {
-            return "ok";
         }
     }
 }
