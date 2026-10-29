@@ -111,3 +111,14 @@ Keep related or partially addressed issues open. A PR closed without merging doe
 
 Report the merge and issue-closure outcomes together. This PR workflow is complete after a confirmed merge and confirmed closure of its resolved issues. If closure fails or cannot be verified, report the completed work and remaining action.
 
+## Repository record conventions
+
+Use exactly one primary intent label: `bug` for a repair, `feature` for an addition, or `spike` for research/decision work. Preserve existing definitions/colors and separate priority/status. A label grants no implementation authority. Bug/feature work completes with verified implementation, independent technical review and a PR presented to the owner; decision work follows the decision-issue procedure above.
+
+Inspect and reuse existing records instead of creating duplicates. Preserve human content and review/decision history. Use supported native labels, assignees, milestones and issue/dependency/branch/PR associations, verifying the actual relationships rather than inferring them from a name or body assertion. Task IDs need not equal issue numbers; the roadmap owns their real mapping.
+
+Use `Refs` for partial issue coverage and `Closes` only when the PR delivers the full issue scope. PR evidence identifies behavior changes, actual commands/results, candidate identities, independent review coverage/findings and limits. Keep PR bodies under the installed `pr` skill; the EGM workflow owns the fresh implementation-review handoff.
+
+Reuse a suitable checkout and established issue/title associations. Prepare agents from an agreed committed baseline containing needed instructions. Preserve unique/dirty work before authorized recoverable checkout archival; keep global Git configuration unchanged. Concurrency and shared-file ownership are in the EGM workflow and roadmap.
+
+Preserve native provider protections and actual required checks, including `Tests`. Verify supported settings before changing them within authorized scope. A fresh technical reviewer is not a separate GitHub approval identity; retain native approval requirements where present. Application CI uses real native suites, without document/PR-metadata-only jobs. These conventions change no provider setting or spending authority.

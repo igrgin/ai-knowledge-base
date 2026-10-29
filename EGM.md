@@ -2,7 +2,7 @@
 
 ## System Overview
 
-This is the entry point for incremental Elephant-Goldfish (EGM) package contracts.
+This is the entry point for Elephant-Goldfish (EGM) architecture and package contracts.
 The initial contract coverage is the backend's shared error boundary. The
 [README](README.md) describes demonstrated product behavior and startup.
 
@@ -34,9 +34,9 @@ implementation evidence. Add package contracts as real feature boundaries appear
   separate local/deployment settings from test resources. The
   [backend POM](backend/pom.xml) packages built frontend assets into the backend;
   the [extractor POM](pdf-extractor/pom.xml) packages a separate executable JAR.
-- [Product invariants](.Lighthouse/scopes/initial-application/spec.md#invariants)
-  describe the required target. Current task completion and contract availability
-  are owned by the [plan](.Lighthouse/scopes/initial-application/plan.md#contract-gates-for-early-starts).
+- [Product invariants](docs/designs/application.md#invariants)
+  describe the required target. The [roadmap](docs/roadmap.md) owns task completion;
+  the [contract index](docs/contracts/README.md#contract-availability) owns gate availability.
 
 ## Global Side Effects
 
@@ -65,15 +65,6 @@ verification entry points, not evidence that a particular candidate has passed.
 
 ## Design and Contract Maintenance
 
-Lighthouse's [intent](.Lighthouse/scopes/initial-application/intent.md),
-[specification](.Lighthouse/scopes/initial-application/spec.md) and
-[plan](.Lighthouse/scopes/initial-application/plan.md) retain their existing
-authority. EGM adds package contracts and focused feature-design review; it does
-not create a second task ledger or replace K0. Follow the plan's ownership and
-contract gates when changing a shared boundary, and update affected package
-contracts alongside its implementation.
+[Application design](docs/designs/application.md) owns product requirements and proposed mechanisms; the [roadmap](docs/roadmap.md) owns task authority and progress, and the [contract index](docs/contracts/README.md) owns gate availability. Follow the [EGM workflow](docs/egm-workflow.md) for design, review, implementation handoff and agent assignments, and [remote work](docs/remote-work.md) for issue/branch/PR operations.
 
-The [bootstrap scope and follow-up](.Lighthouse/scopes/initial-application/plan.md#incremental-egm-bootstrap)
-record the T2 baseline, finalization work and proposed first T3 design review.
-Keep feature proposals in the design records until accepted and implemented;
-package contracts describe actual code and identify remaining consumer work.
+K0 stays canonical. Update affected package contracts alongside implementation and reconcile accepted design amendments at their owning source. Future feature proposals remain in design records until accepted and implemented; package maps describe actual code and explicit consumer obligations. T3 is the proposed next feature-design task and has not started.

@@ -77,3 +77,5 @@ The app runs on your own machine, with local services bound to loopback. Keep da
 <!-- Add supported document limits and grounded-answer behavior alongside those features. -->
 
 [MIT](LICENSE)
+
+Engineering navigation: [implemented architecture](EGM.md), [application design](docs/designs/application.md), [delivery roadmap](docs/roadmap.md), [EGM workflow](docs/egm-workflow.md) and [local development](docs/local-development.md).

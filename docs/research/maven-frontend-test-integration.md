@@ -16,7 +16,7 @@ The selected plugin version is a released Maven Central version, verified agains
 - [Backend POM](../../backend/pom.xml) copies `../frontend/dist` into `static` during resource processing. Today Maven does not generate it, so packaging depends on a prior separate frontend build.
 - [Frontend package](../../frontend/package.json) pins Node 24.22.1/npm 11.19.1. `build` owns TypeScript/Vite compilation, `pretest` runs `build`, and `test` runs `playwright test`. The committed lockfile owns dependency resolution.
 - [Playwright configuration](../../frontend/playwright.config.ts) owns Vite preview startup/shutdown on loopback 15175, with `reuseExistingServer: false` and one worker. [Three tests](../../frontend/e2e/shell.spec.ts) mock readiness success/retry, HTTP 503 recovery, and connection failure. They need Chromium, not a running Java backend or PostgreSQL.
-- [CI](../../.github/workflows/tests.yml) has one `Tests` job: setup Java/Node, `npm ci`, Playwright browser/system installation, `npm test`, then Maven verification. [Local development](../../docs/local-development.md) documents native tools and a project-local optional Node installer. The [plan](../scopes/initial-application/plan.md) preserves native commands and three current Maven modules; this proposal does not amend that authority.
+- [CI](../../.github/workflows/tests.yml) has one `Tests` job: setup Java/Node, `npm ci`, Playwright browser/system installation, `npm test`, then Maven verification. [Local development](../local-development.md) documents native tools and a project-local optional Node installer. The [plan](../roadmap.md) preserves native commands and three current Maven modules; this proposal does not amend that authority.
 
 ## Lifecycle and illustrative configuration
 

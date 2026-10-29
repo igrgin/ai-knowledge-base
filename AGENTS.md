@@ -2,11 +2,11 @@
 
 ## Delivery work
 
-For delivery work, use the installed Lighthouse skills with this repository's [intent](.Lighthouse/scopes/initial-application/intent.md), [specification](.Lighthouse/scopes/initial-application/spec.md) and [plan](.Lighthouse/scopes/initial-application/plan.md). The plan owns task authority, file ownership, contract gates and progress.
+For delivery work, use the [EGM workflow](docs/egm-workflow.md), [application design](docs/designs/application.md) and [roadmap](docs/roadmap.md). The roadmap owns task authority, dependencies, file/schema ownership and progress; the [contract index](docs/contracts/README.md) owns gate availability. T3 and later features require separate authorization.
 
 ## Agent assignments
 
-For agent role/model assignment, read [project settings](.Lighthouse/settings/project.md#development-agent-assignments). Review and delivery lifecycle procedure come from Lighthouse.
+For skill routing, review handoff, sequential execution and role/model assignment, read the [workflow](docs/egm-workflow.md). Use the installed skill's own procedure. For architecture bootstrap, explicitly select `target_filename="EGM.md"` and a bounded subtree.
 
 ## Remote work
 

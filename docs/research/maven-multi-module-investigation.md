@@ -2,7 +2,7 @@
 
 ## Scope and recommendation
 
-Research date: 2026-10-26, Europe/Zagreb. Repository baseline: `776396722e499ff9108b87d1eba3ff091011cf62`. This note evaluates build structure and native test selection. The owner clarified that the immediate aim is to group tests, run either test level separately or together through Maven plugins, select one or both Java modules, and keep versions together. The accepted [specification](../scopes/initial-application/spec.md) and [plan](../scopes/initial-application/plan.md) own the resulting bounded amendment; this note supplies its investigation and verification evidence.
+Research date: 2026-10-26, Europe/Zagreb. Repository baseline: `776396722e499ff9108b87d1eba3ff091011cf62`. This note evaluates build structure and native test selection. The owner clarified that the immediate aim is to group tests, run either test level separately or together through Maven plugins, select one or both Java modules, and keep versions together. The accepted [specification](../designs/application.md) and [plan](../roadmap.md) own the resulting bounded amendment; this note supplies its investigation and verification evidence.
 
 Keep the existing Maven reactor with `bom`, `backend` and `pdf-extractor`. It already provides useful separation between dependency management and two executable artifacts. Do not add a Maven module for every future business feature yet; begin with feature packages inside `backend`, then extract build modules when a concrete dependency boundary or reuse requirement justifies them. This is a project-specific recommendation, not a Maven requirement.
 
@@ -15,7 +15,7 @@ pom.xml                    root aggregator and Java-module parent
 └── pdf-extractor/pom.xml   standalone executable JAR
 ```
 
-The [root POM](../../pom.xml) aggregates all three submodules and inherits Spring Boot's starter parent 4.1.2. Backend and extractor inherit the root's build configuration and explicitly import the shared [BOM](../../bom/pom.xml), which imports Spring Boot's dependency BOM 4.1.2. The BOM has no project parent, avoiding an import/parent cycle; it introduces no runtime library by itself. The [development guide](../../docs/local-development.md#compatibility) describes the current arrangement.
+The [root POM](../../pom.xml) aggregates all three submodules and inherits Spring Boot's starter parent 4.1.2. Backend and extractor inherit the root's build configuration and explicitly import the shared [BOM](../../bom/pom.xml), which imports Spring Boot's dependency BOM 4.1.2. The BOM has no project parent, avoiding an import/parent cycle; it introduces no runtime library by itself. The [development guide](../local-development.md#compatibility) describes the current arrangement.
 
 The backend currently contains the application shell. The [extractor entry point](../../pdf-extractor/src/main/java/com/aiknowledgebase/extractor/ExtractorMain.java) implements only `--version`; real extraction remains planned in T6. Its separate executable packaging is an existing reason for a build-module boundary, without claiming that PDF processing is implemented.
 
@@ -46,7 +46,7 @@ Keep the current modules: module selection and test-level selection are independ
 
 `skipUnitTests` is mapped only to Surefire. Its default follows `skipTests`, preserving the pinned plugins' global `-DskipTests=true` behavior when no explicit `skipUnitTests` override is given. `-DskipITs=true` skips Failsafe execution. Integration-only `verify` still compiles and packages before launching packaged-JAR tests. Maven's `integration-tests` build profile is distinct from the Spring `test` and `itest` configuration profiles.
 
-The backend currently has zero Java tests; selecting it does not invent coverage. Extractor has one Surefire test (`ExtractorLaunchTest`) and one Failsafe test (`ExtractorPackageITests`). Browser tests remain in the native npm suite. The [development guide](../../docs/local-development.md#native-tests) owns ongoing command instructions.
+The backend currently has zero Java tests; selecting it does not invent coverage. Extractor has one Surefire test (`ExtractorLaunchTest`) and one Failsafe test (`ExtractorPackageITests`). Browser tests remain in the native npm suite. The [development guide](../local-development.md#native-tests) owns ongoing command instructions.
 
 ## Whether to add feature modules
 
