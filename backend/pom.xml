@@ -32,9 +32,33 @@
       <artifactId>spring-boot-starter-jdbc</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-flyway</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-junit-jupiter</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -48,6 +72,61 @@
       </resource>
     </resources>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <workingDirectory>${project.basedir}/../frontend</workingDirectory>
+          <executable>npm</executable>
+        </configuration>
+        <executions>
+          <execution>
+            <id>frontend-dependencies</id>
+            <phase>initialize</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <arguments>
+                <argument>ci</argument>
+                <argument>--engine-strict</argument>
+                <argument>--include=dev</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>frontend-build</id>
+            <phase>generate-resources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <arguments><argument>run</argument><argument>build</argument></arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>frontend-tests</id>
+            <phase>test</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <skip>${skipFrontendTests}</skip>
+              <arguments><argument>--ignore-scripts</argument><argument>test</argument></arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset><directory>${project.basedir}/../frontend/dist</directory></fileset>
+            <fileset><directory>${project.basedir}/../frontend/test-results</directory></fileset>
+            <fileset><directory>${project.basedir}/../frontend/playwright-report</directory></fileset>
+            <fileset>
+              <directory>${project.basedir}/../frontend</directory>
+              <includes><include>*.tsbuildinfo</include></includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

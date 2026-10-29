@@ -15,14 +15,14 @@ A learning and portfolio project for exploring text PDFs through grounded AI con
 
 ## How it works
 
-The React shell asks the Spring Boot backend for readiness. The backend checks a real PostgreSQL connection and reports whether the workspace runtime is available. In the package, the backend serves both the frontend and its readiness endpoint from the same origin.
+Flyway applies versioned database migrations when the backend starts, currently enabling pgvector without domain tables. The React shell asks the Spring Boot backend for readiness. The backend checks a real PostgreSQL connection and reports whether the workspace runtime is available. In the package, the backend serves both the frontend and its readiness endpoint from the same origin.
 
 | Layer | Stack |
 | --- | --- |
 | Browser | React 19, TypeScript, Vite 8, shadcn/ui |
 | Backend | Java 26, Spring Boot 4.1, Maven Wrapper |
 | Database | PostgreSQL 17, pgvector, Docker Compose |
-| Tests | JUnit, Playwright |
+| Tests | JUnit, Testcontainers/PostgreSQL, Playwright |
 
 ## Run locally
 
@@ -49,10 +49,9 @@ npm run dev --prefix frontend
 
 Open [localhost:5173](http://127.0.0.1:5173). Stop each app with Ctrl-C; `docker compose stop db` stops its database while preserving the named volume.
 
-To build and run the single-origin package:
+To build and run the single-origin package, first complete the [browser setup](#test-and-build) because `package` runs the browser tests. Use `./mvnw -DskipTests=true package` to build fresh assets/package without test execution:
 
 ```sh
-npm run build --prefix frontend
 ./mvnw package
 java -jar backend/target/backend-0.1.0-SNAPSHOT.jar --spring.profiles.active=dev
 ```
@@ -62,14 +61,14 @@ Open [localhost:8080](http://127.0.0.1:8080). For occupied ports or custom datab
 ## Test and build
 
 ```sh
+npm ci --prefix frontend
 npx --prefix frontend playwright install chromium  # Once per browser version
-npm test --prefix frontend                        # Builds UI; browser tests start their own preview
-./mvnw -Pintegration-tests verify                 # Basic + extractor package integration tests
+./mvnw -Pintegration-tests verify                   # Java basic/integration + browser tests
 ```
 
-Run the frontend command first: its production build is included in the backend package. Linux may need Playwright's `--with-deps` option when installing Chromium. `./mvnw test` runs only the basic Java tests, without Docker or a full application startup. Use `-pl backend`, `-pl pdf-extractor` or `-pl backend,pdf-extractor` to select Java modules; see [test-level selection](docs/local-development.md#native-tests) for integration-only commands.
+Maven installs locked frontend dependencies, builds current assets before packaging, and runs the browser suite once. Node/npm must be on PATH; browser installation remains a separate setup step. Linux may need Playwright's `--with-deps` option when installing Chromium. `./mvnw test` runs Java basic and browser tests without Docker or a full application startup. Native `npm test --prefix frontend` remains available for frontend-only work and builds the UI first. Use `-pl backend`, `-pl pdf-extractor` or `-pl backend,pdf-extractor` to select modules; the extractor alone needs no Node. See [test-level selection](docs/local-development.md#native-tests) for skip and integration-only commands.
 
-Frontend browser tests isolate readiness success, failure and retry with test-only network mocks. Java tests cover the extractor child process and its actual built package. Backend readiness and database lifecycle currently have no automated integration tests. Tests do not call AI providers.
+Frontend browser tests isolate readiness success, failure and retry with test-only network mocks. Java tests cover safe MVC errors and correlation IDs, the real HTTP incompatible-Accept JSON 406 regression, and the built extractor JAR. Extractor basic selection currently has no tests; its child runtime/exit contract runs after packaging. Real identity, ownership, persistence and recovery checks belong to their feature slices. Dedicated migration/adoption/sentinel-restart/failed-migration checks have been removed; fresh feature tests do not automatically replace special existing-volume adoption coverage. Integration test classes use the `*ITests` suffix and Spring profile `itest`. Database integration tests require Docker and use isolated disposable databases on a random port. Tests do not call AI providers.
 
 ## Scope
 
