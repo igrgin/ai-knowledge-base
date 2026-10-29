@@ -6,6 +6,18 @@ The current [intent](intent.md), [specification](spec.md) and [plan](plan.md#rev
 
 T1 and its later refinements are completed in merged [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21). The owner authorized T2 in the current T2 conversation on 2026-10-26: “Let's start T2. Use the agreed agent assignments and review process, keep concurrency at 1, and show me the PR before merging.” T2 is delivered in unmerged [PR #23](https://github.com/igrgin/ai-knowledge-base/pull/23), with its feature-focused test amendment completed, from merged `main` at `6a3a319876ba69f05c958cc52a4378cbdb9b441c`; T3–T20 remain pending and unauthorized. Subsequent accepted T2 amendments are recorded under [T2 execution progress](#t2-execution-progress); the user retains the merge decision.
 
+The separately authorized [incremental EGM bootstrap](#incremental-egm-bootstrap) is prepared from T2 on its own branch for finalization after T2 and before T3. It changes documentation only and preserves the task gates above.
+
+## Incremental EGM bootstrap
+
+On 2026-10-29, in the EGM adoption conversation, the owner requested removal of the test Lighthouse migration branch and a copy of T2's PR branch to “implement your changes,” with the sequence: “first finish up T2, and then we will finalize this before starting work on T3.” This authorizes the assessed documentation bootstrap, not T3 implementation or a broader design acceptance.
+
+Baseline: T2 PR #23 head `3f0d084fc4a201979b02cec47db9ae793d720255`, copied to `egm-foundation-bootstrap`. The discarded test migration is not included. Scope: the root [EGM architecture map](../../../EGM.md), contracts for [shared](../../../backend/src/main/java/com/aiknowledgebase/shared/EGM.md) and [shared/web](../../../backend/src/main/java/com/aiknowledgebase/shared/web/EGM.md), one navigation pointer in `AGENTS.md`, and this progress note. The integrator owns these documents; read-only scouts and independent review run sequentially at concurrency 1.
+
+Approach: ground each package contract in its production symbols, invariants and side effects; reuse K0 and native verification commands; keep planned consumer obligations visibly separate. Preserve the existing application README, K0, specification, runtime/build/test behavior and T2 review history. Check every new link and documented command against current files, then obtain a fresh documentation assessment. Application tests need not be rerun for this documentation-only change.
+
+Status: documentation prepared; finalization pending after T2. Local link/anchor, required-section, code-fence and whitespace checks passed; no application tests were run. Fresh independent bugs/security/requirements review of the five-document bootstrap was clear, with its preserved candidate identity and evidence in the EGM adoption conversation. The owner then requested an additional [EGM drift report](../../research/2026-10-29_DRIFT_REPORT.md); sequential comparison of all three new contracts with current source found no drift. After the owner's T2 completion, compare against its final contents and refresh any affected contract/review before integrating the bootstrap. T3 is the proposed first EGM feature-design pilot, using its existing requirements and K0; resolve its concrete principal, session/CSRF/error interfaces and module boundary before implementation. Later contracts remain with their producing tasks. The specification's existing proposal/acceptance distinctions remain unchanged.
+
 ## Sources and scope
 
 | Source | Current section or identifying information | Relevant content |
