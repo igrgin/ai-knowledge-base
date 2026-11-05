@@ -16,3 +16,5 @@ These notes retain their original dates, investigated baselines and sources. The
 | [Spring Modulith](spring-modulith-investigation.md) | Supports structural verification once directional public interfaces exist; no second event/job runtime is adopted. |
 
 The nine earlier retained notes were evaluated for purpose during the [2026-11-05 reassessment](../reviews/egm-migration/reassessment.md). Their external prices/releases were not refreshed by that review. The Google investigation is later issue #3 research authorized on the same date. New research is added here only under its own authorized scope and is incorporated into current decisions through EGM design and review.
+
+The owner subsequently removed public/anonymous transcript viewing from R27/T17. Any such behavior described in earlier research is superseded by the current [application design](../designs/application.md); administrators cannot enable it.
