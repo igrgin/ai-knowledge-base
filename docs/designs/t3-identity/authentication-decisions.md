@@ -17,6 +17,8 @@ Google is the sole application login provider. No application password login, se
 
 The owner requested Google research and an audit of plans, files and current issues before continuing brainstorming. This authorizes the research and planning reconciliation, not feature implementation or completion of issue #3. [The roadmap](../../roadmap.md) owns task authority; [the application design](../application.md) owns amended R1/R18 and C7.
 
+On the first successful Google sign-in, create the application account automatically and let the user start creating projects immediately. No separate registration form, profile-completion step, invitation or approval is required. Returning sign-ins resolve the existing account; concurrent first sign-ins must not create duplicate accounts.
+
 ## Research and audit
 
 The [source-backed Google investigation](../../research/google-sign-in-investigation.md) covers existing-version fit, Google project/client setup, identity scopes, callback origins, persistent sessions, logout, offline verification and recipient identity. The [plan and issue audit](../../reviews/t3-identity/google-auth-plan-audit.md) records changed files, unchanged boundaries and exact proposed remote issue edits.
@@ -28,7 +30,7 @@ The recommended signed-in integration uses server-side OpenID Connect through Sp
 - Property binding, configuration validation and checks for the accepted YAML/profile defaults and explicit overrides.
 - The server-established development account/principal and repeatable fixtures needed to exercise real ownership paths without Google login.
 - Google configuration failure behavior; missing configuration must not silently enable the development shortcut. No local-to-Google product migration or account switcher is needed by this request.
-- Whether a new Google identity creates an account immediately or needs an onboarding step; returning identity and changed-email behavior.
+- Atomic automatic account creation, returning-identity lookup and changed-email behavior; the no-extra-onboarding outcome is settled.
 - Session lifetime, browser restart behavior, concurrent sessions, application logout and provider-side revocation/recovery limits.
 - The identity and proof needed for named project invitations/restricted snapshots. Google sign-in must not silently change accepted sharing behavior; development fixtures do not authorize access to real users' private resources.
 - Exact API/CSRF/error/principal/module interfaces, persistence comparison, file boundaries, implementation phases and meaningful checks required by the roadmap.

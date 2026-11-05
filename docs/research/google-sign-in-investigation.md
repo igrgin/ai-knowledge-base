@@ -10,7 +10,7 @@ These decisions supersede the older email/password proposals in the [application
 
 Recommendation for the signed-in mode: use Spring Security's server-side OIDC authorization-code login and Spring Session JDBC. This fits the existing same-origin Spring MVC application and shared PostgreSQL direction without a runtime upgrade. Keep the application's UUID account identity separate from Google identity and keep Google tokens out of browser storage. Google documents a backend server flow; Spring documents Google OAuth2 Login establishing an authenticated session. [Google server flow](https://developers.google.com/identity/openid-connect/openid-connect#server-flow), [Spring Google login](https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html)
 
-This recommendation does **not** settle account provisioning, invitation semantics, session duration, relinking or immediate response to provider-side revocation. Those decisions are listed below.
+This recommendation does **not** settle invitation semantics, session duration, relinking or immediate response to provider-side revocation. Those decisions are listed below.
 
 For the developer launch, recommendation: an explicit YAML authentication setting supplies a server-established development account/principal. Keep normal ownership predicates, account quotas and feature behavior. Authentication-enabled configurations must reject bypass access; missing Google configuration must not enable it. The default loopback startup remains suitable for the stated IntelliJ workflow; no LAN-use product or local-to-Google migration is requested. The exact fixture, profile/run configuration and safeguards need T3 design. A controlled OIDC issuer used in automated tests is a separate tool and does not satisfy this developer convenience by itself. [K0 trusted identity](../contracts/k0-foundation.md#identifiers-and-trusted-identity), [current local startup](../local-development.md)
 
@@ -70,7 +70,7 @@ Recommended lifecycle boundaries for review:
 
 - A returning issuer/subject resolves the same UUID after an email change; refresh display/contact data only through a deliberate policy. Test collision with another account's email.
 - A new subject must not automatically link/merge into a prior UUID because emails match. Lost Google access does not establish a new account's right to old private content.
-- Decide whether first successful login provisions immediately or presents a short completion step. R1 still requires self-registration without invitation; consent denial or failed validation must not provision a usable account.
+- Owner decision: the first successful Google sign-in creates the application account automatically with no further onboarding and immediate ability to create projects. Implement atomic issuer/subject uniqueness; consent denial or failed validation must not provision a usable account.
 - No account relinking, recovery operator or administrator portal is added by the provider choice. If later required, define proof, audit and existing-session/grant behavior separately. Google itself leaves new-user onboarding/auto-registration to the application. [Google application-account step](https://developers.google.com/identity/openid-connect/openid-connect#authenticatingtheuser)
 
 ## Security and persistent sessions
