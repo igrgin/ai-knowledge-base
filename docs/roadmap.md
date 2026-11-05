@@ -16,6 +16,8 @@ The owner additionally selected explicit permissions rather than a role-only aut
 
 The owner described basic access as reading/writing owned documents and accessing owned chats. The T3 [intake proposal](designs/t3-identity/authentication-decisions.md#proposed-basic-permission-set) maps that to existing feature actions; the detailed basic catalog, including default sharing/publication grants, remains unaccepted. The owner subsequently removed public/anonymous transcript viewing entirely; R27/T17 now require authenticated, authorized recipients. No permission or administrator override may enable public viewing. Private sharing/import/restricted-snapshot basic defaults remain under discussion.
 
+The owner requires at least one permission manager after initial setup. T3 must reject removal of the final permission-management grant, including concurrent changes, against shared database state. Logged-out/expired sessions do not remove the account's authority. No new account deletion or recovery feature is authorized by this rule.
+
 ## Feature design prerequisite
 
 Every unstarted substantial feature requires a bounded, accepted EGM design and completed design review before implementation, following the [workflow](egm-workflow.md#implement-an-accepted-scope). Resolve its technical choices, exact Create/Modify/Delete file boundary, schemas/interfaces, shared edits, incremental phases and tests there. The application design and tables below are direction and ownership, not implementation-ready task plans. Design work itself needs its scoped issue/authority. T3 research and brainstorming are active; its formal design and Goldfish review are not complete.
