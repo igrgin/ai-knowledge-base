@@ -4,7 +4,7 @@
 
 Read the [application design](designs/application.md) for requirements and accepted/proposed distinctions, the [roadmap](roadmap.md) for task authority, dependencies and ownership, and the [contract index](contracts/README.md) for available gates. [EGM.md](../EGM.md) and package maps describe implemented behavior. A design, ready gate or clean review does not authorize another task.
 
-The selected package is **EGM with small fixes**, experimental local derivative **0.2.0**, based on the [Elephant-Goldfish Model](https://github.com/google/elephant-goldfish-model). It includes `egm-fix`; an upstream-only installation does not establish that capability. Resolve the installed package and skill paths through the host's skill catalog, then read the selected `SKILL.md` and its referenced integration guide/personas/standards. Keep those procedures in the package rather than copying them here or relying on a machine's cache path.
+The selected package is **EGM with small fixes**, a local derivative based on the [Elephant-Goldfish Model](https://github.com/google/elephant-goldfish-model). Version **0.2.1** and `egm-fix` were verified during the 2026-11-05 reassessment. Resolve the installed package and skill paths for each invocation, record the version used, then read the selected `SKILL.md` and its referenced integration guide/personas/standards. An upstream-only installation does not establish the small-fix capability. Keep procedures in the package rather than copying them here or relying on a machine's cache path.
 
 ## Choose the skill for the work
 
@@ -23,7 +23,11 @@ Name the task artifact directory for every invocation. Feature briefs/designs be
 
 ## Implement an accepted scope
 
-EGM leaves implementation tooling to the project. Identify the authorized issue/scope and baseline, confirm start gates and integrated completion prerequisites, implement the design's owned files, and use native verification from [local development](local-development.md). Keep controlled providers and fixtures out of application-mode success paths. Feature migrations are introduced with their actual data, not speculatively in the foundation.
+Before a substantial feature enters implementation, identify its authorized issue and committed baseline, then produce or amend its bounded EGM design. Use `egm-brainstorm` for unresolved direction and `egm-draft` for an agreed outcome; review it with `egm-review` and resolve findings under the installed procedure. Record accepted decisions and remaining limits. A roadmap row, overall application design or available provider gate alone is insufficient. The [roadmap's design prerequisite](roadmap.md#feature-design-prerequisite) applies to every unstarted feature, including T3.
+
+The implementation handoff must settle consequential choices and list exact repository-relative files to Create/Modify/Delete, migrations and interfaces, permitted shared changes, incremental buildable phases and meaningful checks. Directory ownership tables describe boundaries; they are not implementation write allowlists. Register the selected real design in [SITEMAP](designs/SITEMAP.md). Required provider gates must be available before consumer code relies on them; full-task completion additionally requires integrated real providers.
+
+EGM leaves implementation tooling to the project. Implement the accepted handoff and use native verification from [local development](local-development.md). Keep controlled providers and fixtures out of application-mode success paths. Feature migrations are introduced with their actual data, not speculatively in the foundation.
 
 Update changed package maps and canonical contracts with the implementation. Proposed product changes belong in the application/feature design until accepted; reconcile accepted amendments at their owning source before consumers rely on them. The roadmap owns current task state, and the contract index owns gate versions/availability.
 

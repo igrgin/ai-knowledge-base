@@ -1,6 +1,6 @@
 # Frontend tests through Maven
 
-Research date: 2026-10-26, Europe/Zagreb. Baseline: `68042f28a112de23c22e230a48a61e77f4bc2a6b` on `2-add-minimal-persistence-and-contract-conventions`. **Accepted for T2 implementation in PR #23; implementation/review evidence is tracked in that PR.** On 2026-10-26 the owner said in the current conversation: “Adopt this approach and implement it in T2’s existing PR. Use the agreed agents and review process, keep concurrency at 1, and show me the updated PR before merging.” This note records the adopted design and original research; it does not itself prove implementation or verification. PR #23 remains unmerged.
+Research date: 2026-10-26, Europe/Zagreb. Baseline: `68042f28a112de23c22e230a48a61e77f4bc2a6b` on `2-add-minimal-persistence-and-contract-conventions`. **Accepted for T2 implementation in PR #23; implementation/review evidence is tracked in that PR.** On 2026-10-26 the owner said in the current conversation: “Adopt this approach and implement it in T2’s existing PR. Use the agreed agents and review process, keep concurrency at 1, and show me the updated PR before merging.” This note records the adopted design and original research; it does not itself prove implementation or verification. At that research baseline PR #23 was unmerged; it is now merged. The [roadmap](../roadmap.md#completed-foundation) owns current completion status.
 
 ## Recommendation
 

@@ -1,5 +1,7 @@
 # EGM cutover review
 
+Current combined assessment: the [2026-11-05 architecture/task reassessment](reassessment.md) extends this original preservation review with new findings, dispositions, retained-file purposes and future design gates. The result below describes the earlier candidate and scope, not a clean review of every later feature design.
+
 Date: 2026-10-29. Scope: documentation governance migration for [issue #24](https://github.com/igrgin/ai-knowledge-base/issues/24).
 
 ## Result

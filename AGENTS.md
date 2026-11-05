@@ -2,7 +2,7 @@
 
 ## Delivery work
 
-For delivery work, use the [EGM workflow](docs/egm-workflow.md), [application design](docs/designs/application.md) and [roadmap](docs/roadmap.md). The roadmap owns task authority, dependencies, file/schema ownership and progress; the [contract index](docs/contracts/README.md) owns gate availability. T3 and later features require separate authorization.
+For delivery work, use the [EGM workflow](docs/egm-workflow.md), [application design](docs/designs/application.md) and [roadmap](docs/roadmap.md). Before substantial feature implementation, satisfy the roadmap's bounded EGM design/review prerequisite. The roadmap owns task authority, dependencies, file/schema ownership and progress; the [contract index](docs/contracts/README.md) owns gate availability. T3 and later features require separate authorization.
 
 ## Agent assignments
 
