@@ -103,4 +103,8 @@ Current code is foundation only: no legacy password-user conversion, existing pu
 
 ## Integrator artifact verification
 
-The integrator read the brief, normalized report and six raw results, checked available native child completion state and reconciled the later review status in the intake/sitemap/roadmap. `git diff --check` passed. An ephemeral checker validated 12 changed/new Markdown files, 96 local file/anchor references (including source links with line suffixes), all required brief sections, six nonempty raw reports, 16 Major plus 3 Nit raw observations, and the normalized 9 Major plus 2 Nit count. The brief is 1,950 words. These are artifact checks, not application tests or a new review of an implementation. All recommendations remain pending owner/design disposition.
+The integrator read the brief, normalized report and six raw results, checked available native child completion state and reconciled the later review status in the intake/sitemap/roadmap. `git diff --check` passed. An ephemeral checker validated 12 changed/new Markdown files, 96 local file/anchor references (including source links with line suffixes), all required brief sections, six nonempty raw reports, 16 Major plus 3 Nit raw observations, and the normalized 9 Major plus 2 Nit count. The initial synthesized brief was 1,950 words. These are artifact checks, not application tests or a new review of an implementation. All recommendations remain pending owner/design disposition.
+
+## Post-review discussion
+
+M1: the owner requested an inactivity recommendation. The integrator added a proposed user-activity policy to the brief, excluding automatic polling and using bounded activity reporting for local interactions. It remains pending owner acceptance and implementation design; M1 is not closed and no repeat Goldfish review is claimed. Original raw reports and reviewed baseline remain unchanged.

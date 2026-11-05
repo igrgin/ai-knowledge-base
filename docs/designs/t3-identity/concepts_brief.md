@@ -17,6 +17,26 @@ The [intake](authentication-decisions.md) records owner decisions and remaining 
 
 The most repeated objection concerns the meaning of inactivity. The owner chose 30 minutes idle and eight hours maximum from sign-in, but planned job polling runs approximately every two seconds. Counting every authenticated request as activity lets an unattended polling page remain signed in until the absolute deadline. Counting deliberate interaction instead requires a clear treatment of passive PDF reading, background tabs and multiple tabs sharing one session. Neither interpretation was selected. The brief therefore carries an owner choice, not a new timeout or heartbeat mechanism. Enforcement must remain server-side and activity in another session must not extend this session.
 
+### Proposed inactivity policy
+
+After the review, the owner asked what normally resets the clock and requested a recommendation. Recommendation for this project, **pending owner acceptance**: reset the idle clock on meaningful user activity in the app, not automatic traffic.
+
+| Activity | Reset idle clock? |
+| --- | --- |
+| Deliberate page refresh, navigation, opening a project/chat/PDF | Yes, while the session is still valid |
+| Typing, clicking controls, scrolling a PDF or changing pages in a visible app tab | Yes |
+| Automatic job/status polling, background refresh or PDF prefetch | No |
+| Background worker completion or activity in a different browser session | No |
+| Leaving a tab open, mouse movement alone or passive reading without interaction | No |
+
+Conventional HTTP inactivity uses the last request for a session, and Spring records session access. That convention explains why a refresh usually counts, but does not by itself distinguish a person from polling. [OWASP idle timeout](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#idle-timeout), [Spring Session access time](https://docs.spring.io/spring-session/reference/api.html#api-session) (checked 2026-11-05).
+
+A small shared frontend activity signal can report qualifying local interactions, with requests throttled rather than sent for every keystroke/scroll event. The server records its own receipt time, enforces expiry and cannot revive an expired/revoked session from a delayed signal; client timestamps are not authority. Keep the eight-hour maximum unchanged, share activity across tabs using the same session, and keep separate sessions independent. The exact integration/throttle belongs in drafting; no standalone heartbeat service or implementation is selected. Framework session access caused by polling must not override this policy.
+
+The tradeoff is some application-specific activity tracking beyond default request-based expiry. Passive reading with no interaction for 30 minutes can still expire; preserve position/draft and request sign-in when needed. Counting a merely visible tab as activity would again let an unattended screen remain active. This recommendation is not yet an owner decision or a closed M1 finding.
+
+### Other review findings
+
 Revocation also needs distinct meanings. Ending a session, removing an action permission and revoking a resource are separate changes. Reviewers recommend that committed session/permission changes govern subsequent authorization checks across instances, rather than leaving grants frozen in an eight-hour session. This is a proposed effect boundary. The design must settle concurrent requests, login racing with “revoke all,” and whether later fresh Google login remains allowed. Revoking sessions must not silently introduce account suspension.
 
 Later durable jobs complicate the boundary further: a job can be accepted before a permission is removed and dispatch or publish afterward. The owner must choose whether permission removal blocks new submissions only, also blocks undispatched work, or additionally fences publication. T3 should define the account-based consumer contract with future owners, without implementing their jobs. Logout need not cancel accepted work; any such rule requires an explicit choice. Already dispatched or uncertain paid calls still require the owning feature's accounting settlement. Workers must not depend on a live browser session or Google token.
