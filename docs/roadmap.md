@@ -18,6 +18,8 @@ The owner described basic access as reading/writing owned documents and accessin
 
 The owner requires at least one permission manager after initial setup. T3 must reject removal of the final permission-management grant, including concurrent changes, against shared database state. Logged-out/expired sessions do not remove the account's authority. No new account deletion or recovery feature is authorized by this rule.
 
+Post-review, the owner accepted meaningful user-action renewal, at-most-once-per-minute local interaction notifications and exclusion of polling from idle renewal. Ordinary expiry preserves already-authorized requests/durably accepted jobs; future requests need valid authentication. A concrete five-minute pre-write threshold before the eight-hour maximum is proposed for confirmation; no absolute-lifetime extension is allowed.
+
 ## Feature design prerequisite
 
 Every unstarted substantial feature requires a bounded, accepted EGM design and completed design review before implementation, following the [workflow](egm-workflow.md#implement-an-accepted-scope). Resolve its technical choices, exact Create/Modify/Delete file boundary, schemas/interfaces, shared edits, incremental phases and tests there. The application design and tables below are direction and ownership, not implementation-ready task plans. Design work itself needs its scoped issue/authority. T3 brainstorm round 1 is complete with six fresh lenses; the [concepts brief](designs/t3-identity/concepts_brief.md) awaits owner refinement/alignment. Its formal feature design and design review are not complete.
