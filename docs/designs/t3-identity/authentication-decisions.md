@@ -25,6 +25,23 @@ Each signed-in session has its own inactivity countdown and maximum lifetime; ac
 
 The owner requires an explicit permission system; a role-only authorization model is insufficient. Backend actions must check the needed permission together with resource ownership. Google establishes identity; application permissions and their assignments are managed by this application. Administrators assign/revoke individual user permissions through the app, and new accounts receive basic permissions automatically. Optional role grouping is not a substitute for those controls. The basic set must retain immediate project creation; its remaining actions need clarification. Disabling sign-in does not disable permission checks: the server-established no-sign-in account uses the same authorization paths. Permission catalog, basic defaults, initial privileged-account setup, exact UI and cross-instance propagation need the bounded design; no general policy language or deny/override hierarchy is selected.
 
+## Proposed basic permission set
+
+The owner described ordinary users as able to read, write and access their own documents and access their own chats, and requested suggestions for any missing everyday actions. Immediate project creation and own-session controls are already selected. The following expands those needs into a **proposal**, not an accepted final permission catalog or implementation allowlist. Exact permission identifiers and feature migrations belong in the bounded design/owning slices.
+
+| Area | Proposed ordinary-user actions | Existing scope |
+| --- | --- | --- |
+| Projects | Create, list/open, rename and delete owned projects | T4/T11; preserve confirmation and tracked purge |
+| PDFs | Upload, open originals/citations, archive/unarchive, view processing status and retry eligible failed work | T6/T18/T20/T7; no PDF editing or individual PDF deletion |
+| Chats | Create/reopen/read, ask questions/follow-ups, delete owned chats and change eligible source selections | T8/T9/T20; keep document ownership and archive rules |
+| Own sessions | List and revoke individual sessions or all own sessions | T3; independent idle/absolute expiry |
+| AI/operation status | See the account's AI availability/limits and its own operation status | T5 and producing slices; permission never bypasses spending/quota admission |
+| Sharing/publication | Create/revoke owned project-copy shares, accept authorized imports, publish/update/revoke owned chat snapshots | T16/T17/T19; whether these are automatic basic grants remains an owner question |
+
+Administrative session revocation and permission assignment/revocation are separate from the basic set. No default permission grants access to another account's private resources. Permission checks remain combined with resource ownership; resource IDs and browser-supplied permission lists do not authorize access. The exact permission matrix must be tested on the backend, consistent with [OWASP authorization guidance](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html#enforce-least-privileges) (checked 2026-11-05).
+
+The sharing row preserves existing requirements; leaving its default grants unresolved does not remove those features or authorize early implementation. Clarify that row before finalizing the basic catalog. Definitions of `read`/`write` must not add PDF editing, individual file deletion or unrestricted AI use to the accepted application scope.
+
 ## Research and audit
 
 The [source-backed Google investigation](../../research/google-sign-in-investigation.md) covers existing-version fit, Google project/client setup, identity scopes, callback origins, persistent sessions, logout, offline verification and recipient identity. The [plan and issue audit](../../reviews/t3-identity/google-auth-plan-audit.md) records changed files, unchanged boundaries and exact proposed remote issue edits.

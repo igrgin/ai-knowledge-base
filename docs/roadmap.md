@@ -14,6 +14,8 @@ The owner additionally requests independent session timers and settings/profile 
 
 The owner additionally selected explicit permissions rather than a role-only authorization model. T3 must design permission assignments/enforcement and agree the consumer boundary; admins assign/revoke individual permissions in the app and new users receive basic permissions automatically. The exact basic set, initial privileged-account setup, optional role grouping and propagation need design. Resource slices still own ownership predicates and their actual action permissions. Permission checks remain active when sign-in is disabled.
 
+The owner described basic access as reading/writing owned documents and accessing owned chats. The T3 [intake proposal](designs/t3-identity/authentication-decisions.md#proposed-basic-permission-set) maps that to existing feature actions; the detailed basic catalog, including default sharing/publication grants, remains unaccepted. No existing product feature is removed by this discussion.
+
 ## Feature design prerequisite
 
 Every unstarted substantial feature requires a bounded, accepted EGM design and completed design review before implementation, following the [workflow](egm-workflow.md#implement-an-accepted-scope). Resolve its technical choices, exact Create/Modify/Delete file boundary, schemas/interfaces, shared edits, incremental phases and tests there. The application design and tables below are direction and ownership, not implementation-ready task plans. Design work itself needs its scoped issue/authority. T3 research and brainstorming are active; its formal design and Goldfish review are not complete.
