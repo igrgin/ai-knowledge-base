@@ -41,6 +41,8 @@ Authentication/security-filter responses remain T3-owned and must reuse this pub
 
 ## JDBC transactions
 
+K0 records the current Spring JDBC convention; no domain repositories exist yet. The [persistence decision](../designs/application.md#alternatives) remains reviewable before the first domain implementation. JPA also supports transactions and is not excluded by the required atomicity/ownership behavior. A selected alternative must amend this convention with its real transaction-manager and mixed-access rules before consumers implement it; this migration adds no persistence dependency.
+
 Use Boot's managed `JdbcClient`/datasource and Spring's transaction manager. Put each atomic database state change in a short `@Transactional` service method or `TransactionTemplate` callback. Bind UUIDs as SQL parameters; do not interpolate user values. Keep ownership predicates, relevant locks and uniqueness constraints inside the transaction. Use the default PostgreSQL READ COMMITTED isolation unless a slice's actual race requires a more specific lock/isolation protocol. Checked failures need explicit rollback semantics when used with `@Transactional`.
 
 Commit/release connections and row locks before provider calls, filesystem work or child-process waits. Claim/reserve and finalize in separate short transactions under the owning feature's durable state protocol; request UUIDs alone cannot provide idempotency or fence stale results. No generic transaction/job framework or long-lived connection is added by K0.
