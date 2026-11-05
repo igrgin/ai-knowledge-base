@@ -47,6 +47,19 @@ The remaining private-sharing defaults above are recommendations pending owner a
 
 Alternative rejected by the owner: public snapshots enabled through an extra administrator-granted permission. The owner removed anonymous/public viewing entirely. Public URLs would not technically require anonymous accounts; this exclusion is a product decision, separate from Spring's anonymous security-context support. [Spring anonymous authentication](https://docs.spring.io/spring-security/reference/servlet/authentication/anonymous.html) Keep ordinary public login/static/health endpoints and the configured developer no-sign-in principal separate from that product decision; the development principal still satisfies ownership/recipient checks. Definitions of `read`/`write` do not add PDF editing, individual file deletion or unlimited AI use.
 
+## Proposed initial administrator setup
+
+The owner suggested manual internal assignment of the first administrator and asked for an alternative. Recommendation, **pending owner acceptance**: provide a one-time operator-run setup command that grants the initial permission-management and administrator session-management permissions to an explicitly selected existing application account UUID.
+
+1. The operator signs in through Google normally, creating an ordinary account with basic permissions.
+2. From the trusted application host/environment, the operator invokes the internal setup command with that account UUID. Exact command syntax is a design output; no such command exists yet.
+3. The application verifies the account, grants the defined initial permissions transactionally, and records the bootstrap completion and grant evidence without tokens/private content. First successful bootstrap consumes the setup facility; concurrent/duplicate attempts cannot grant a different account.
+4. Subsequent assignments/revocations happen in the permission-management UI under the accepted permissions. Ordinary startup must never replay the initial grant or undo a later revocation.
+
+This is an operator action rather than a public setup endpoint. Normal users cannot invoke it through the application UI/API, and being the first registrant must not confer administrator permissions. Do not create a separate local-password admin account or trust a matching email string as proof of identity. The concrete trusted-host invocation, transaction/concurrency rules and failure recovery need bounded design. A later last-administrator recovery procedure is a separate unresolved question; it must not be an always-on bootstrap backdoor.
+
+This recommendation replaces neither the owner's Google login decision nor in-app permission management. It is a proposed way to establish the first permission manager without requiring ad hoc SQL edits, automatic privilege assignment on every startup or a generic role-only seed.
+
 ## Research and audit
 
 The [source-backed Google investigation](../../research/google-sign-in-investigation.md) covers existing-version fit, Google project/client setup, identity scopes, callback origins, persistent sessions, logout, offline verification and recipient identity. The [plan and issue audit](../../reviews/t3-identity/google-auth-plan-audit.md) records changed files, unchanged boundaries and exact proposed remote issue edits.
