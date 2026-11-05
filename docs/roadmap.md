@@ -22,7 +22,7 @@ Post-review, the owner accepted meaningful user-action renewal, at-most-once-per
 
 The owner accepted the permission-removal boundary: current checks for every new protected request, with previously authorized requests/durably accepted queued or running work allowed to finish within original bounds. Atomically order admission/revocation; keep result-access, lifecycle and spending checks. No global permission-change job scan or implicit cancellation is required. T3 must agree this contract with future job owners before consumers implement it.
 
-New basic permissions must also reach existing accounts automatically, while preserving every explicit administrator revocation. Session invalidation is not selected as the refresh mechanism; the owner asked for a recommendation. The [default/exception model](designs/t3-identity/authentication-decisions.md#basic-permission-evolution) is a proposal pending owner acceptance, not an implemented schema or published contract.
+New basic permissions must also reach existing accounts automatically, while preserving every explicit administrator revocation. The owner selected current server-side permission checks on each new protected request, without user/session refresh or forced Google sign-in. Already-admitted work retains the accepted boundary. The [default/exception model](designs/t3-identity/authentication-decisions.md#basic-permission-evolution) is a proposal pending owner acceptance, not an implemented schema or published contract.
 
 ## Feature design prerequisite
 

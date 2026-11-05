@@ -49,7 +49,7 @@ Alternative rejected by the owner: public snapshots enabled through an extra adm
 
 ## Basic-permission evolution
 
-**Accepted outcome:** new basic permissions apply to existing accounts too, without restoring anything an administrator explicitly revoked. The owner suggested session invalidation as a possible mechanism and requested a recommendation; that mechanism is not accepted.
+**Accepted outcome:** new basic permissions apply to existing accounts too, without restoring anything an administrator explicitly revoked. The owner selected server-side permission changes with current checks on each new protected request. Permission changes require no user/session refresh, forced sign-out or fresh Google login. Already-admitted work retains the previously accepted boundary; UI permission displays may remain stale until their next normal reload, but cannot authorize an action. The default/exception storage model below remains proposed.
 
 **Recommendation, pending owner acceptance:** keep a finite application-defined permission catalog, a shared set of basic defaults, and one explicit grant or revocation per account/permission when an administrator makes an exception. No exception means inherit the default. An explicit revocation wins over a basic default; an explicit grant allows a non-basic action. Regranting a revoked permission replaces that revocation through an authorized administrator action. Record revocation even when the permission is currently absent, so making it basic later does not silently grant it.
 
