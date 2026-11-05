@@ -36,11 +36,16 @@ The owner described ordinary users as able to read, write and access their own d
 | Chats | Create/reopen/read, ask questions/follow-ups, delete owned chats and change eligible source selections | T8/T9/T20; keep document ownership and archive rules |
 | Own sessions | List and revoke individual sessions or all own sessions | T3; independent idle/absolute expiry |
 | AI/operation status | See the account's AI availability/limits and its own operation status | T5 and producing slices; permission never bypasses spending/quota admission |
-| Sharing/publication | Create/revoke owned project-copy shares, accept authorized imports, publish/update/revoke owned chat snapshots | T16/T17/T19; whether these are automatic basic grants remains an owner question |
+| Share own project copies | Basic by default: create/revoke fixed copies for intended recipients or registered-link acceptance | T16/T19; explicit share action and existing independent-copy rules |
+| Import an authorized project copy | Basic by default: accept/import subject to account/storage quotas | T16/T19; permission alone grants no access to an unshared source |
+| Publish restricted chat snapshots | Basic by default: explicitly publish/update/revoke snapshots for authorized recipients | T17; transcript only, no PDF/project/AI access |
+| Publish public chat snapshots | Separate permission, absent from new-user basic defaults; an authorized administrator can grant it individually | T17; explicit public publication/preview, no anonymous private API/file rights |
 
 Administrative session revocation and permission assignment/revocation are separate from the basic set. No default permission grants access to another account's private resources. Permission checks remain combined with resource ownership; resource IDs and browser-supplied permission lists do not authorize access. The exact permission matrix must be tested on the backend, consistent with [OWASP authorization guidance](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html#enforce-least-privileges) (checked 2026-11-05).
 
-The sharing row preserves existing requirements; leaving its default grants unresolved does not remove those features or authorize early implementation. Clarify that row before finalizing the basic catalog. Definitions of `read`/`write` must not add PDF editing, individual file deletion or unrestricted AI use to the accepted application scope.
+The sharing defaults above are the integrator's recommendation requested by the owner, **pending owner acceptance**. Keep private sharing convenient, while making permission to publish a transcript without login an explicit administrator grant. This does not remove R27 public publishing: it remains a feature available to accounts granted that permission. Project import always creates an independent destination; revoking a share stops future imports but cannot erase accepted copies. All publication/share actions remain explicit; receiving a basic permission never publishes existing data automatically.
+
+Counter-argument: withholding public publishing introduces an administrator step for a legitimate owner action already included in the product. The owner can choose to grant that permission to all new users instead, retaining a separate revocable permission and explicit publication confirmation. No default in this proposal is accepted merely by being written here; later slices still require their own authorization and designs. Definitions of `read`/`write` must not add PDF editing, individual file deletion or unrestricted AI use to the accepted application scope.
 
 ## Research and audit
 
