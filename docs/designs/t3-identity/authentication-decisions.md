@@ -81,6 +81,8 @@ Planned timing properties (not implemented yet):
 
 Each profile may explicitly override these values. The 7h55m example is derived from maximum lifetime minus the pre-write lead time, not a separately hardcoded cutoff. Tests may use consistent shorter values. Validate positive durations, activity interval below idle duration and pre-write lead time below maximum lifetime. Exact binding to framework expiration and frontend timing belongs in the bounded design; retain one authoritative setting per behavior.
 
+The owner tentatively preferred letting authorized work finish after later permission removal and asked about usual request/job checks. The [M2 recommendation](concepts_brief.md#other-review-findings), pending acceptance, checks current permissions on new protected requests while preserving specific durably accepted queued/running work. It requires atomic ordering of acceptance versus revocation, continued lifecycle/budget checks and fresh authorization for result access/new retries; it does not scan/cancel every open job on a permission change.
+
 ## Questions still requiring design or owner input
 
 - Property binding, configuration validation and checks for the accepted YAML/profile defaults and explicit overrides.
