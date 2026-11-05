@@ -26,7 +26,7 @@ New basic permissions must also reach existing accounts automatically, while pre
 
 The owner accepted session revocation without account suspension: invalidate targeted application sessions on the server, allow a later new Google sign-in using current permissions, and never restore removed grants. Concurrent login/revoke-all ordering and admitted-work interactions still need design; no Google-side logout guarantee or account-blocking feature is added.
 
-The owner accepted enabled-mode startup failure for missing required Google configuration and disabled-mode startup without Google settings (2026-11-06). Temporary Google failure behavior remains pending owner acceptance following the [source-backed investigation](research/google-sign-in-failure-handling.md). T3 must explicitly choose/test discovery, token/UserInfo/JWK dependencies, bounded transport/retry and failure handlers; no outage availability or automatic SDK recovery is verified.
+The owner accepted enabled-mode startup failure for missing required Google configuration and disabled-mode startup without Google settings (2026-11-06). Following the [source-backed investigation](research/google-sign-in-failure-handling.md), the owner accepted fresh user-triggered sign-in after a safe transient failure, without callback/code replay. Existing-session continuity remains a goal to verify under current limits, especially failed same-browser reauthentication; no browser return means no guaranteed in-app error. T3 must explicitly choose/test discovery, token/UserInfo/JWK dependencies, bounded transport/retry and failure handlers; no outage availability or automatic SDK recovery is verified.
 
 ## Feature design prerequisite
 
