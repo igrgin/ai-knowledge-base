@@ -2,7 +2,7 @@
 
 ## Current authority
 
-[Issue #24](https://github.com/igrgin/ai-knowledge-base/issues/24) is closed after the EGM documentation cutover and architecture/task reassessment merged at `e85f9de`; [results and dispositions](reviews/egm-migration/reassessment.md) record that work. T1 is merged in [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2 is merged in [PR #23](https://github.com/igrgin/ai-knowledge-base/pull/23), merge `d5b2efceda70db39bcf6e19fcdef69c9f236f297`. On 2026-11-05 the owner authorized T3 [issue #3](https://github.com/igrgin/ai-knowledge-base/issues/3) research, plan/issue audit and EGM brainstorming, selecting Google where sign-in is required and normal local use without sign-in. [Intake decisions](designs/t3-identity/authentication-decisions.md) record the bounded scope. T3–T20 implementation remains pending and requires separate authority. No paid calls, deployment or merge follows from this record. Concurrency remains one.
+[Issue #24](https://github.com/igrgin/ai-knowledge-base/issues/24) is closed after the EGM documentation cutover and architecture/task reassessment merged at `e85f9de`; [results and dispositions](reviews/egm-migration/reassessment.md) record that work. T1 is merged in [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2 is merged in [PR #23](https://github.com/igrgin/ai-knowledge-base/pull/23), merge `d5b2efceda70db39bcf6e19fcdef69c9f236f297`. On 2026-11-05 the owner authorized T3 [issue #3](https://github.com/igrgin/ai-knowledge-base/issues/3) research, plan/issue audit and EGM brainstorming, selecting Google as the login provider plus a development-only no-sign-in launch from IntelliJ with local supporting services. [Intake decisions](designs/t3-identity/authentication-decisions.md) record the bounded scope. T3–T20 implementation remains pending and requires separate authority. No paid calls, deployment or merge follows from this record. Concurrency remains one.
 
 [Application design](designs/application.md) owns product requirements and proposed mechanisms. [Contract availability](contracts/README.md) owns published interface gates. [Workflow](egm-workflow.md) owns EGM routing and review handoff; [remote work](remote-work.md) owns native task/branch/PR operations. Current progress belongs here; detailed execution evidence belongs on the task/PR.
 
@@ -30,7 +30,7 @@ A task in the start column denotes its completion; a K gate denotes the narrower
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | T1 | Run the Java 26/React shell and local database reproducibly | R18, R19 | Planning/build authority | None | Integrator | completed | feature | [#1](https://github.com/igrgin/ai-knowledge-base/issues/1); `1-run-java-26-react-shell-and-local-database` (created) |
 | T2 | Provide Flyway/pgvector wiring and safe API error/K0 conventions | R18, R23 | T1 | T1 | Foundation owner | completed | feature | [#2](https://github.com/igrgin/ai-knowledge-base/issues/2); `2-add-minimal-persistence-and-contract-conventions`; [PR #23](https://github.com/igrgin/ai-knowledge-base/pull/23) (merged) |
-| T3 | Use the app locally without sign-in; in signed-in mode register/log in through Google, log out and retain sessions after restart | R1, R2, R16, R18, R23 | T2 | T2 | Identity slice owner | research/brainstorm active; implementation pending | feature | [#3](https://github.com/igrgin/ai-knowledge-base/issues/3); `3-register-log-in-and-retain-authenticated-sessions` (created for research/brainstorm; title retained) |
+| T3 | Register/log in through Google, log out and retain sessions after restart; skip sign-in during local development | R1, R2, R16, R18, R23 | T2 | T2 | Identity slice owner | research/brainstorm active; implementation pending | feature | [#3](https://github.com/igrgin/ai-knowledge-base/issues/3); `3-register-log-in-and-retain-authenticated-sessions` (created for research/brainstorm; title retained) |
 | T4 | Create/list/open/rename private projects through the UI | R2, R3, R6, R17 | T3 | T3 | Project slice owner | pending | feature | [#4](https://github.com/igrgin/ai-knowledge-base/issues/4); `4-create-and-manage-private-projects` (planned; not created) |
 | T5 | See AI availability/budget status and enforce bounded, idempotent provider spending | R12, R16, R17, R23 | T2 and K0 | T3 | Usage/model slice owner | pending | feature | [#5](https://github.com/igrgin/ai-knowledge-base/issues/5); `5-show-ai-availability-and-enforce-provider-spending-limits` (planned; not created) |
 | T6 | Upload a private PDF, observe durable extraction/failure status and recover after restart | R2, R4, R5, R6, R16, R17, R22, R23 | KP | T4 | Document slice owner | pending | feature | [#6](https://github.com/igrgin/ai-knowledge-base/issues/6); `6-upload-and-extract-private-pdfs-with-durable-status` (planned; not created) |
@@ -118,7 +118,7 @@ Paths are proposed because implementation files do not exist yet. Backend paths 
 | Slice owner | Exclusive application files/directories | Feature schema/migration responsibility | Shared touchpoints to coordinate |
 | --- | --- | --- | --- |
 | Integrator, T1/T2/T12/T15 | Root build/config/scripts, application shell/routes, `components/ui/`, `lib/api/`, contract records, plan and shared test bootstrap | Only minimal migration wiring in T2; reviews/numbers feature migrations at integration | Sole editor of poms, npm manifest/lock, common config, Compose, shell/routes, shared API types and plan; feature authors submit narrow changes |
-| Identity, T3 | `identity/**`, `features/auth/**` | Application accounts, Google identity mappings/JDBC sessions; local identity design pending | K0 UUID/trusted-identity conventions; concrete principal, explicit local/Google access modes and route/auth integration |
+| Identity, T3 | `identity/**`, `features/auth/**` | Application accounts, Google identity mappings/JDBC sessions; development account fixture | K0 UUID/trusted-identity conventions; concrete principal, Google login, development-only shortcut and route/auth integration |
 | Projects, T4 | `project/**`, `features/projects/**` | Projects/ownership/count limits and lifecycle revision | KP ownership/lock API; library mounts feature components without taking their files |
 | Usage/model, T5 | `usage/**`, `model/**`, `features/ai-status/**` | Reservations/usage/periods/shared provider admission | KU, actor FK to T3, model dependencies/config through integrator |
 | Documents, T6 | `document/upload/**`, `document/storage/**`, `document/api/**`, `ingestion/extraction/**`, `jobs/**`, `pdf-extractor/src/**`, `features/documents/upload/**`, `features/documents/status/**` | Documents/versions/pages/extraction, storage admission and first durable operations/jobs | KD document state, file service and job API; other slices extend through these boundaries |
@@ -165,7 +165,7 @@ Each requirement maps to its owning vertical implementation and later integratio
 
 | Requirement | Owning slice and evidence |
 | --- | --- |
-| R1 | T3 Google registration/login/session and local no-sign-in UI/API/schema; T12 composition; T13 separate signed-in isolation/session and local-mode checks |
+| R1 | T3 Google registration/login/session UI/API/schema; T12 composition; T13 cross-account/session checks |
 | R2 | T3 identity, T4 projects; each T6–T11/T16–T20 owns its resource authorization; T13 integrated private/public attack paths |
 | R3 | T4 projects/counts; T6 document library/status; T18 retained PDF reader; T20 active/archive controls |
 | R4 | T6 real parser/negative fixtures; T7 page-local indexing; T14 source-quality evidence |
@@ -182,7 +182,7 @@ Each requirement maps to its owning vertical implementation and later integratio
 | R15 | T4 parent revision/ownership; T11 real delete/purge/recovery UI; T6/T7/T9 consumer fences; T16/T17/T19 original-link revocation and copy independence; T13 combined races |
 | R16 | T3 session boundary; T5 server-only adapters; T6 parser isolation; T7/T9 minimal model inputs; T17 bounded transcript publication; T14/T15 retention evidence/docs |
 | R17 | T4 account project limits; T6 storage/pages/files admission; T5 financial/global provider authority; T7/T9 bounded calls; T16 import admission reuse; T13 races/T14 actual usage |
-| R18 | T1 local shell/toolchain; T2 persistence wiring; T3 normal local startup without sign-in/Google setup; each slice runnable locally; T12 single-origin integration; T15 repeatable distribution |
+| R18 | T1 local shell/toolchain; T2 persistence wiring; T3 IntelliJ/developer startup without sign-in/Google setup; each slice runnable locally; T12 single-origin integration; T15 repeatable distribution |
 | R19 | T1/T15 no hosting prerequisite; hosted provider/controls/costs remain separately requested later work |
 | R20 | T11 independent journal and restore replay; T16/T17/T19 extend actual revocation integration; T13 old-backup tests; T15 documentation |
 | R21 | Every slice owns meaningful tests; T13 integrated offline/performance evidence; T14 real-model gate; T15 truthful handoff |
@@ -208,7 +208,7 @@ Each requirement maps to its owning vertical implementation and later integratio
 | C4 unfinished/failed archives | T6 owns processing state; T20 visibility/cancellation; T7 uses the same fences and T13 verifies combined cases |
 | C5 backup/provider retention | T11 local journal/restore; T16/T17 replay integration; T15 transparent retention; hosted backup terms remain later |
 | C6 review/operations/platform policy | Use the EGM workflow, fresh implementation review and selected project agent assignments. The remote-work guide governs native GitHub operations; hosted controls remain deferred and require actual authority |
-| C7 identity/access modes | T3 Google-only sign-in plus normal local use without sign-in; local actor/network/mode activation unresolved. T16/T17 agree recipient identity; no application email/recovery service added |
+| C7 Google identity/developer launch | T3 Google-only sign-in plus an explicit development-only shortcut for IntelliJ/local services. T16/T17 agree recipient identity; no application email/recovery service added |
 | C8 dependency/model compatibility/access | Core checks T1, feature-library checks in its slice; T5 test adapters remain test-only; paid/account-quality limitations affect T14 only |
 | C9 unknown total workload/capacity | T13 reproducible experiments, T14 bounded provider evidence; no invented throughput promise or budget increase |
 | C10 no-cache performance | T7/T16 reuse ready embeddings; T13 report mandatory, cache prototype optional only with evidence |
@@ -222,7 +222,7 @@ T1/T2 and issue #24's EGM cutover are merged. Issue #3 has research/brainstorm a
 
 | Input | Current disposition | Affected work |
 | --- | --- | --- |
-| Access modes and Google setup | Google selected where sign-in is required; normal local use needs no sign-in/Google credentials. Settle local identity/isolation/network reach and activation, provisioning/session/recipient identity, and actual Google acceptance; no Google project/client has been verified | T3/T12/T13/T15; T16/T17 recipients |
+| Google setup and developer launch | Google selected for normal application login; the IntelliJ/developer launch must work without sign-in/Google credentials. Settle development principal/configuration safeguards, Google provisioning/session/recipient identity and real-provider acceptance; no Google project/client has been verified | T3/T12/T13/T15; T16/T17 recipients |
 | Representative PDFs/questions | Use redistributable/generated fixtures; preferred owner material remains optional | T6/T13/T14 |
 | Languages and limits | Accepted baseline starting limits and English-first quality criteria remain unchanged; verify them in their owning features and expand only after evidence. Later explicit resource proposals and experimental targets retain their separate status | T6/T7/T13/T14; specification limits/quality gate |
 | Capacity/concurrency | No traffic/corpus target was supplied; measure defined local experiments without claiming hosted throughput. Current concurrency is one; any increase requires a separate owner decision | T13/T14 and later sizing/dispatch decisions |
@@ -238,4 +238,4 @@ T1 provides the Java 26 Maven reactor, shared BOM, React readiness shell, loopba
 
 Final T2 deliberately removed synthetic persistence/adoption/restart/broken-migration and general HTTP smoke demonstrations. Its retained verification was 7 MVC cases, 1 real restrictive-Accept HTTP regression, 1 packaged extractor check and 3 browser checks. Dedicated existing-volume adoption coverage was retired; later fresh feature tests do not implicitly cover that special upgrade case. Concrete identity belongs to T3; real persisted data, migrations, ownership, spending and recovery checks belong to their actual feature owners and T13. See [K0](contracts/k0-foundation.md) and [test-scope research](research/java-spring-test-scope-review.md). Earlier larger suite counts are historical.
 
-T3 identity/session/security research and brainstorming are active using the amended R1/R2/R18 and K0. Resolve the Google/local actor, session/CSRF/error interfaces and module boundary in its reviewed bounded design before implementation. The intake decisions are not a completed feature design. There is no retrospective T2 feature draft.
+T3 identity/session/security research and brainstorming are active using the amended R1/R2/R18 and K0. Resolve the Google/development principal, session/CSRF/error interfaces and module boundary in its reviewed bounded design before implementation. The intake decisions are not a completed feature design. There is no retrospective T2 feature draft.

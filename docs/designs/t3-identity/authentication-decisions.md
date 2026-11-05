@@ -9,11 +9,11 @@
 
 ## Owner decisions
 
-The owner selected Google as the login provider in this chat: “Let's just do Google as the provider.” Normal local startup/use of the AI Knowledge Base must also work without sign-in. The later clarification means running the application locally, not merely running automated tests or a developer-only shortcut.
+The owner selected Google as the login provider in this chat: “Let's just do Google as the provider.” The latest clarification defines skipping sign-in as a developer pressing Run in IntelliJ and starting supporting services locally. This is a development-only shortcut, not a separate unauthenticated product mode. This clarification supersedes the earlier interpretation recorded in commit `da08ee3`.
 
-Google is the sole provider wherever sign-in is required. No application password login, separate admin login or admin portal is included. The repository and open issue audit found no existing application-admin requirement. Existing infrastructure-administrator references do not define one.
+Google is the sole application login provider. No application password login, separate admin login or admin portal is included. The repository and open issue audit found no existing application-admin requirement. Existing infrastructure-administrator references do not define one.
 
-The owner requested Google research and an audit of plans, files and current issues before continuing brainstorming. This authorizes the research and planning reconciliation, not feature implementation or completion of issue #3. [The roadmap](../../roadmap.md) owns task authority; [the application design](../application.md) owns amended R1/R2/R18 and C7.
+The owner requested Google research and an audit of plans, files and current issues before continuing brainstorming. This authorizes the research and planning reconciliation, not feature implementation or completion of issue #3. [The roadmap](../../roadmap.md) owns task authority; [the application design](../application.md) owns amended R1/R18 and C7.
 
 ## Research and audit
 
@@ -23,13 +23,13 @@ The recommended signed-in integration uses server-side OpenID Connect through Sp
 
 ## Questions still requiring design or owner input
 
-- Whether local access is limited to the same computer or intentionally available to other devices on a local network.
-- Which persisted application identity owns local content, whether multiple local identities exist, and what privacy boundary the local mode promises.
-- How operators explicitly select access modes, how configuration errors fail, and whether/how local data can later be associated with a Google account. No automatic transfer or account merge is selected.
+- The exact developer launch/profile configuration and safeguard that keeps the shortcut unavailable outside development.
+- The server-established development account/principal and repeatable fixtures needed to exercise real ownership paths without Google login.
+- Google configuration failure behavior; missing configuration must not silently enable the development shortcut. No local-to-Google product migration or account switcher is needed by this request.
 - Whether a new Google identity creates an account immediately or needs an onboarding step; returning identity and changed-email behavior.
 - Session lifetime, browser restart behavior, concurrent sessions, application logout and provider-side revocation/recovery limits.
-- The identity and proof needed for named project invitations/restricted snapshots, and whether those features are available in local mode. Google sign-in must not silently change accepted sharing behavior.
+- The identity and proof needed for named project invitations/restricted snapshots. Google sign-in must not silently change accepted sharing behavior; development fixtures do not authorize access to real users' private resources.
 - Exact API/CSRF/error/principal/module interfaces, persistence comparison, file boundaries, implementation phases and meaningful checks required by the roadmap.
-- Actual Google project/client availability and a real-provider acceptance gate, separately from controlled offline tests and local-mode demonstration.
+- Actual Google project/client availability and a real-provider acceptance gate, separately from controlled offline tests and development-shortcut checks.
 
-The local-mode ownership and network answers come first: otherwise “private account” has no defined meaning for that mode. No readiness confirmation or Goldfish brainstorm review has occurred. Continue the open-ended clarification before requesting that gate.
+The development shortcut is a local workflow convenience; it does not require a separate product ownership/network-access design. The concrete development principal and activation safeguards belong in the bounded T3 design. No readiness confirmation or Goldfish brainstorm review has occurred. Continue the open-ended clarification before requesting that gate.
