@@ -7,7 +7,7 @@ These notes retain their original dates, investigated baselines and sources. The
 | [Caching](caching-evaluation.md) | Supports the no-cache starting recommendation; optional optimizations need measured benefit and lifecycle correctness. |
 | [Costs](costs.md) | Dated price arithmetic and hosting alternatives; allocations remain proposals and grant no spending authority. |
 | [Extraction scaling](extraction-scaling-investigation.md) | Supports separately sized worker roles with the bounded parser child; no throughput increase is measured or authorized. |
-| [Google sign-in](google-sign-in-investigation.md) | Supports the owner-selected Google provider and development-only no-sign-in launch. Development principal/configuration safeguards, Google setup, session policy and recipient binding remain T3/later design work; no real login or configuration is verified. |
+| [Google sign-in](google-sign-in-investigation.md) | Supports the owner-selected Google provider and configurable no-sign-in launch. Development principal/configuration safeguards, Google setup, session policy and recipient binding remain T3/later design work; no real login or configuration is verified. |
 | [Java/Spring test scope](java-spring-test-scope-review.md) | Historical audit and amendments; current K0 supersedes retired generic-test recommendations and retains the stated coverage loss. |
 | [Maven/frontend integration](maven-frontend-test-integration.md) | Adopted and implemented in merged T2; original baseline/instructions remain historical evidence, not pending delivery work. |
 | [Maven modules](maven-multi-module-investigation.md) | Supports the existing three artifact modules and native test selection; feature modules need a concrete reason. |

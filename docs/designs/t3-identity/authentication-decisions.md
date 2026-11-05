@@ -9,7 +9,9 @@
 
 ## Owner decisions
 
-The owner selected Google as the login provider in this chat: “Let's just do Google as the provider.” The latest clarification defines skipping sign-in as a developer pressing Run in IntelliJ and starting supporting services locally. This is a development-only shortcut, not a separate unauthenticated product mode. This clarification supersedes the earlier interpretation recorded in commit `da08ee3`.
+The owner selected Google as the login provider. For developer startup from IntelliJ with supporting services running locally, sign-in is controlled by an application YAML boolean. It defaults to **off in `dev`** and **on in `prod`**. These are overridable defaults, not a rule forbidding explicit disablement in production. This supersedes the earlier hard development-only restriction in commit `4f9a737` and the separate local-product interpretation in `da08ee3`.
+
+Use `app.auth.enabled` as the planned property name. The common default is true; `application-dev.yml` sets false and `application-prod.yml` sets true. When false, the server supplies a stable application account/principal without a Google login or Google configuration. Existing ownership predicates and quotas still apply. When true, Google sign-in is required; missing Google configuration must not silently change the boolean. The concrete no-sign-in account/fixtures and property binding are T3 design work. This is the accepted planned configuration, not an implemented setting yet.
 
 Google is the sole application login provider. No application password login, separate admin login or admin portal is included. The repository and open issue audit found no existing application-admin requirement. Existing infrastructure-administrator references do not define one.
 
@@ -23,7 +25,7 @@ The recommended signed-in integration uses server-side OpenID Connect through Sp
 
 ## Questions still requiring design or owner input
 
-- The exact developer launch/profile configuration and safeguard that keeps the shortcut unavailable outside development.
+- Property binding, configuration validation and checks for the accepted YAML/profile defaults and explicit overrides.
 - The server-established development account/principal and repeatable fixtures needed to exercise real ownership paths without Google login.
 - Google configuration failure behavior; missing configuration must not silently enable the development shortcut. No local-to-Google product migration or account switcher is needed by this request.
 - Whether a new Google identity creates an account immediately or needs an onboarding step; returning identity and changed-email behavior.
@@ -32,4 +34,4 @@ The recommended signed-in integration uses server-side OpenID Connect through Sp
 - Exact API/CSRF/error/principal/module interfaces, persistence comparison, file boundaries, implementation phases and meaningful checks required by the roadmap.
 - Actual Google project/client availability and a real-provider acceptance gate, separately from controlled offline tests and development-shortcut checks.
 
-The development shortcut is a local workflow convenience; it does not require a separate product ownership/network-access design. The concrete development principal and activation safeguards belong in the bounded T3 design. No readiness confirmation or Goldfish brainstorm review has occurred. Continue the open-ended clarification before requesting that gate.
+The development shortcut is a local workflow convenience; it does not require a separate product ownership/network-access design. The concrete development principal and configuration behavior belong in the bounded T3 design. No readiness confirmation or Goldfish brainstorm review has occurred. Continue the open-ended clarification before requesting that gate.

@@ -4,7 +4,7 @@ Date: **2026-11-05, Europe/Zagreb**. Scope: existing [issue #3](https://github.c
 
 ## Decisions and evidence
 
-The owner selected Google as the sole application login provider. The latest clarification means skipping sign-in only when a developer presses Run in IntelliJ and starts supporting services locally. This supersedes the broader local-product interpretation in commit `da08ee3`; the current records and issue drafts have been corrected. No admin portal or application password login is included. [Intake decisions](../../designs/t3-identity/authentication-decisions.md) separate accepted scope from open questions; the [Google investigation](../../research/google-sign-in-investigation.md) cites primary sources checked on this date.
+The owner selected Google as the sole login provider and a YAML setting to skip sign-in, primarily for IntelliJ/local development: false by default in `dev`, true in `prod`, explicitly overridable. This supersedes the earlier hard development-only restriction in `4f9a737` and separate local-product interpretation in `da08ee3`; plans and issue drafts are reconciled. No admin portal or application password login is included. [Intake decisions](../../designs/t3-identity/authentication-decisions.md) distinguish accepted scope from open questions; the [Google investigation](../../research/google-sign-in-investigation.md) cites primary sources checked on this date.
 
 The repository was initially on `egm-foundation-bootstrap` at `e095a9161f3382aa9ee1a83db6198f3f93f94f76`. Fetching the remote showed merged main at `e85f9de` with the same tracked tree. Issue #24 is closed/completed. The issue-specific local branch is `3-register-log-in-and-retain-authenticated-sessions`, created from that main baseline after checking current branches and historical PR search for that name. The existing issue/title association is retained. The pre-existing untracked `docs/research/langchain-architecture-assessment.md` was not edited or included in this work.
 
@@ -14,9 +14,9 @@ The repository was initially on `egm-foundation-bootstrap` at `e095a9161f3382aa9
 - Keep the application account UUID separate from Google identity/profile. Google's stable subject is suitable for a provider mapping; email text must not merge accounts or transfer existing private data. The exact mapping and provisioning mechanism still need T3 design.
 - Basic Google identity scopes have a documented exception to common Testing-mode restrictions. Do not carry generic seven-day/100-listed-tester assumptions into setup without checking the actual scopes and console state.
 - Google's assurance of a third-party email claim is insufficient to silently define every named-recipient access rule. T16/T17 must agree recipient identity/proof without dropping named invitations or changing registered-link/public-transcript semantics.
-- Distinguish the development-only no-sign-in launch, controlled offline authentication tests and actual Google acceptance. None proves the other. The developer launch needs no Google credentials; normal application configuration must not allow the shortcut or select it on configuration failure.
+- Distinguish the configurable no-sign-in launch, controlled offline authentication tests and actual Google acceptance. None proves the other. The developer launch needs no Google credentials; normal application configuration must not allow the shortcut or select it on configuration failure.
 
-These are conclusions and recommendations from the linked research, not acceptance of every implementation mechanism. The exact development principal/fixture and activation safeguards belong in T3 design. No separate local-user product, account switcher, LAN-use policy or local-to-Google transfer flow is required.
+These are conclusions and recommendations from the linked research, not acceptance of every implementation mechanism. The exact development principal/fixture and configuration behavior belong in T3 design. No separate local-user product, account switcher, LAN-use policy or local-to-Google transfer flow is required.
 
 ## Repository audit and reconciliation
 
@@ -52,7 +52,7 @@ All 18 issue bodies still have a cutover-candidate banner saying #24 awaits revi
 | [#9](https://github.com/igrgin/ai-knowledge-base/issues/9) | Stale banner only. Answer ownership and model accounting stay provider-independent. | [#9 draft](issue-drafts/9.md) |
 | [#10](https://github.com/igrgin/ai-knowledge-base/issues/10) | Stale banner only. Citation/file access keeps T3/T4 account ownership. | [#10 draft](issue-drafts/10.md) |
 | [#11](https://github.com/igrgin/ai-knowledge-base/issues/11) | Stale banner only. Project deletion/recovery is not Google account deletion. | [#11 draft](issue-drafts/11.md) |
-| [#12](https://github.com/igrgin/ai-knowledge-base/issues/12) | Integrate Google return/cancellation/errors and the development-only shortcut; keep T3 as auth owner. | [#12 draft](issue-drafts/12.md) |
+| [#12](https://github.com/igrgin/ai-knowledge-base/issues/12) | Integrate Google return/cancellation/errors and the configured sign-in bypass; keep T3 as auth owner. | [#12 draft](issue-drafts/12.md) |
 | [#13](https://github.com/igrgin/ai-knowledge-base/issues/13) | Separate development-shortcut checks from signed-in isolation/session/protocol checks; keep live Google outside ordinary offline CI. | [#13 draft](issue-drafts/13.md) |
 | [#14](https://github.com/igrgin/ai-knowledge-base/issues/14) | Stale banner only. Google identity access and real paid AI authority are separate. | [#14 draft](issue-drafts/14.md) |
 | [#15](https://github.com/igrgin/ai-knowledge-base/issues/15) | Document IntelliJ/developer startup separately from Google setup for normal application use, account-access limits and real-login evidence. | [#15 draft](issue-drafts/15.md) |
@@ -66,6 +66,6 @@ No new admin issue or separate duplicate authentication issue is needed. No issu
 
 ## Verification and remaining work
 
-Validation passed after the developer-only clarification: documentation whitespace checks and a check of the 28 planning/research/draft files and their local links/anchors. All 18 drafts retain ownership/scheduling sections; the 12 banner-only drafts remain unchanged by the clarification. No runtime source/configuration was modified, so Java/browser suites were not run. No Google setup, actual login or developer shortcut has been implemented or tested.
+Validation passed after the YAML-setting amendment: documentation whitespace checks plus local-link/anchor checks across the 28 planning/research/draft files. All 18 drafts retain ownership/scheduling sections; the 12 banner-only drafts remain unchanged. No runtime source/configuration was modified, so Java/browser suites were not run. No Google setup, actual login or sign-in switch has been implemented or tested.
 
-Continue brainstorming with Google account provisioning and session behavior, then recipient identity. The development principal/fixture and launch safeguards need bounded design; no product local-access questionnaire is required. Request the installed EGM readiness gate before Goldfish concept review; the research scout was not that review.
+Continue brainstorming with Google account provisioning and session behavior, then recipient identity. The development principal/fixture and profile defaults and overrides need bounded design; no product local-access questionnaire is required. Request the installed EGM readiness gate before Goldfish concept review; the research scout was not that review.

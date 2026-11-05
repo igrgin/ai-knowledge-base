@@ -131,7 +131,9 @@ The reactor includes a standalone `bom` module (`ai-knowledge-base-bom`) that im
 
 ### Planned Google login and developer shortcut
 
-The owner clarified that local no-sign-in startup means a developer pressing Run in IntelliJ and starting supporting services locally. T3 must provide an explicit development-only shortcut with a server-established development account/principal, so this workflow needs no Google credentials. Normal application use still requires Google sign-in. No shortcut flag, principal fixture or Google integration is implemented yet; keep the current startup commands above. The [intake decisions](designs/t3-identity/authentication-decisions.md) and [Google research](research/google-sign-in-investigation.md) record pending design/setup. The shortcut must remain unavailable in normal application configurations and must not be selected by missing Google configuration. It does not supply AI credentials or bypass quotas/spending rules.
+The owner clarified that local no-sign-in startup means a developer pressing Run in IntelliJ and starting supporting services locally. T3 must provide an explicit configured sign-in bypass with a server-established development account/principal, so this workflow needs no Google credentials. With sign-in enabled, Google login is required. No shortcut flag, principal fixture or Google integration is implemented yet; keep the current startup commands above. The [intake decisions](designs/t3-identity/authentication-decisions.md) and [Google research](research/google-sign-in-investigation.md) record pending design/setup. The setting defaults to false in `dev` and true in `prod`; when enabled, bypass access must be unavailable and must not be selected by missing Google configuration. It does not supply AI credentials or bypass quotas/spending rules.
+
+Planned YAML configuration: `app.auth.enabled` defaults to `true` in common configuration, `false` in `application-dev.yml`, and `true` in `application-prod.yml`. Operators can explicitly override it. This remains a T3 design decision; no runtime YAML/property binding has been added.
 
 ### Current persistence conventions
 
