@@ -1,5 +1,7 @@
 # Microservices investigation
 
+> Owner scope amendment, 2026-11-05: all standalone chat sharing/snapshots are dropped; R27/T17 references below are historical, not active requirements. Full-project sharing/import remains; saved-chat contents and T19 require clarification. See the [current application design](../designs/application.md#d-k-independent-project-imports).
+
 Date: 2026-10-26. Research recommendation only; this does not amend the accepted architecture or authorize implementation, hosting or spending.
 
 ## Starting point

@@ -15,13 +15,14 @@ A checkpoint needs an agreed version and schema assumptions, a usable provider i
 | KU | T5, usage/model owner | Embedding/chat ports, token/price input and atomic reservation/admission; agree the dispatch/unknown/settlement seam jointly with T6's KD protocol and lifecycle obligations before charged consumers; no requirement to implement future jobs in T5 | T7, T9 |
 | KD | T6, document owner | Private original-file lookup/storage interface, immutable version/page-extraction format, durable extraction/indexing stage handoff and bounded persisted pages, processing states and job claim/fence/parser-admission contract | T7, T18, T20, T11, T16 |
 | KE | T7, indexing owner | Complete-ready generation visibility, immutable chunk/page/vector identities, model/dimension/version compatibility and read/copy interface; agreement with T9 retrieval and T16 imports, including stale-generation/lifecycle checks | T9, T16 |
-| KH | T8, saved-chat owner | Ordered transcript/read-write API, owner/project association, message IDs and delete command boundary; no embeddings required | T20, T9, T17, T19 |
+| KH | T8, saved-chat owner | Ordered transcript/read-write API, owner/project association, message IDs and delete command boundary; no embeddings required | T20, T9, T19 |
 | KS | T20, source-control owner | Active-or-granted minus chat-exclusions query, archive-cycle/source revision semantics | T9, T16, T19 |
 | KV | T18, viewer owner | One reusable viewer route/component accepting an authorized original-file reference and physical page | T10, T16 |
-| KC | T9, answer owner | Persisted validated citation/turn DTO, passage/version/page references and bounded transcript representation | T10, T17, T19 |
-| KL | T11, lifecycle owner | Parent revocation/SQL lock boundary, crash-consistent independent journal acknowledgement/replay and deletion fences; failure evidence for interrupted SQL/log writes and non-serving restores; extension mechanism for later link kinds | T9, T16, T17 |
+| KC | T9, answer owner | Persisted validated citation/turn DTO, passage/version/page references and bounded transcript representation | T10, T19 |
+| KL | T11, lifecycle owner | Parent revocation/SQL lock boundary, crash-consistent independent journal acknowledgement/replay and deletion fences; failure evidence for interrupted SQL/log writes and non-serving restores; extension mechanism for later link kinds | T9, T16 |
 | KI | T16, distribution owner | Fixed-version manifest and destination-ID map/import transaction extension point | T19 |
 
 
+T17 is withdrawn and consumes no gates. T19 references in the table are conditional on the unresolved saved-chat contents of full-project imports; they authorize no work or interface publication.
 
 K0 supplies typed application/MVC errors and UUID/trusted-identity, short-transaction, migration and meaningful-test conventions. It does not implement a principal or domain schema. Its [shared](../../backend/src/main/java/com/aiknowledgebase/shared/EGM.md) and [web](../../backend/src/main/java/com/aiknowledgebase/shared/web/EGM.md) package maps distinguish current behavior from future consumer obligations. A cross-slice contract change needs provider/consumer review and versioning before consumers rely on it; one integrator edits shared records.

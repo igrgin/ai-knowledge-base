@@ -1,5 +1,7 @@
 # Scalable design and caching
 
+> Owner scope amendment, 2026-11-05: all standalone chat sharing/snapshots are dropped; R27/T17 references below are historical, not active requirements. Full-project sharing/import remains; saved-chat contents and T19 require clarification. See the [current application design](../designs/application.md#d-k-independent-project-imports).
+
 ## Current planning references
 
 This is supporting research, not another implementation plan. Use the current [requirements](../designs/application.md#requirements), [design decisions](../designs/application.md#design-decisions) and single [task list](../roadmap.md#tasks). The [performance checkpoint](../designs/application.md#offline-scalability-checkpoint) measures a no-cache baseline and embedding batching/reuse; no Caffeine or Redis prototype is required. Hosting remains optional later. No implementation or capacity result is claimed by this note.
