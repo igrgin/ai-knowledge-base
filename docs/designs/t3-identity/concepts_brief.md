@@ -91,7 +91,7 @@ The one-time internal setup command replaces manual initial assignment as the ch
 
 Research recommends server-side OIDC and JDBC sessions over introducing browser-held login tokens or another identity service. These are recommendations to evaluate in drafting, not newly attributed owner rejections. Likewise, framework session lookup versus a parallel registry, a finite action catalog versus optional role grouping, and controlled identity recovery versus a separate journal remain technical alternatives. No implementation or performance comparison has selected their exact form.
 
-Full-project sharing/import is the only distribution feature. Accepted copies remain independently owned; revoking a share stops future imports without erasing accepted copies. Full-project copies include all saved chats/messages/citations and source settings; T19 completes that mandatory scope in the same import pipeline. Basic share/import grants remain proposed. Standalone chat snapshots are dropped.
+Full-project sharing/import is the only distribution feature. Edits/deletions in either project never affect the other; revocation stops future imports without erasing accepted copies. Full-project copies include all saved chats/messages/citations and source settings; T19 completes that mandatory scope in the same import pipeline. Basic share/import grants remain proposed. Standalone chat snapshots are dropped.
 
 ## Key Decisions & Staging for Next Steps
 

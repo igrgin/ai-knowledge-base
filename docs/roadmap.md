@@ -214,7 +214,7 @@ Each requirement maps to its owning vertical implementation and later integratio
 | Old-chat archives, new-chat exclusion, retained originals | T20 is the only eligibility owner; T9 consumes KS and T18 viewer remains separate; T19 remaps archive grants |
 | Physical-page provenance and grounded/refused answers | T6 extraction, T7 immutable indexing, T9 validation/refusal, T10 viewer navigation, T14 actual grounding |
 | No resurrection after delete/revoke | T11 parent/journal base; later T16/T19 install their own actual consumer integration before completion; T13 restore/worker races |
-| Independent full-project copies | T16 creates fresh destination ownership/IDs; T19 maps all history; no shared mutable project |
+| Independent full-project copies | T16 creates fresh destination ownership/IDs; T19 maps all history; edits/deletions in either project never affect the other; no synchronization or shared mutable content |
 | C1 hosted cost fit | Deferred hosting; T5 financial bounds, T13 resources and T14 actual usage inform a future cost decision |
 | C2 archive/source UX | T20 owns controls; T18 owns library reading; T9 consumes retrieval-only choices; T12 checks navigation/copy consistency |
 | C3 limits/languages/evaluation | Existing quotas/English-first criteria unchanged; feature tests and T13/T14 evidence before expansion |
