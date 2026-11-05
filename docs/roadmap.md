@@ -12,7 +12,7 @@ The owner accepted session defaults of 30 minutes idle and 8 hours maximum, YAML
 
 The owner additionally requests independent session timers and settings/profile controls to revoke one or all sessions, plus administrator session-revocation controls. These are T3 brainstorm amendments; administrator designation/permission, UI boundary and exact file/schema changes must be resolved before implementation. No separate password/admin login or broader private-data access is authorized.
 
-The owner additionally selected explicit permissions rather than a role-only authorization model. T3 must design permission assignments/enforcement and agree the consumer boundary; role grouping, direct user grants, who manages grants and propagation are unresolved. Resource slices still own ownership predicates and their actual action permissions. Permission checks remain active when sign-in is disabled.
+The owner additionally selected explicit permissions rather than a role-only authorization model. T3 must design permission assignments/enforcement and agree the consumer boundary; admins assign/revoke individual permissions in the app and new users receive basic permissions automatically. The exact basic set, initial privileged-account setup, optional role grouping and propagation need design. Resource slices still own ownership predicates and their actual action permissions. Permission checks remain active when sign-in is disabled.
 
 ## Feature design prerequisite
 

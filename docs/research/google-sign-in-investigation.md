@@ -16,7 +16,7 @@ For the developer launch, recommendation: an explicit YAML authentication settin
 
 Accepted configuration detail: the planned property is `app.auth.enabled`, with common default true, `dev` false and `prod` true. Explicit overrides are allowed. Tests must cover the defaults and overrides, Google-disabled startup without credentials, and absence of automatic fallback when credentials are missing with sign-in enabled.
 
-Further owner authorization decision: explicit permissions are required; the earlier role-only suggestion is not the chosen model. Google establishes identity, and this application manages/enforces action permissions plus ownership. Whether permissions are granted directly to users, through role bundles or both is unresolved. The development no-sign-in account must use the same permission path. Exact schema, permission catalog, grant workflow and propagation are design inputs rather than findings established by the Google sources.
+Further owner authorization decision: explicit permissions are required; the earlier role-only suggestion is not the chosen model. Google establishes identity, and this application manages/enforces action permissions plus ownership. The owner selected in-app administrator assignment/revocation of individual permissions and automatic basic permissions for new accounts. The exact basic set, initial privileged-account setup and any additional role grouping remain open. The development no-sign-in account must use the same permission path. Exact schema, permission catalog, grant workflow and propagation are design inputs rather than findings established by the Google sources.
 
 ## Existing-version fit
 
