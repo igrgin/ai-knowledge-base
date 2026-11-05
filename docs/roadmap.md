@@ -8,6 +8,8 @@
 
 The owner further selected a YAML sign-in boolean (planned name `app.auth.enabled`): false by default in `dev`, true in `prod`, explicitly overridable. This supersedes a hard development-only bypass restriction. T3 must design its no-sign-in principal and property behavior; no runtime setting has been implemented. The first successful Google sign-in must also create the account automatically with immediate project access and no extra onboarding.
 
+The owner accepted session defaults of 30 minutes idle and 8 hours maximum, YAML-configurable. Browser reopening and backend restart preserve valid sessions within both limits; expiry preserves view/unsent-question state for same-account reauthentication. T3 owns session behavior; T12/feature owners integrate the UI obligations without adding future chat UI to T3.
+
 ## Feature design prerequisite
 
 Every unstarted substantial feature requires a bounded, accepted EGM design and completed design review before implementation, following the [workflow](egm-workflow.md#implement-an-accepted-scope). Resolve its technical choices, exact Create/Modify/Delete file boundary, schemas/interfaces, shared edits, incremental phases and tests there. The application design and tables below are direction and ownership, not implementation-ready task plans. Design work itself needs its scoped issue/authority. T3 research and brainstorming are active; its formal design and Goldfish review are not complete.
@@ -224,7 +226,7 @@ T1/T2 and issue #24's EGM cutover are merged. Issue #3 has research/brainstorm a
 
 | Input | Current disposition | Affected work |
 | --- | --- | --- |
-| Google setup and developer launch | Google selected for normal application login; the IntelliJ/developer launch must work without sign-in/Google credentials. Settle development principal/configuration safeguards, atomic automatic account creation, session/recipient identity and real-provider acceptance; no Google project/client has been verified | T3/T12/T13/T15; T16/T17 recipients |
+| Google setup and developer launch | Google selected for normal application login; the IntelliJ/developer launch must work without sign-in/Google credentials. Settle development principal/configuration safeguards, atomic automatic account creation, concurrent-session/logout policy, recipient identity and real-provider acceptance; no Google project/client has been verified | T3/T12/T13/T15; T16/T17 recipients |
 | Representative PDFs/questions | Use redistributable/generated fixtures; preferred owner material remains optional | T6/T13/T14 |
 | Languages and limits | Accepted baseline starting limits and English-first quality criteria remain unchanged; verify them in their owning features and expand only after evidence. Later explicit resource proposals and experimental targets retain their separate status | T6/T7/T13/T14; specification limits/quality gate |
 | Capacity/concurrency | No traffic/corpus target was supplied; measure defined local experiments without claiming hosted throughput. Current concurrency is one; any increase requires a separate owner decision | T13/T14 and later sizing/dispatch decisions |

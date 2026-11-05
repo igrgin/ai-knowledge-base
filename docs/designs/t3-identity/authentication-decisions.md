@@ -19,6 +19,8 @@ The owner requested Google research and an audit of plans, files and current iss
 
 On the first successful Google sign-in, create the application account automatically and let the user start creating projects immediately. No separate registration form, profile-completion step, invitation or approval is required. Returning sign-ins resolve the existing account; concurrent first sign-ins must not create duplicate accounts.
 
+Session defaults are **30 minutes of inactivity** and **8 hours maximum from sign-in**, both configurable in YAML and enforced by the server. A valid session survives closing/reopening the browser and backend restarts within both limits; restarts do not reset its age. Expiry preserves the current view and unsent question while requesting sign-in again. Restore private view/draft state only for the same application account; these UI obligations apply as their owning features are introduced.
+
 ## Research and audit
 
 The [source-backed Google investigation](../../research/google-sign-in-investigation.md) covers existing-version fit, Google project/client setup, identity scopes, callback origins, persistent sessions, logout, offline verification and recipient identity. The [plan and issue audit](../../reviews/t3-identity/google-auth-plan-audit.md) records changed files, unchanged boundaries and exact proposed remote issue edits.
@@ -31,7 +33,7 @@ The recommended signed-in integration uses server-side OpenID Connect through Sp
 - The server-established development account/principal and repeatable fixtures needed to exercise real ownership paths without Google login.
 - Google configuration failure behavior; missing configuration must not silently enable the development shortcut. No local-to-Google product migration or account switcher is needed by this request.
 - Atomic automatic account creation, returning-identity lookup and changed-email behavior; the no-extra-onboarding outcome is settled.
-- Session lifetime, browser restart behavior, concurrent sessions, application logout and provider-side revocation/recovery limits.
+- Concurrent sessions, the effect of logout on other browsers/devices, and provider-side revocation/recovery limits. The 30-minute idle/8-hour maximum defaults and restart/browser continuity are settled.
 - The identity and proof needed for named project invitations/restricted snapshots. Google sign-in must not silently change accepted sharing behavior; development fixtures do not authorize access to real users' private resources.
 - Exact API/CSRF/error/principal/module interfaces, persistence comparison, file boundaries, implementation phases and meaningful checks required by the roadmap.
 - Actual Google project/client availability and a real-provider acceptance gate, separately from controlled offline tests and development-shortcut checks.
