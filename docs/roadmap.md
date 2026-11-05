@@ -24,6 +24,8 @@ The owner accepted the permission-removal boundary: current checks for every new
 
 New basic permissions must also reach existing accounts automatically, while preserving every explicit administrator revocation. The owner selected current server-side permission checks on each new protected request, without user/session refresh or forced Google sign-in. Already-admitted work retains the accepted boundary. The [default/exception model](designs/t3-identity/authentication-decisions.md#basic-permission-evolution) is a proposal pending owner acceptance, not an implemented schema or published contract.
 
+The owner accepted session revocation without account suspension: invalidate targeted application sessions on the server, allow a later new Google sign-in using current permissions, and never restore removed grants. Concurrent login/revoke-all ordering and admitted-work interactions still need design; no Google-side logout guarantee or account-blocking feature is added.
+
 ## Feature design prerequisite
 
 Every unstarted substantial feature requires a bounded, accepted EGM design and completed design review before implementation, following the [workflow](egm-workflow.md#implement-an-accepted-scope). Resolve its technical choices, exact Create/Modify/Delete file boundary, schemas/interfaces, shared edits, incremental phases and tests there. The application design and tables below are direction and ownership, not implementation-ready task plans. Design work itself needs its scoped issue/authority. T3 brainstorm round 1 is complete with six fresh lenses; the [concepts brief](designs/t3-identity/concepts_brief.md) awaits owner refinement/alignment. Its formal feature design and design review are not complete.

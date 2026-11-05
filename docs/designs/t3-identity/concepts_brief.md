@@ -50,7 +50,7 @@ Order operation acceptance and permission revocation atomically: admission commi
 
 No full-user job scan is required just because an action grant changes. Workers still honor current project deletion, sharing/lifecycle fences, quotas, spending/provider admission and settlement. Already dispatched calls are settled; deleted content cannot be republished. Explicit job cancellation is a separate control if later requested, not a required new UI. Tradeoff: a bounded, accepted queued operation can still spend after its submit permission is removed.
 
-Session revocation separately blocks subsequent use of that session; concurrent login/revoke-all and later fresh-login behavior still need disposition. T3 defines the authorization contract with future job owners, not their job implementation. The permission boundary is accepted; implementation and verification remain pending.
+Session revocation blocks old-session use. The owner permits new Google sign-in under current permissions, without account suspension. Concurrent login/revoke-all and admitted-work interactions need design. T3 agrees consumer contracts; implementation and verification remain pending.
 
 The owner requires new basics to reach existing users while preserving explicit administrator revocations. The [proposed mechanism](authentication-decisions.md#basic-permission-evolution), pending acceptance, combines shared basic defaults with explicit per-account grants/revocations; revocation wins. The owner accepted current server-side checks on the next protected request without user/session refresh or forced login. The proposal also avoids per-user backfills and permission polling. Stable action identifiers and explicit replacement migrations preserve restrictions. Categories are display groups, not wildcard grants. The detailed catalog and project-share/import defaults remain unaccepted.
 
@@ -98,7 +98,7 @@ Full-project sharing/import is the only distribution feature. Edits/deletions in
 Carry owner decisions above unchanged into the next draft. Review recommendations in this brief are pending dispositions, and no reviewer selected policy on the owner's behalf. The next decisions and drafting inputs are:
 
 1. Carry the selected activity policy and configurable timers into the bounded design and later verification; no further duration choice is pending.
-2. Carry the accepted-work permission boundary into consumer contracts; settle session revocation/fresh-login and concurrent “all sessions” behavior.
+2. Carry the accepted-work permission boundary into consumer contracts; implement accepted fresh-login behavior and settle concurrent “all sessions” ordering.
 3. Decide detailed basic/project-share/import grants and the proposed shared-default/per-account-exception mechanism; preserve the accepted existing-account/revocation outcome.
 4. Resolve missing-Google-configuration behavior, authentication-mode transitions and identity restore safeguards; retain the explicit override and no-silent-fallback requirements.
 5. Set a proportionate administrative audit policy and usable permission-denial/session-management presentation. Agree recipient identity with T16 without treating email text as universal proof.
