@@ -129,6 +129,12 @@ The reactor includes a standalone `bom` module (`ai-knowledge-base-bom`) that im
 
 ## Persistence and shared contracts
 
+### Planned access modes
+
+The owner selected normal local AI Knowledge Base startup/use without sign-in, and Google as the sole provider in modes requiring sign-in. T3 is still in research/brainstorm: no authentication-mode flag, local account policy, Google credentials or callback configuration has been implemented. Keep the current startup commands above; do not treat a Spring `dev`/`prod` profile as an already-defined access-mode switch. The [intake decisions](designs/t3-identity/authentication-decisions.md) and [Google research](research/google-sign-in-investigation.md) record the pending design and setup requirements. Local sign-in-free use does not supply AI credentials or bypass quota/spending rules.
+
+### Current persistence conventions
+
 Flyway is the only schema migration mechanism. Add feature-owned SQL under `backend/src/main/resources/db/migration/` with an integrator-assigned `V<number>__description.sql`; keep applied migrations unchanged and introduce a new additive version for changes. Do not enable automatic baselining or clean an existing database to fix a failure. Inspect and correct the failing migration/configuration while preserving stored data. The database user must be allowed to enable the installed `vector` extension on first startup.
 
 [K0 foundation conventions](contracts/k0-foundation.md) define UUID identity/resource/operation IDs, trusted server-established account identity, safe MVC errors, and short JDBC transactions. Feature owners add their own tables and publish consumer-reviewed contracts when a real interface is needed. No identity/session, resource ownership, operation deduplication or job processing feature is supplied by this foundation.
