@@ -3,7 +3,7 @@
 * **Author:** igrgin
 * **Date:** 2026-11-05
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
-* **Status:** Research and EGM brainstorm intake; formal design and review pending.
+* **Status:** Goldfish brainstorm round 1 completed; owner dispositions/brief alignment pending. Formal design/review and implementation remain pending.
 * **Artifact directory:** `docs/designs/t3-identity/`
 * **Workflow:** EGM with small fixes 0.2.1, `egm-brainstorm`.
 
@@ -79,4 +79,4 @@ The recommended signed-in integration uses server-side OpenID Connect through Sp
 - Exact API/CSRF/error/principal/module interfaces, persistence comparison, file boundaries, implementation phases and meaningful checks required by the roadmap.
 - Actual Google project/client availability and a real-provider acceptance gate, separately from controlled offline tests and development-shortcut checks.
 
-The development shortcut is a local workflow convenience; it does not require a separate product ownership/network-access design. The concrete development principal and configuration behavior belong in the bounded T3 design. No readiness confirmation or Goldfish brainstorm review has occurred. Continue the open-ended clarification before requesting that gate.
+The development shortcut is a local workflow convenience; it does not require a separate product ownership/network-access design. After the owner explicitly confirmed readiness, six fresh Goldfish lenses completed sequentially at baseline `bb26f25`. The [concepts brief](concepts_brief.md) and [round-1 report](../../reviews/t3-identity/brainstorm-round-1/review.md) record the synthesis and unresolved choices. Findings are pending owner/design disposition; this is not formal design acceptance or implementation authority.
