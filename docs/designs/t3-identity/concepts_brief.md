@@ -77,11 +77,11 @@ Two lifecycle safeguards remain proposals. Changing `app.auth.enabled` must defi
 
 **Scope to resolve rather than treat as accepted defaults:** the exact permission catalog and UI, basic grants beyond the selected ordinary needs, project-share/import defaults, no-sign-in fixture, activity semantics, revocation boundaries, configuration failures, mode transitions, audit and recovery policy. The intake's proposed ordinary actions cover owned projects, retained PDFs, chats, sessions and operation/AI status within existing limits; they add neither PDF editing nor individual PDF deletion.
 
-**Out-of-scope non-goals:** application passwords or a separate admin login; a general policy language; broader private-content administration; new account disable/delete/relinking or Google-account-loss recovery; Google-side logout/revocation guarantees; an application email service; a local-user product edition or account switcher; future PDF/chat/sharing implementations; deployment, paid calls and capacity claims. All standalone chat sharing/snapshots are dropped, including authenticated and public views. T19 needs clarification about history within project copies. Ordinary public login/static/health endpoints remain distinct from public content publication.
+**Out-of-scope non-goals:** application passwords or a separate admin login; a general policy language; broader private-content administration; new account disable/delete/relinking or Google-account-loss recovery; Google-side logout/revocation guarantees; an application email service; a local-user product edition or account switcher; future PDF/chat/sharing implementations; deployment, paid calls and capacity claims. All standalone chat sharing/snapshots are dropped, including authenticated and public views. Full-project copies include all saved chats and source settings. Ordinary public login/static/health endpoints remain distinct from public content publication.
 
 ## Alternatives Weighed
 
-The owner first rejected public snapshots, then removed all standalone chat snapshots, including authenticated restricted views, to simplify the product. R27/D-L and T17 are withdrawn; no publication permission, schema or route remains. Whole-project sharing/import remains. The former files-only/include-chats selector is superseded; saved-chat contents and T19 need clarification.
+The owner first rejected public snapshots, then removed all standalone chat snapshots, including authenticated restricted views, to simplify the product. R27/D-L and T17 are withdrawn; no publication permission, schema or route remains. Whole-project sharing/import remains. The former files-only/include-chats selector is superseded; all saved chats and source settings are included; T19 is mandatory.
 
 The owner selected Google as the sole login provider, replacing earlier application-password proposals. A separate password-based administrator login is not selected. Google proves identity; this application manages authority. No provider-based claim is being used to replace individual application grants.
 
@@ -91,7 +91,7 @@ The one-time internal setup command replaces manual initial assignment as the ch
 
 Research recommends server-side OIDC and JDBC sessions over introducing browser-held login tokens or another identity service. These are recommendations to evaluate in drafting, not newly attributed owner rejections. Likewise, framework session lookup versus a parallel registry, a finite action catalog versus optional role grouping, and controlled identity recovery versus a separate journal remain technical alternatives. No implementation or performance comparison has selected their exact form.
 
-Full-project sharing/import is the only distribution feature. Accepted copies remain independently owned; revoking a share stops future imports without erasing accepted copies. Saved-chat contents inside the full-project bundle need clarification; T19 is on hold. Basic share/import grants remain proposed. Standalone chat snapshots are dropped.
+Full-project sharing/import is the only distribution feature. Accepted copies remain independently owned; revoking a share stops future imports without erasing accepted copies. Full-project copies include all saved chats/messages/citations and source settings; T19 completes that mandatory scope in the same import pipeline. Basic share/import grants remain proposed. Standalone chat snapshots are dropped.
 
 ## Key Decisions & Staging for Next Steps
 

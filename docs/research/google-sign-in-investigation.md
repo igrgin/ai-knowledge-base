@@ -1,6 +1,6 @@
 # Google sign-in investigation
 
-> Owner scope amendment, 2026-11-05: all standalone chat sharing/snapshots are dropped; R27/T17 references below are historical, not active requirements. Full-project sharing/import remains; saved-chat contents and T19 require clarification. See the [current application design](../designs/application.md#d-k-independent-project-imports).
+> Owner scope amendment, 2026-11-05: all standalone chat sharing/snapshots are dropped; R27/T17 references below are historical, not active requirements. Full-project sharing/import remains; full-project copies include all saved chats/citations/source settings, and T19 is required. See the [current application design](../designs/application.md#d-k-independent-project-imports).
 
 Checked: **2026-11-05, Europe/Zagreb**. Repository baseline: `e095a9161f3382aa9ee1a83db6198f3f93f94f76`, branch `egm-foundation-bootstrap`. Existing untracked `langchain-architecture-assessment.md` was left untouched. This is supporting research for [issue #3](https://github.com/igrgin/ai-knowledge-base/issues/3), requested before resuming its EGM brainstorm; it is not an implementation handoff or a Goldfish review. Google account/project configuration, client credentials, domain ownership and actual sign-in have **not** been inspected or verified.
 

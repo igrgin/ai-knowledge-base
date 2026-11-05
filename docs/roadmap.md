@@ -14,7 +14,7 @@ The owner additionally requests independent session timers and settings/profile 
 
 The owner additionally selected explicit permissions rather than a role-only authorization model. T3 must design permission assignments/enforcement and agree the consumer boundary; admins assign/revoke individual permissions in the app and new users receive basic permissions automatically. The first permission manager is established by an owner-accepted one-time internal setup command targeting an existing account UUID; exact basic grants, command/recovery design, optional role grouping and propagation remain open. Resource slices still own ownership predicates and their actual action permissions. Permission checks remain active when sign-in is disabled.
 
-The owner described basic access as reading/writing owned documents and accessing owned chats. The T3 [intake proposal](designs/t3-identity/authentication-decisions.md#proposed-basic-permission-set) maps these to actions. The owner now limits sharing to whole projects and importing shared projects; all standalone chat snapshots are dropped (R27/T17). The detailed basic catalog and default project-share/import grants remain to be confirmed. Saved-chat contents inside a full-project copy require clarification; T19 is on hold.
+The owner described basic access as reading/writing owned documents and accessing owned chats. The T3 [intake proposal](designs/t3-identity/authentication-decisions.md#proposed-basic-permission-set) maps these to actions. The owner now limits sharing to whole projects and importing shared projects; all standalone chat snapshots are dropped (R27/T17). The detailed basic catalog and default project-share/import grants remain to be confirmed. The owner clarified that everything is copied, including all saved chats/messages/citations and source settings. T19 is required to complete the same project-copy flow; no content selector or files-only product mode remains.
 
 The owner requires at least one permission manager after initial setup. T3 must reject removal of the final permission-management grant, including concurrent changes, against shared database state. Logged-out/expired sessions do not remove the account's authority. No new account deletion or recovery feature is authorized by this rule.
 
@@ -59,15 +59,15 @@ A task in the start column denotes its completion; a K gate denotes the narrower
 | T11 | Delete a project and recover safely from purge/restart/restore failures | R2, R5, R14, R15, R20, R23, R24 | KP, KD and KH | T6, T8 | Lifecycle slice owner | pending | feature | [#11](https://github.com/igrgin/ai-knowledge-base/issues/11); `11-purge-projects-and-recover-safely-after-restore` (planned; not created) |
 | T9 | Ask a grounded question and persist an idempotent, validated answer | R2, R7, R9, R10, R11, R12, R16, R17, R22, R23, R28 | KU, KD, KE, KH, KS and KL | T5, T7, T8, T20, T11 | Answer slice owner | pending | feature | [#9](https://github.com/igrgin/ai-knowledge-base/issues/9); `9-answer-grounded-questions-with-saved-provenance` (planned; not created) |
 | T10 | Open a validated answer citation at its original physical PDF page | R2, R10, R13, R29 | KV and KC | T18, T9 | Citation slice owner | pending | feature | [#10](https://github.com/igrgin/ai-knowledge-base/issues/10); `10-open-answer-citations-at-the-correct-pdf-page` (planned; not created) |
-| T16 | Share/import a complete fixed project copy; saved-chat contents need clarification | R2, R3, R7, R13, R15, R17, R20, R25, R26, R29 | KP, KD, KE, KS, KV and KL | T7, T18, T20, T11 | Distribution slice owner | pending | feature | [#16](https://github.com/igrgin/ai-knowledge-base/issues/16); `16-share-and-import-independent-fixed-project-copies` (planned; not created) |
+| T16 | Build the fixed full-project share/import foundation; final product behavior requires T19 | R2, R3, R7, R13, R15, R17, R20, R25, R26, R29 | KP, KD, KE, KS, KV and KL | T7, T18, T20, T11 | Distribution slice owner | pending | feature | [#16](https://github.com/igrgin/ai-knowledge-base/issues/16); `16-share-and-import-independent-fixed-project-copies` (planned; not created) |
 | T17 | Dropped: standalone chat snapshots | R27 withdrawn | None | None; excluded from completion | No active slice owner | dropped by owner | feature (historical issue label) | [#17](https://github.com/igrgin/ai-knowledge-base/issues/17); remote issue remains open pending reconciliation; no branch planned |
-| T19 | Clarify saved-chat contents of a full-project copy | R26; other mappings conditional | No implementation start until owner clarification | Conditional on retaining chat history | Distribution extension owner | on hold: scope clarification | feature | [#19](https://github.com/igrgin/ai-knowledge-base/issues/19); planned branch not created |
-| T12 | Complete cross-feature navigation, accessibility and packaged UI consistency | R1, R3, R6, R8, R10, R11, R12, R13, R14, R15, R18, R26, R28, R29 | T4 | All retained feature demos integrated with passing evidence; T19 conditional on contents decision | Integrator/UI integration owner | pending | feature | [#12](https://github.com/igrgin/ai-knowledge-base/issues/12); `12-integrate-navigation-accessibility-and-packaged-ui` (planned; not created) |
+| T19 | Complete full-project imports with all saved chats, mapped citations and source settings | R2, R7, R8, R10, R14, R20, R26, R28 | KI, KH and KC | T16, T10 | Distribution extension owner | pending; required product scope | feature | [#19](https://github.com/igrgin/ai-knowledge-base/issues/19); `19-include-saved-chats-and-citations-in-project-copies` (planned; not created) |
+| T12 | Complete cross-feature navigation, accessibility and packaged UI consistency | R1, R3, R6, R8, R10, R11, R12, R13, R14, R15, R18, R26, R28, R29 | T4 | All retained feature demos integrated with passing evidence; T19 required for complete project copying | Integrator/UI integration owner | pending | feature | [#12](https://github.com/igrgin/ai-knowledge-base/issues/12); `12-integrate-navigation-accessibility-and-packaged-ui` (planned; not created) |
 | T13 | Prove integrated privacy/lifecycle/scalability behavior and measure no-cache performance | R1, R2, R4, R5, R7, R10, R12, R13, R14, R15, R17, R20, R21, R22, R23, R24, R25, R26, R28, R29 | T6 | T12 and its feature prerequisites | Verification owner | pending | feature | [#13](https://github.com/igrgin/ai-knowledge-base/issues/13); `13-verify-privacy-lifecycle-scalability-and-embedding-performance` (planned; not created) |
 | T14 | Evaluate actual model grounding, citation quality, latency and cost within a bounded allowance | R4, R9, R10, R11, R16, R17, R21, R24, R25 | T5, T7 and passing focused offline dispatch/accounting checks; separate credential/paid-call authority | T9, T10 and passing focused offline answer/citation checks; paid-call authority | AI evaluation owner | pending | spike | [#14](https://github.com/igrgin/ai-knowledge-base/issues/14); `14-evaluate-real-ai-grounding-quality-latency-and-cost` (legacy planned name; no branch required for spike) |
 | T15 | Hand over the reproducible local package and truthful readiness evidence | R18, R19, R20, R21, R22, R24, R25, R26, R28, R29 | T1 for living documentation | T12, T13; T14 additionally required for a real-AI-ready claim | Integrator/handoff owner | pending | feature | [#15](https://github.com/igrgin/ai-knowledge-base/issues/15); `15-document-and-hand-over-the-reproducible-local-package` (planned; not created) |
 
-T5 can be scheduled independently of T4's project UI, subject to the common prerequisite and single-task limit. T8 has no T7 dependency; T18 has no embedding/answer dependency. T17 is dropped and has no gate or ownership. T19 is on hold for the full-project chat-history decision; the former include-chats selector is superseded. T12 does not gate any feature slice.
+T5 can be scheduled independently of T4's project UI, subject to the common prerequisite and single-task limit. T8 has no T7 dependency; T18 has no embedding/answer dependency. T17 is dropped and has no gate or ownership. T19 is a mandatory stage of T16's same full-project copy flow; the former include-chats selector is removed. T16 alone cannot expose a files-only product mode or complete R26. T12 does not gate any feature slice.
 
 Keep T9 and T10 as separate owned increments but demonstrate them as one usable grounded-answer/citation milestone, reusing T18's reader. T9 alone does not complete R10: correct physical-page navigation requires T10 as well. Keeping the existing issue IDs preserves review history without creating a second reader or answer pipeline.
 
@@ -99,17 +99,16 @@ flowchart TD
   T18 --> T16
   T20 --> T16
   T11 --> T16
-  T16 -. if history retained .-> T19["T19 Scope on hold"]
-  T10 -. if history retained .-> T19
-  T16 --> T12["T12 Integration/polish"]
-  T19 -. if retained .-> T12
+  T16 --> T19["T19 Complete project history copy"]
+  T10 --> T19
+  T19 --> T12["T12 Integration/polish"]
   T12 --> T13["T13 Integrated offline/performance proof"]
   T10 --> T14["T14 Bounded real-AI evaluation"]
   T13 --> T15["T15 Local handoff"]
   T14 -. "real-AI-ready claim" .-> T15
 ```
 
-For example, T5 starts after K0 while T3 is unfinished, although its signed-in UI/ownership demonstration finishes after T3. T9 demonstrates a grounded answer once T5/T7/T8/T20 are wired; T11 is needed for completed deletion-race checks. T10 starts after KV/KC agreement while real answer integration proceeds. T17 is withdrawn; T19 cannot start until its full-project contents question is resolved. No app-mode fake provider counts as final behavior.
+For example, T5 starts after K0 while T3 is unfinished, although its signed-in UI/ownership demonstration finishes after T3. T9 demonstrates a grounded answer once T5/T7/T8/T20 are wired; T11 is needed for completed deletion-race checks. T10 starts after KV/KC agreement while real answer integration proceeds. T17 is withdrawn; T19 is required for full project copying and starts only after its agreed gates and bounded design prerequisite. No app-mode fake provider counts as final behavior.
 
 ## Demonstration order
 
@@ -119,10 +118,10 @@ For example, T5 starts after K0 while T3 is unfinished, although its signed-in U
 | Upload/read and saved chats | T6, T18 and T8 | Show these independently before embeddings/answers |
 | Ready knowledge and source controls | T5, T7, T20; T11 alongside | Finish AI inputs and lifecycle foundations without serializing viewer work |
 | Grounded chat/page citation | T9, T10 | Extend history/reader; T14 may begin bounded evidence after focused safety checks |
-| Distribute a full project | T16; T19 conditional | One independent project-copy pipeline; no standalone chat sharing or collaboration |
+| Distribute a full project | T16/T19 | One independent project-copy pipeline; no standalone chat sharing or collaboration |
 | Complete local evidence/handoff | T12, T13, T14, T15 | Integration, actual AI evidence and package claims remain separate |
 
-A valid single-writer sequence remains possible: T1, T2, T3, T4, T6, T8, T18, T5, T7, T20, T11, T9, T10, T16, T12, T13, T14, T15. Insert T19 after its gates only if the clarified project contents retain it. This is a preference, not authority; T5 can start earlier and T18 can follow T6.
+A valid single-writer sequence remains possible: T1, T2, T3, T4, T6, T8, T18, T5, T7, T20, T11, T9, T10, T16, T19, T12, T13, T14, T15. This is a preference, not authority; T5 can start earlier and T18 can follow T6. T19 completes mandatory history copying within the same full-project product flow.
 
 ## Ownership and coordination
 
@@ -147,14 +146,14 @@ Paths are proposed because implementation files do not exist yet. Backend paths 
 | Answers, T9 | `chat/answering/**`, `retrieval/**`, `features/chats/answering/**` | Answer operations and provenance/citation extensions | KU/KD/KE/KH/KS/KL; message-schema extension approved with T8; no second history/provider/job implementation |
 | Citations, T10 | `source/citations/**`, `features/chats/citations/**` | Normally none; extend T9 provenance only when warranted | KC/KV; use existing viewer props and coordinate API changes with T18 |
 | Distribution, T16 | `distribution/projectcopy/**`, `features/distribution/projectcopy/**` | Fixed manifests, token/invitation access and import acceptance/state | KD/KE/KS/KV/KL and existing quota/job APIs; KI for chat-copy extension |
-| Chat-copy extension, T19 (on hold) | `distribution/chatcopy/**`, `features/distribution/chatcopy/**` | Pinned chat-manifest/mapping extensions | KI/KH/KC; T16 owner/integrator controls base copy engine; final contents await owner clarification |
+| Full-project history mapping, T19 | `distribution/chatcopy/**`, `features/distribution/chatcopy/**` | Pinned chat-manifest/mapping extensions | KI/KH/KC; T16 owner/integrator controls base copy engine; all project chats/citations/source settings are mandatory; no content selector |
 | Verification/evaluation, T13/T14 | `evaluation/**`, dedicated `frontend/e2e/integration/**` and `backend/src/test/**/integration/**` scenarios | No production feature schema | Root launcher/Compose changes through integrator; failures go to the feature owner |
 
 This matrix restricts ownership rather than granting blanket access to shared parent directories. When two slices need the same test helper, DTO, table definition or route entry, its existing owner/integrator is the sole writer and consumer changes are integrated together.
 
 ### Feature migrations and integration coordination
 
-1. Each slice lists the tables/columns/indexes it owns when its contract gate is agreed. T2 owns only migration infrastructure. Examples: users/sessions in T3, projects in T4, money/provider slots in T5, originals/jobs in T6, saved history in T8, vectors in T7, grants/exclusions in T20, answer provenance in T9, lifecycle journal in T11, project imports in T16, conditional copied-chat extensions in T19.
+1. Each slice lists the tables/columns/indexes it owns when its contract gate is agreed. T2 owns only migration infrastructure. Examples: users/sessions in T3, projects in T4, money/provider slots in T5, originals/jobs in T6, saved history in T8, vectors in T7, grants/exclusions in T20, answer provenance in T9, lifecycle journal in T11, project imports in T16, required copied-history mappings in T19.
 2. Slice writers use isolated disposable test databases and task-specific SQL filenames. The integrator assigns final unique Flyway version numbers in actual integration order after prerequisite migrations are available. Tentative branch migration numbers must never be applied to user/shared persistent data.
 3. Before merging, rebase on the integration baseline, assign the final unused version/name, and rerun clean-schema plus upgrade-from-baseline checks. An unapplied/disposable-branch migration may be renumbered; an applied integrated/non-disposable migration is immutable. Never enable out-of-order execution or rewrite applied history to repair a collision. One integration writer serializes this step, so merging a higher migration cannot silently strand a lower version.
 4. A foreign key to another slice's table is a real migration prerequisite. For example T5 can develop after K0, but its user ownership migration cannot complete before T3's identity migration; project UI completion is irrelevant. T20 needs T6 document and T8 chat schemas. T9 needs vector/history/source schema. This is separate from preferred UI order.
@@ -185,37 +184,37 @@ Each requirement maps to its owning vertical implementation and later integratio
 | R4 | T6 real parser/negative fixtures; T7 page-local indexing; T14 source-quality evidence |
 | R5 | T6 first durable upload/extraction jobs; T7 indexing/retry; T11 purge fences; T13 restart/race integration |
 | R6 | T4 empty project/library; T6 upload/status UI; T7 ready outcome; T8 saved chats; T12 consistency |
-| R7 | T8 project-serialized chat creation; T20 grants/exclusions/automatic uploads; T7 readiness; T9 KS retrieval/revision checks; T19 copied grants if retained; T13 races |
-| R8 | T8 saved-history UI/API/schema; T9 answer persistence; T19 histories if retained; T13 independent conversations |
+| R7 | T8 project-serialized chat creation; T20 grants/exclusions/automatic uploads; T7 readiness; T9 KS retrieval/revision checks; T19 copied grants; T13 races |
+| R8 | T8 saved-history UI/API/schema; T9 answer persistence; T19 copied histories; T13 independent conversations |
 | R9 | T9 evidence-only retrieval/answering through real history/data and KU; T14 semantic grounding/follow-ups |
-| R10 | T9 validated citation provenance; T10 navigation extending T18 reader; T19 mapping if retained; T14 semantic/page gate |
+| R10 | T9 validated citation provenance; T10 navigation extending T18 reader; T19 copied mapping; T14 semantic/page gate |
 | R11 | T9 refusal/structural validation/UI states; T14 unsupported-question gate |
 | R12 | T5 charged idempotency/admission; T6 reusable operation mechanics; T9 answer operation/UI; T13 duplicate/unknown-outcome tests |
 | R13 | T20 archive/unarchive/grants and quota retention; T18 retained viewer; T11 no orphan purge; T13 lifecycle cases |
-| R14 | T8 saved-chat deletion without PDF removal; T11 journal-aware parent deletion; T16 and conditional T19 distribution integration if manifests contain chats; T13 replay |
-| R15 | T4 parent revision/ownership; T11 real delete/purge/recovery UI; T6/T7/T9 consumer fences; T16 and conditional T19 original-link revocation and copy independence; T13 combined races |
+| R14 | T8 saved-chat deletion without PDF removal; T11 journal-aware parent deletion; T16/T19 distribution-manifest revocation for included chats; T13 replay |
+| R15 | T4 parent revision/ownership; T11 real delete/purge/recovery UI; T6/T7/T9 consumer fences; T16/T19 original-link revocation and copy independence; T13 combined races |
 | R16 | T3 session boundary; T5 server-only adapters; T6 parser isolation; T7/T9 minimal model inputs; T14/T15 retention evidence/docs |
 | R17 | T4 account project limits; T6 storage/pages/files admission; T5 financial/global provider authority; T7/T9 bounded calls; T16 import admission reuse; T13 races/T14 actual usage |
 | R18 | T1 local shell/toolchain; T2 persistence wiring; T3 IntelliJ/developer startup without sign-in/Google setup; each slice runnable locally; T12 single-origin integration; T15 repeatable distribution |
 | R19 | T1/T15 no hosting prerequisite; hosted provider/controls/costs remain separately requested later work |
-| R20 | T11 independent journal and restore replay; T16 and conditional T19 extend actual revocation integration; T13 old-backup tests; T15 documentation |
+| R20 | T11 independent journal and restore replay; T16/T19 extend actual revocation integration; T13 old-backup tests; T15 documentation |
 | R21 | Every slice owns meaningful tests; T13 integrated offline/performance evidence; T14 real-model gate; T15 truthful handoff |
 | R22 | T6 first combined/web/worker durable execution; T7/T9/T11/T16 extend it; T13 two-web/two-worker proof; T15 role instructions |
 | R23 | T3 JDBC sessions; T4 SQL ownership/lock boundary; T5 shared admission/accounting; T6 claims/fences; T20 grants/revisions; T11 recovery; consumers reuse those boundaries; T13 competing processes |
 | R24 | T6/T11 shared local file/journal contracts; T13 load/corpus/failure report; T14 bounded provider-stage evidence; T15 clearly deferred multi-host storage/operations |
 | R25 | T7 bounded embedding batches and completed-vector persistence; T20 ready unarchive reuse; T16 compatible ready-vector copying; T13 no-cache performance/embedding report; T14 actual endpoint data; no mandatory cache prototype |
-| R26 | T16 fixed full-project invitation/link imports; saved-chat contents and T19 need clarification; T11 lifecycle; T13 quota/independence/version/race checks |
+| R26 | T16 fixed full-project invitation/link import foundation; T19 mandatory all-chat/history/citation/source mapping in the same pipeline; T11 lifecycle; T13 complete-contents/quota/independence/version/race checks |
 | R27 | Withdrawn: no standalone chat snapshot feature; T17 dropped and excluded from completion |
-| R28 | T20 fresh-retrieval exclusions; T9 keeps bounded prior answers/context and fences stale retrieval; T19, if retained, maps exclusions into copied chats; T13 no hidden history reset |
-| R29 | T18 library/original PDF reader; T10 citation navigation; T16 destination files; T19 destination citations if retained |
+| R28 | T20 fresh-retrieval exclusions; T9 keeps bounded prior answers/context and fences stale retrieval; T19 maps exclusions into copied chats; T13 no hidden history reset |
+| R29 | T18 library/original PDF reader; T10 citation navigation; T16 destination files; T19 destination citations |
 
 | Invariant or concern | Work/disposition |
 | --- | --- |
 | Per-user confidentiality and explicit sharing | Resource owners enforce ownership; T16 accepts explicit full-project imports; T13 verifies isolation; no standalone transcript access |
-| Old-chat archives, new-chat exclusion, retained originals | T20 is the only eligibility owner; T9 consumes KS and T18 viewer remains separate; T19 remaps archive grants if retained |
+| Old-chat archives, new-chat exclusion, retained originals | T20 is the only eligibility owner; T9 consumes KS and T18 viewer remains separate; T19 remaps archive grants |
 | Physical-page provenance and grounded/refused answers | T6 extraction, T7 immutable indexing, T9 validation/refusal, T10 viewer navigation, T14 actual grounding |
-| No resurrection after delete/revoke | T11 parent/journal base; later T16 and conditional T19 install their own actual consumer integration before completion; T13 restore/worker races |
-| Independent full-project copies | T16 creates fresh destination ownership/IDs; T19 history mapping conditional; no shared mutable project |
+| No resurrection after delete/revoke | T11 parent/journal base; later T16/T19 install their own actual consumer integration before completion; T13 restore/worker races |
+| Independent full-project copies | T16 creates fresh destination ownership/IDs; T19 maps all history; no shared mutable project |
 | C1 hosted cost fit | Deferred hosting; T5 financial bounds, T13 resources and T14 actual usage inform a future cost decision |
 | C2 archive/source UX | T20 owns controls; T18 owns library reading; T9 consumes retrieval-only choices; T12 checks navigation/copy consistency |
 | C3 limits/languages/evaluation | Existing quotas/English-first criteria unchanged; feature tests and T13/T14 evidence before expansion |
@@ -227,7 +226,7 @@ Each requirement maps to its owning vertical implementation and later integratio
 | C9 unknown total workload/capacity | T13 reproducible experiments, T14 bounded provider evidence; no invented throughput promise or budget increase |
 | C10 no-cache performance | T7/T16 reuse ready embeddings; T13 report mandatory, cache prototype optional only with evidence |
 | C11 retrieval-only exclusion | R28 settled behavior; T20 filter/T9 bounded prior context, T13 checks; no transitive history-filter graph |
-| C12 project-import operating limits | T16 reuses quota/admission/jobs; conditional T19 extends one pipeline; T13 measures before hosting |
+| C12 project-import operating limits | T16 reuses quota/admission/jobs; T19 extends one pipeline; T13 measures before hosting |
 | Preserve instructions/settings/tools | Preserve current records and native definitions; T1/T2 and EGM cutover are merged, T3 research/brainstorm is active, later implementation remains pending, and the concurrency proposal is unapplied |
 
 ## Open delivery inputs

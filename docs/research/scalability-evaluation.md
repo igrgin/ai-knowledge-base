@@ -1,6 +1,6 @@
 # Scalable design and caching
 
-> Owner scope amendment, 2026-11-05: all standalone chat sharing/snapshots are dropped; R27/T17 references below are historical, not active requirements. Full-project sharing/import remains; saved-chat contents and T19 require clarification. See the [current application design](../designs/application.md#d-k-independent-project-imports).
+> Owner scope amendment, 2026-11-05: all standalone chat sharing/snapshots are dropped; R27/T17 references below are historical, not active requirements. Full-project sharing/import remains; full-project copies include all saved chats/citations/source settings, and T19 is required. See the [current application design](../designs/application.md#d-k-independent-project-imports).
 
 ## Current planning references
 

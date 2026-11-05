@@ -23,6 +23,6 @@ A checkpoint needs an agreed version and schema assumptions, a usable provider i
 | KI | T16, distribution owner | Fixed-version manifest and destination-ID map/import transaction extension point | T19 |
 
 
-T17 is withdrawn and consumes no gates. T19 references in the table are conditional on the unresolved saved-chat contents of full-project imports; they authorize no work or interface publication.
+T17 is withdrawn and consumes no gates. T19 is required to complete the full-project import flow with all saved chats, citations and source settings. The listed boundaries remain planned; this clarification authorizes no implementation or interface publication.
 
 K0 supplies typed application/MVC errors and UUID/trusted-identity, short-transaction, migration and meaningful-test conventions. It does not implement a principal or domain schema. Its [shared](../../backend/src/main/java/com/aiknowledgebase/shared/EGM.md) and [web](../../backend/src/main/java/com/aiknowledgebase/shared/web/EGM.md) package maps distinguish current behavior from future consumer obligations. A cross-slice contract change needs provider/consumer review and versioning before consumers rely on it; one integrator edits shared records.
