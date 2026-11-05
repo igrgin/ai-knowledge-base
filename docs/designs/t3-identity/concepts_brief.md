@@ -15,11 +15,11 @@ The [intake](authentication-decisions.md) records owner decisions and remaining 
 
 ## Analysis
 
-The repeated inactivity objection now has an owner-selected policy: meaningful user-action requests renew idle age; local typing/scrolling reports are limited to once per minute; automatic polling does not count. The 30-minute idle/eight-hour absolute limits remain fixed. The owner accepted the operation/admission behavior and requested an exact replacement for the earlier vague pre-upload threshold. Server enforcement and concurrency still require drafting and tests.
+The repeated inactivity objection now has an owner-selected policy: meaningful user-action requests renew idle age; local typing/scrolling reports are limited to once per minute; automatic polling does not count. The 30-minute idle/eight-hour absolute limits remain fixed. The owner accepted the operation/admission behavior and a configurable five-minute pre-write threshold. Server enforcement and concurrency still require drafting and tests.
 
 ### Activity and operation admission
 
-The owner accepted ordinary user-action renewal, bounded local interaction reports, excluded automatic traffic and admission-based protection of accepted work. The exact pre-action absolute-lifetime threshold below is a new concrete recommendation pending owner confirmation; it is separate from idle renewal.
+The owner accepted ordinary user-action renewal, bounded local interaction reports, excluded automatic traffic and admission-based protection of accepted work. The owner also accepted the exact pre-action threshold and configurable timing defaults in every development, production and test profile; this is separate from idle renewal.
 
 | Activity | Accepted treatment |
 | --- | --- |
@@ -30,15 +30,17 @@ The owner accepted ordinary user-action renewal, bounded local interaction repor
 | Typing or PDF scrolling/page changes without an API request | Bounded activity notification from a visible tab, initially no more than once per minute across tabs sharing that session |
 | Automatic status polling, prefetch, worker completion, passive open tabs or another session's activity | Do not renew the meaningful-activity clock |
 
-A close established pattern is sliding expiration with conditional renewal: ASP.NET Core reissues its cookie after a request passes the midpoint of its window. This is an example of the pattern, not a Spring option to copy. Spring Session's normal servlet integration updates session access; distinguishing meaningful activity and excluding polling needs a tested application integration. [Conditional renewal](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.cookies.cookieauthenticationoptions.slidingexpiration), [Spring Session filter 4.1.1](https://raw.githubusercontent.com/spring-projects/spring-session/4.1.1/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java) (checked 2026-11-05).
+Conditional sliding renewal has framework precedents; Spring's access updates still need application integration to exclude polling. [Conditional renewal](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.cookies.cookieauthenticationoptions.slidingexpiration), [Spring Session filter 4.1.1](https://raw.githubusercontent.com/spring-projects/spring-session/4.1.1/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java) (checked 2026-11-05).
 
 Do not add a session-status round trip before every button click or an extra renewal call for actions already reaching the backend. Server admission checks the live session, current permission and ownership, then records qualifying activity. Idle renewal concerns this application's session, not another Google login. No claim of one database write per minute is made: ordinary session persistence still has its own work. Throttle only noisy client-local interaction signals initially; verify database costs before adding more write-coalescing machinery.
 
-Renewing only near expiry is a different idle promise. If expiry is minute 30 and an action at minute 10 is ignored because 20 minutes remain, the user expires after only 20 minutes without activity. Preserve the intended 30-minute window for actual API actions; local event batching has one-minute recording granularity to specify/test in drafting. The server uses its own clock and cannot revive expired/revoked sessions from delayed reports.
+Preserve the configured idle window on user-action API requests; local event recording has the configured report interval's granularity to specify/test in drafting. The server uses its own clock and cannot revive expired/revoked sessions from delayed reports.
 
 Treat operation admission separately from session lifetime. Recommend renewing idle age before admitting project creation/upload and letting an already-authorized request or durably accepted job finish despite ordinary idle expiry; new requests still need a valid session. The owner accepted this ordinary-expiry boundary; permission/resource/admin revocation and queued-work rules remain unresolved. An upload that has not reached durable acceptance must not be reported as safely accepted; T6 must define bounded transfer/staging, interruption and any reauthentication/finalization behavior. Permission/resource/admin revocation rules remain separate.
 
-The eight-hour maximum is never extended. Concrete recommendation: with **five minutes or less remaining** (at or after **7h55m** from sign-in), require fresh sign-in before a new PDF upload or other state-changing action. Reads may continue with a valid session until 8h; new requests then require sign-in. The server decides at admission, not via a separate per-click status call. Already-authorized requests/accepted jobs finish despite ordinary expiry; unfinished transfers still need T6 staging/interruption rules. The five-minute value is pending owner confirmation, not a guarantee of transfer duration. Passive reading can reach idle expiry; preserve position/draft. No implementation or repeat review is claimed.
+The configured maximum is never extended. Accepted rule: with **five minutes or less remaining** (at or after **7h55m** from sign-in), require fresh sign-in before a new PDF upload or other state-changing action. Reads continue with a valid session until the maximum; new requests then require sign-in. The server decides at admission, not via a separate per-click status call. Already-authorized requests/accepted jobs finish despite ordinary expiry; unfinished transfers still need T6 staging/interruption rules. The cutoff is `max-lifetime` minus `reauthenticate-before-write`, not a guarantee of transfer duration. Passive reading can reach idle expiry; preserve position/draft. No implementation or repeat review is claimed.
+
+Accepted timing defaults are YAML-overridable in `dev`, `prod`, `test` and `itest`: idle `30m`, maximum lifetime `8h`, pre-write sign-in lead time `5m`, local activity-report interval `1m`. The [intake property table](authentication-decisions.md) names the planned settings; production and development use the same timer defaults. Tests may override them consistently. No runtime configuration has been added.
 
 ### Other review findings
 
@@ -89,9 +91,9 @@ Private project copying and restricted transcript publication retain their diffe
 
 ## Key Decisions & Staging for Next Steps
 
-Carry owner decisions above unchanged into the next draft. Review recommendations in this brief are pending dispositions, and no reviewer selected policy on the owner's behalf. The immediate owner choices are:
+Carry owner decisions above unchanged into the next draft. Review recommendations in this brief are pending dispositions, and no reviewer selected policy on the owner's behalf. The next decisions and drafting inputs are:
 
-1. Confirm the proposed five-minute pre-write sign-in threshold; the activity policy and time limits are selected, with exact integration/tests still required.
+1. Carry the selected activity policy and configurable timers into the bounded design and later verification; no further duration choice is pending.
 2. Choose session/permission revocation effect for concurrent requests and already accepted work, including the boundary of “all sessions.”
 3. Decide the detailed basic grants, including private-sharing defaults, and how newly introduced defaults affect existing users without restoring intentional restrictions.
 4. Resolve missing-Google-configuration behavior, authentication-mode transitions and identity restore safeguards; retain the explicit override and no-silent-fallback requirements.

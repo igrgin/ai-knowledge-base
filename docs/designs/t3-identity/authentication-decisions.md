@@ -68,7 +68,18 @@ The [source-backed Google investigation](../../research/google-sign-in-investiga
 
 The recommended signed-in integration uses server-side OpenID Connect through Spring Security and PostgreSQL-backed application sessions. Keep the application's UUID identity independent of Google's email/profile. These mechanisms and their exact routes/schema still require the bounded T3 design; the provider decision alone does not select every research recommendation.
 
-The owner accepted the [activity/admission policy](concepts_brief.md#activity-and-operation-admission): existing user-action requests renew idle age, typing/scrolling notifications are limited to once per minute, automatic traffic does not renew, and ordinary expiry does not cancel an already-authorized request or durably accepted job. New requests still require a valid session; permission/resource/admin revocation is separate. The owner requested an exact absolute-limit preflight threshold. Proposed value pending confirmation: five minutes remaining, requiring fresh sign-in before new uploads or other state-changing actions from 7h55m onward; the hard limit remains 8h. Unfinished transfer/staging rules remain T6 design work.
+The owner accepted the [activity/admission policy](concepts_brief.md#activity-and-operation-admission): existing user-action requests renew idle age, typing/scrolling notifications are limited to once per minute, automatic traffic does not renew, and ordinary expiry does not cancel an already-authorized request or durably accepted job. New requests still require a valid session; permission/resource/admin revocation is separate. The owner accepted the exact absolute-limit preflight: five minutes or less remaining requires fresh sign-in before new uploads or other state-changing actions (7h55m onward with the default maximum); the hard limit remains 8h. All four timing values are configurable defaults in common application YAML and every runtime/test profile, including `dev`, `prod`, `test` and `itest`. Unfinished transfer/staging rules remain T6 design work.
+
+Planned timing properties (not implemented yet):
+
+| Property | Default in every profile |
+| --- | --- |
+| `app.auth.session.idle-timeout` | `30m` |
+| `app.auth.session.max-lifetime` | `8h` |
+| `app.auth.session.reauthenticate-before-write` | `5m` |
+| `app.auth.session.activity-report-interval` | `1m` |
+
+Each profile may explicitly override these values. The 7h55m example is derived from maximum lifetime minus the pre-write lead time, not a separately hardcoded cutoff. Tests may use consistent shorter values. Validate positive durations, activity interval below idle duration and pre-write lead time below maximum lifetime. Exact binding to framework expiration and frontend timing belongs in the bounded design; retain one authoritative setting per behavior.
 
 ## Questions still requiring design or owner input
 
