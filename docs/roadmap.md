@@ -12,6 +12,8 @@ The owner accepted session defaults of 30 minutes idle and 8 hours maximum, YAML
 
 The owner additionally requests independent session timers and settings/profile controls to revoke one or all sessions, plus administrator session-revocation controls. These are T3 brainstorm amendments; administrator designation/permission, UI boundary and exact file/schema changes must be resolved before implementation. No separate password/admin login or broader private-data access is authorized.
 
+The owner additionally selected explicit permissions rather than a role-only authorization model. T3 must design permission assignments/enforcement and agree the consumer boundary; role grouping, direct user grants, who manages grants and propagation are unresolved. Resource slices still own ownership predicates and their actual action permissions. Permission checks remain active when sign-in is disabled.
+
 ## Feature design prerequisite
 
 Every unstarted substantial feature requires a bounded, accepted EGM design and completed design review before implementation, following the [workflow](egm-workflow.md#implement-an-accepted-scope). Resolve its technical choices, exact Create/Modify/Delete file boundary, schemas/interfaces, shared edits, incremental phases and tests there. The application design and tables below are direction and ownership, not implementation-ready task plans. Design work itself needs its scoped issue/authority. T3 research and brainstorming are active; its formal design and Goldfish review are not complete.
@@ -124,7 +126,7 @@ Paths are proposed because implementation files do not exist yet. Backend paths 
 | Slice owner | Exclusive application files/directories | Feature schema/migration responsibility | Shared touchpoints to coordinate |
 | --- | --- | --- | --- |
 | Integrator, T1/T2/T12/T15 | Root build/config/scripts, application shell/routes, `components/ui/`, `lib/api/`, contract records, plan and shared test bootstrap | Only minimal migration wiring in T2; reviews/numbers feature migrations at integration | Sole editor of poms, npm manifest/lock, common config, Compose, shell/routes, shared API types and plan; feature authors submit narrow changes |
-| Identity, T3 | `identity/**`, `features/auth/**` | Application accounts, Google identity mappings/JDBC sessions; development account fixture | K0 UUID/trusted-identity conventions; concrete principal, Google login, configured sign-in bypass and route/auth integration |
+| Identity, T3 | `identity/**`, `features/auth/**` | Application accounts, Google identity mappings/JDBC sessions; development account fixture; permission data design pending | K0 UUID/trusted-identity conventions; concrete principal, Google login, configured sign-in bypass and route/auth integration |
 | Projects, T4 | `project/**`, `features/projects/**` | Projects/ownership/count limits and lifecycle revision | KP ownership/lock API; library mounts feature components without taking their files |
 | Usage/model, T5 | `usage/**`, `model/**`, `features/ai-status/**` | Reservations/usage/periods/shared provider admission | KU, actor FK to T3, model dependencies/config through integrator |
 | Documents, T6 | `document/upload/**`, `document/storage/**`, `document/api/**`, `ingestion/extraction/**`, `jobs/**`, `pdf-extractor/src/**`, `features/documents/upload/**`, `features/documents/status/**` | Documents/versions/pages/extraction, storage admission and first durable operations/jobs | KD document state, file service and job API; other slices extend through these boundaries |

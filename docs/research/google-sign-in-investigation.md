@@ -16,6 +16,8 @@ For the developer launch, recommendation: an explicit YAML authentication settin
 
 Accepted configuration detail: the planned property is `app.auth.enabled`, with common default true, `dev` false and `prod` true. Explicit overrides are allowed. Tests must cover the defaults and overrides, Google-disabled startup without credentials, and absence of automatic fallback when credentials are missing with sign-in enabled.
 
+Further owner authorization decision: explicit permissions are required; the earlier role-only suggestion is not the chosen model. Google establishes identity, and this application manages/enforces action permissions plus ownership. Whether permissions are granted directly to users, through role bundles or both is unresolved. The development no-sign-in account must use the same permission path. Exact schema, permission catalog, grant workflow and propagation are design inputs rather than findings established by the Google sources.
+
 ## Existing-version fit
 
 The [root POM](../../pom.xml) pins Boot **4.1.2** and Java **26**; [backend/pom.xml](../../backend/pom.xml) already uses MVC, JDBC, PostgreSQL and Flyway but has no security/session dependency. The locally cached Boot 4.1.2 BOM resolves Spring Security **7.1.2** and Spring Session **4.1.1**, matching the inspected official documentation. Boot's published coordinates manage those versions and the `spring-boot-starter-security-oauth2-client`, `spring-boot-starter-session-jdbc` and corresponding test starters. Use managed versions rather than independently pinning or upgrading these libraries. [Boot 4.1.2 managed dependencies](https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html)
