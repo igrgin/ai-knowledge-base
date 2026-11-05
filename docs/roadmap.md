@@ -26,6 +26,8 @@ New basic permissions must also reach existing accounts automatically, while pre
 
 The owner accepted session revocation without account suspension: invalidate targeted application sessions on the server, allow a later new Google sign-in using current permissions, and never restore removed grants. Concurrent login/revoke-all ordering and admitted-work interactions still need design; no Google-side logout guarantee or account-blocking feature is added.
 
+The owner accepted enabled-mode startup failure for missing required Google configuration and disabled-mode startup without Google settings (2026-11-06). Temporary Google failure behavior remains pending owner acceptance following the [source-backed investigation](research/google-sign-in-failure-handling.md). T3 must explicitly choose/test discovery, token/UserInfo/JWK dependencies, bounded transport/retry and failure handlers; no outage availability or automatic SDK recovery is verified.
+
 ## Feature design prerequisite
 
 Every unstarted substantial feature requires a bounded, accepted EGM design and completed design review before implementation, following the [workflow](egm-workflow.md#implement-an-accepted-scope). Resolve its technical choices, exact Create/Modify/Delete file boundary, schemas/interfaces, shared edits, incremental phases and tests there. The application design and tables below are direction and ownership, not implementation-ready task plans. Design work itself needs its scoped issue/authority. T3 brainstorm round 1 is complete with six fresh lenses; the [concepts brief](designs/t3-identity/concepts_brief.md) awaits owner refinement/alignment. Its formal feature design and design review are not complete.

@@ -69,7 +69,7 @@ Two lifecycle safeguards remain proposals. Changing `app.auth.enabled` must defi
 **In-scope goals already selected by the owner:**
 
 - Google-only sign-in, automatic first-account creation, returning-account continuity and immediate project-creation permission.
-- Planned `app.auth.enabled`: common true, `dev` false and `prod` true, with explicit overrides allowed. Disabled mode supplies a stable server-established account without Google configuration; permissions, ownership and quotas still apply. Enabled mode must never fall back because Google configuration is missing.
+- Planned `app.auth.enabled`: common true, `dev` false and `prod` true, with explicit overrides allowed. Disabled mode supplies a stable server-established account without Google configuration; permissions, ownership and quotas still apply. Enabled mode rejects missing required Google configuration at startup; disabled mode needs none. No automatic fallback.
 - Server-enforced, configurable 30-minute idle and eight-hour absolute limits; valid sessions survive browser reopening and restarts without resetting age. Each session has independent timers.
 - Users list/revoke one or all own sessions; ordinary sign-out ends the current session, and the explicit all-sessions action includes it. Administrators can revoke selected/all user sessions through a separate permission across instances.
 - In-app assignment/revocation of individual action permissions plus resource ownership. A role-only model is insufficient. New and existing accounts inherit new basics without restoring explicit revocations; the no-sign-in account follows the same authorization paths.
@@ -100,7 +100,7 @@ Carry owner decisions above unchanged into the next draft. Review recommendation
 1. Carry the selected activity policy and configurable timers into the bounded design and later verification; no further duration choice is pending.
 2. Carry the accepted-work permission boundary into consumer contracts; implement accepted fresh-login behavior and settle concurrent “all sessions” ordering.
 3. Decide detailed basic/project-share/import grants and the proposed shared-default/per-account-exception mechanism; preserve the accepted existing-account/revocation outcome.
-4. Resolve missing-Google-configuration behavior, authentication-mode transitions and identity restore safeguards; retain the explicit override and no-silent-fallback requirements.
+4. Carry accepted configuration startup rules into design; resolve [researched login failures](../../research/google-sign-in-failure-handling.md), mode transitions and identity restore safeguards.
 5. Set a proportionate administrative audit policy and usable permission-denial/session-management presentation. Agree recipient identity with T16 without treating email text as universal proof.
 
 After refinement and explicit brief alignment, the EGM handoff can offer formal drafting or retaining the brief for later. A bounded `egm-draft` must settle the real principal/permission API, protocol and CSRF/error behavior, persistence comparison, transaction races, command invocation, safe session metadata and consumer interfaces. It must name exact Create/Modify/Delete files, migrations, permitted shared edits, buildable phases and meaningful checks. This brief does not supply that execution allowlist or publish a gate.
