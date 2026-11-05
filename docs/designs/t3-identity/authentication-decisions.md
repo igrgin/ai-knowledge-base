@@ -13,13 +13,15 @@ The owner selected Google as the login provider. For developer startup from Inte
 
 Use `app.auth.enabled` as the planned property name. The common default is true; `application-dev.yml` sets false and `application-prod.yml` sets true. When false, the server supplies a stable application account/principal without a Google login or Google configuration. Existing ownership predicates and quotas still apply. When true, Google sign-in is required; missing Google configuration must not silently change the boolean. The concrete no-sign-in account/fixtures and property binding are T3 design work. This is the accepted planned configuration, not an implemented setting yet.
 
-Google is the sole application login provider. No application password login, separate admin login or admin portal is included. The repository and open issue audit found no existing application-admin requirement. Existing infrastructure-administrator references do not define one.
+Google is the sole application login provider; no separate password-based admin login is selected. The initial plans had no application-admin capability. The owner now requests session controls for users and administrators: administrators can revoke a selected user session or all of that user's sessions. How administrators are designated, their exact session-management boundary and any admin UI remain to be defined; no broader administrative powers follow from this request.
 
 The owner requested Google research and an audit of plans, files and current issues before continuing brainstorming. This authorizes the research and planning reconciliation, not feature implementation or completion of issue #3. [The roadmap](../../roadmap.md) owns task authority; [the application design](../application.md) owns amended R1/R18 and C7.
 
 On the first successful Google sign-in, create the application account automatically and let the user start creating projects immediately. No separate registration form, profile-completion step, invitation or approval is required. Returning sign-ins resolve the existing account; concurrent first sign-ins must not create duplicate accounts.
 
 Session defaults are **30 minutes of inactivity** and **8 hours maximum from sign-in**, both configurable in YAML and enforced by the server. A valid session survives closing/reopening the browser and backend restarts within both limits; restarts do not reset its age. Expiry preserves the current view and unsent question while requesting sign-in again. Restore private view/draft state only for the same application account; these UI obligations apply as their owning features are introduced.
+
+Each signed-in session has its own inactivity countdown and maximum lifetime; activity on another device does not extend it. Users can view/manage their sessions from settings or profile and revoke an individual session or all sessions. Ordinary sign-out affects the current session; the explicit all-sessions action includes the current session. Expiry happens independently per session. Administrator revocation must use an explicit permission and take effect across web instances; it does not grant access to the user's private documents/chats. Device/session representation, safe display metadata and concurrent-request revocation behavior need bounded design.
 
 ## Research and audit
 
@@ -33,7 +35,7 @@ The recommended signed-in integration uses server-side OpenID Connect through Sp
 - The server-established development account/principal and repeatable fixtures needed to exercise real ownership paths without Google login.
 - Google configuration failure behavior; missing configuration must not silently enable the development shortcut. No local-to-Google product migration or account switcher is needed by this request.
 - Atomic automatic account creation, returning-identity lookup and changed-email behavior; the no-extra-onboarding outcome is settled.
-- Concurrent sessions, the effect of logout on other browsers/devices, and provider-side revocation/recovery limits. The 30-minute idle/8-hour maximum defaults and restart/browser continuity are settled.
+- Administrator designation/permission, administrator session-management UI scope, session/device representation and concurrent revocation behavior. Independent per-session timers, user individual/all-session controls and administrator revocation are requested; provider-side revocation/recovery remains separate.
 - The identity and proof needed for named project invitations/restricted snapshots. Google sign-in must not silently change accepted sharing behavior; development fixtures do not authorize access to real users' private resources.
 - Exact API/CSRF/error/principal/module interfaces, persistence comparison, file boundaries, implementation phases and meaningful checks required by the roadmap.
 - Actual Google project/client availability and a real-provider acceptance gate, separately from controlled offline tests and development-shortcut checks.
