@@ -19,21 +19,26 @@ The most repeated objection concerns the meaning of inactivity. The owner chose 
 
 ### Proposed inactivity policy
 
-After the review, the owner asked what normally resets the clock and requested a recommendation. Recommendation for this project, **pending owner acceptance**: reset the idle clock on meaningful user activity in the app, not automatic traffic.
+The owner asked for an established approach, suggested renewing near a remaining-time threshold, and raised expiry during uploads/project creation. Recommendation for this project, **pending owner acceptance**: use a sliding activity window; ordinary user actions renew through their existing API request, while local interaction reports are throttled.
 
-| Activity | Reset idle clock? |
+| Activity | Recommended treatment |
 | --- | --- |
-| Deliberate page refresh, navigation, opening a project/chat/PDF | Yes, while the session is still valid |
-| Typing, clicking controls, scrolling a PDF or changing pages in a visible app tab | Yes |
-| Automatic job/status polling, background refresh or PDF prefetch | No |
-| Background worker completion or activity in a different browser session | No |
-| Leaving a tab open, mouse movement alone or passive reading without interaction | No |
+| Refresh/navigation; create/open/rename/delete an owned project | Qualifying activity; validate and renew on the existing server request |
+| Upload/open/archive/unarchive PDFs; retry eligible processing | Qualifying activity; no new individual PDF delete/edit capability |
+| Create/open/delete chats, send questions, change source selection | Qualifying activity on the existing authorized request |
+| Explicit own-session/permission-management actions | Qualifying activity; ordinary permission checks still apply |
+| Typing or PDF scrolling/page changes without an API request | Bounded activity notification from a visible tab, initially no more than once per minute across tabs sharing that session |
+| Automatic status polling, prefetch, worker completion, passive open tabs or another session's activity | Do not renew the meaningful-activity clock |
 
-Conventional HTTP inactivity uses the last request for a session, and Spring records session access. That convention explains why a refresh usually counts, but does not by itself distinguish a person from polling. [OWASP idle timeout](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#idle-timeout), [Spring Session access time](https://docs.spring.io/spring-session/reference/api.html#api-session) (checked 2026-11-05).
+A close established pattern is sliding expiration with conditional renewal: ASP.NET Core reissues its cookie after a request passes the midpoint of its window. This is an example of the pattern, not a Spring option to copy. Spring Session's normal servlet integration updates session access; distinguishing meaningful activity and excluding polling needs a tested application integration. [Conditional renewal](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.cookies.cookieauthenticationoptions.slidingexpiration), [Spring Session filter 4.1.1](https://raw.githubusercontent.com/spring-projects/spring-session/4.1.1/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java) (checked 2026-11-05).
 
-A small shared frontend activity signal can report qualifying local interactions, with requests throttled rather than sent for every keystroke/scroll event. The server records its own receipt time, enforces expiry and cannot revive an expired/revoked session from a delayed signal; client timestamps are not authority. Keep the eight-hour maximum unchanged, share activity across tabs using the same session, and keep separate sessions independent. The exact integration/throttle belongs in drafting; no standalone heartbeat service or implementation is selected. Framework session access caused by polling must not override this policy.
+Do not add a session-status round trip before every button click or an extra renewal call for actions already reaching the backend. Server admission checks the live session, current permission and ownership, then records qualifying activity. Idle renewal concerns this application's session, not another Google login. No claim of one database write per minute is made: ordinary session persistence still has its own work. Throttle only noisy client-local interaction signals initially; verify database costs before adding more write-coalescing machinery.
 
-The tradeoff is some application-specific activity tracking beyond default request-based expiry. Passive reading with no interaction for 30 minutes can still expire; preserve position/draft and request sign-in when needed. Counting a merely visible tab as activity would again let an unattended screen remain active. This recommendation is not yet an owner decision or a closed M1 finding.
+Renewing only near expiry is a different idle promise. If expiry is minute 30 and an action at minute 10 is ignored because 20 minutes remain, the user expires after only 20 minutes without activity. Preserve the intended 30-minute window for actual API actions; local event batching has one-minute recording granularity to specify/test in drafting. The server uses its own clock and cannot revive expired/revoked sessions from delayed reports.
+
+Treat operation admission separately from session lifetime. Recommend renewing idle age before admitting project creation/upload and letting an already-authorized request or durably accepted job finish despite ordinary idle expiry; new requests still need a valid session. This is a proposed M2 boundary, not an accepted cancellation policy. An upload that has not reached durable acceptance must not be reported as safely accepted; T6 must define bounded transfer/staging, interruption and any reauthentication/finalization behavior. Permission/resource/admin revocation rules remain separate.
+
+The eight-hour maximum is never extended. Before starting a long transfer near that limit, require reauthentication based on the operation's bounded duration, or preserve staged work for authenticated completion; exact thresholds belong in T3/T6 design. Passive reading without interaction can still reach idle expiry; preserve reading position/draft. These are recommendations, not closed M1/M2 findings or implemented behavior.
 
 ### Other review findings
 

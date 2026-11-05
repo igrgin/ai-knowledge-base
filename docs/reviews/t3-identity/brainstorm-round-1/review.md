@@ -108,3 +108,5 @@ The integrator read the brief, normalized report and six raw results, checked av
 ## Post-review discussion
 
 M1: the owner requested an inactivity recommendation. The integrator added a proposed user-activity policy to the brief, excluding automatic polling and using bounded activity reporting for local interactions. It remains pending owner acceptance and implementation design; M1 is not closed and no repeat Goldfish review is claimed. Original raw reports and reviewed baseline remain unchanged.
+
+The owner then proposed near-expiry renewal and asked about uploads/project creation. The revised proposal recommends normal user-action request renewal, throttled local interaction reporting, no separate status check per action, and separate admission/completion semantics. It documents the shortened-idle tradeoff of near-expiry-only renewal and retains the absolute limit. M1 and the affected M2 operation boundary remain pending owner acceptance; no new Goldfish round is claimed.

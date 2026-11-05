@@ -68,7 +68,7 @@ The [source-backed Google investigation](../../research/google-sign-in-investiga
 
 The recommended signed-in integration uses server-side OpenID Connect through Spring Security and PostgreSQL-backed application sessions. Keep the application's UUID identity independent of Google's email/profile. These mechanisms and their exact routes/schema still require the bounded T3 design; the provider decision alone does not select every research recommendation.
 
-The owner requested a recommendation on the idle timer after round 1. The [proposed inactivity policy](concepts_brief.md#proposed-inactivity-policy) counts deliberate interaction/refresh/navigation, excludes polling and passive open tabs, and keeps the eight-hour maximum. It is pending owner acceptance; accepted timeout values have not changed.
+The owner requested an established approach for threshold-based renewal and protecting uploads/project creation from expiry. The revised [inactivity/admission proposal](concepts_brief.md#proposed-inactivity-policy) uses existing user-action requests to renew idle age, throttles only noisy typing/scrolling reports initially, excludes polling, and separates admitted work from new requests. Exact upload staging and absolute-deadline handling need T3/T6 design. It remains pending owner acceptance; accepted timeout values have not changed.
 
 ## Questions still requiring design or owner input
 
