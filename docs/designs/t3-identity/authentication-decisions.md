@@ -48,6 +48,12 @@ The owner accepted project-share/import as basic defaults, subject to individual
 
 Alternative rejected by the owner: public snapshots enabled through an extra administrator-granted permission. The owner removed anonymous/public viewing entirely. Public URLs would not technically require anonymous accounts; this exclusion is a product decision, separate from Spring's anonymous security-context support. [Spring anonymous authentication](https://docs.spring.io/spring-security/reference/servlet/authentication/anonymous.html) Keep ordinary public login/static/health endpoints and the configured developer no-sign-in principal separate from that product decision; the development principal still satisfies ownership/recipient checks. Definitions of `read`/`write` do not add PDF editing, individual file deletion or unlimited AI use.
 
+## Accepted project-sharing access modes
+
+**Owner confirmation, 2026-11-06:** the owner of a project chooses either a specific-recipient invitation or a general sharing link. A recipient-specific invitation permits only the designated signed-in application account to import. A general link permits any signed-in account possessing it and currently holding import permission, subject to the existing quotas and lifecycle checks. Forwarding a general link can therefore permit another eligible account to import an independent full copy. No anonymous access or standalone chat sharing is added.
+
+Stable recipient binding and exact selection/acceptance UI belong to T16's bounded design; T3 supplies trusted account identity and current permission checks. Full-project capture/history mapping remains T16/T19 work. This confirmation does not authorize those implementations.
+
 ## Basic-permission evolution
 
 **Accepted outcome:** new basic permissions apply to existing accounts too, without restoring anything an administrator explicitly revoked. The owner selected server-side permission changes with current checks on each new protected request. Permission changes require no user/session refresh, forced sign-out or fresh Google login. Already-admitted work retains the previously accepted boundary; UI permission displays may remain stale until their next normal reload, but cannot authorize an action. The default/exception storage model below remains proposed.
