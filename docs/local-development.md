@@ -137,7 +137,7 @@ Planned YAML configuration: `app.auth.enabled` defaults to `true` in common conf
 
 ### Planned audit configuration
 
-The accepted plan always audits administrators, including the automatically selected development database admin. Planned common settings are `app.audit.users.enabled=false` for optional ordinary-user action history and `app.audit.retention=90d`; runtime/test profiles can override these values. Turning off user audit does not disable admin records or existing security-failure diagnostics. Basic-user fixtures are needed to test the optional path; the development admin stays audited. Event coverage and business/read-event failure handling require bounded design. No audit property, table, history UI or cleanup task is implemented.
+Planned common audit settings are `app.audit.admins.enabled=true`, `app.audit.admins.retention=90d`, `app.audit.users.enabled=false` and `app.audit.users.retention=30d`. Runtime/test profiles can override each independently. The development database admin follows the admin settings, which may be disabled. Retention cleanup follows the recorded event category and continues independently of new capture. Capture flags do not disable existing security-failure diagnostics or functional permission/accounting/bootstrap state. Use admin and ordinary-user fixtures to verify all four flag combinations; exact events/failure handling need bounded design. No audit property, table, history UI or cleanup task is implemented.
 
 ### Current persistence conventions
 
