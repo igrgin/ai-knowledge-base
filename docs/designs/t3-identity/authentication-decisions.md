@@ -106,6 +106,14 @@ The owner accepted the [permission-revocation boundary](concepts_brief.md#other-
 
 Invalidate revoked sessions on the server so an old cookie cannot resume them. The [OWASP session-management guidance](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#session-expiration), checked 2026-11-05, supports server-side invalidation; it does not choose this application's future-login policy. This policy makes no promise to end Google's own session or require Google to prompt for a password. The tradeoff is that session revocation alone cannot keep someone out if they can authenticate again. Exact ordering of concurrent login/revoke-all, and already-admitted work interactions, remain bounded-design inputs; no concurrency protocol or new account-blocking feature is selected here.
 
+## Accepted permission feedback
+
+**Owner decision, 2026-11-06:** hide administrative areas unless the current account has the relevant permissions. Ordinary actions can remain visible but greyed out/disabled, with a short explanation or suitable notification when permission is missing. Exact tooltip, toast, notification-dropdown or inline presentation is a UI design choice; no separate persistent-notification system is selected.
+
+The backend checks current action permission and ownership on every new protected request. An already-open page may have stale controls: if a user submits an action after losing permission, reject it and explain the denial; do not rely on the element having been disabled or accept browser-supplied permissions. Do not retry the rejected action automatically or send a still-authenticated user through Google login merely because permission changed.
+
+New grants take effect through current server checks in the same valid application session. The UI can refresh its displayed permission state without logging out/in; exact refresh triggers/cadence and API shape belong in the bounded design. Immediate push updates or a separate permission-status request before every button are not required by this decision. Normal session expiry/revocation and the pre-write fresh-sign-in rule still apply independently. Preserve K0's non-disclosing ownership denial and same-account draft/privacy boundaries.
+
 ## Google configuration and failure handling
 
 **Accepted setup behavior, 2026-11-06:** when `app.auth.enabled=true`, missing/blank required Google configuration stops startup with a clear operator error naming the missing setting without displaying secrets. When false, Google configuration is not required. Never change the configured sign-in mode automatically. The owner first accepted these setup rules, requested provider/framework research, then accepted the recovery policy below on 2026-11-06.
