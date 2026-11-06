@@ -3,7 +3,7 @@
 * **Author:** igrgin
 * **Date:** 2026-11-06, Europe/Zagreb
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
-* **Status:** Brainstorm synthesis for owner alignment; formal design/review and implementation remain pending.
+* **Status:** Predecessor brief for owner-authorized bounded drafting. Accepted decisions are retained; open mechanisms remain pending. Formal design/review and implementation are incomplete.
 
 ## Overview
 
@@ -108,3 +108,5 @@ Preserve accepted controls and stop adding adjacent product questions. Align thi
 A proposed drafting sequence is account/security/session continuity and development modes, then permissions/bootstrap safeguards, then session administration/audit inspection and consumer contracts. These are recommendations, not accepted phases or authority to omit controls. Any actual T3 scope reduction/reassignment needs owner choice.
 
 The design must list exact Create/Modify/Delete files, migrations, permitted shared edits, buildable phases and meaningful checks. Midpoint evidence should establish two-account identity/session continuity; final T3 evidence must cover all accepted controls, first-login/bootstrap/revocation races, timing/activity, permission evolution, mode isolation and audit combinations using real PostgreSQL. Keep developer-bypass checks, offline test-only OIDC protocol/fault checks and real Google acceptance separate. No Google project/client/sign-in, application tests or load measurements were verified in this checkpoint. Formal design review, separate implementation authority and later fresh implementation review still follow.
+
+On 2026-11-06 the owner instructed proceeding to bounded `egm-draft`, keeping all accepted decisions and resolving disabled-sign-in behavior as part of that design. The [working draft](design_draft.md) is the active artifact. This authorizes drafting, not automatic acceptance of proposed mechanisms or runtime implementation.
