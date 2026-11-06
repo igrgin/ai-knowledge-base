@@ -1,110 +1,110 @@
 # T3 Google identity, persistent sessions and explicit permissions
 
 * **Author:** igrgin
-* **Date:** 2026-11-05, Europe/Zagreb
+* **Date:** 2026-11-06, Europe/Zagreb
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
-* **Status:** Brainstorm synthesis for owner review; not an accepted feature design or implementation handoff.
+* **Status:** Brainstorm synthesis for owner alignment; formal design/review and implementation remain pending.
 
 ## Overview
 
-T3 must let people enter the private PDF knowledge base through Google, return to the same application account, and keep a valid application session across browser reopening and backend restarts. The first successful sign-in automatically creates an account with basic permissions and allows immediate project creation, without a registration form, invitation, approval or profile-completion step. Project functionality remains T4 work.
+T3 lets people sign in through Google, automatically receive an application account and return to that same account with a valid persistent session. New accounts need no invitation, registration form, approval or profile-completion step and receive permission to create projects immediately. Projects themselves remain T4 work.
 
-The owner also selected a configurable developer launch without Google sign-in, independent session expiry and revocation controls, and application-managed individual permissions. Administrators can manage grants and revoke user sessions through explicitly authorized actions. Those powers do not grant access to private documents or chats. This expands identity beyond login alone, so the bounded design must establish one authorization boundary that later features can consume.
+The owner expanded the original login/logout/restart milestone with development automatic sign-in, individual permissions, session administration, initial-administrator safeguards and configurable audit history. These are selected outcomes. Administrators use the ordinary website under the same ownership and quota rules; administrative grants do not grant access to another account's private content.
 
-The [intake](authentication-decisions.md) records owner decisions and remaining proposals. [Application requirements](../application.md), the [roadmap](../../roadmap.md), [K0](../../contracts/k0-foundation.md) and [implemented architecture](../../../EGM.md) remain authoritative at their respective boundaries. Only the foundation exists today. This brief summarizes six completed fresh-context brainstorm reviews at baseline `bb26f2571b6d6787d86fa29ed1f4f8a55a5dfda4`; [review evidence](../../reviews/t3-identity/brainstorm-round-1/review.md) retains findings and limits. Completion of this round does not mean owner acceptance, completed formal design review or implementation authority.
+The [round-2 scope/progress review](../../reviews/t3-identity/brainstorm-round-2/review.md) completed six fresh-context lenses sequentially at `77e774661f350ec5a95dd3d9f25e25bf03333d7e`. The direction remains coherent, but progress is conceptual: 37 branch commits and 41 changed files are all Markdown, and runtime code still supplies only the foundation/readiness shell. No T3 behavior is implemented.
+
+The recommended path is to stop broad product exploration, align this amended boundary and proceed to one bounded T3 design under scoped drafting authority. Further sharing, job or recovery exploration should not delay it. This recommendation neither removes accepted controls nor authorizes code. [Owner decisions](authentication-decisions.md), the [application design](../application.md), [roadmap](../../roadmap.md), [contract index](../../contracts/README.md) and [K0](../../contracts/k0-foundation.md) retain their respective authority. The amended issue body remains an unpublished local draft.
 
 ## Analysis
 
-The repeated inactivity objection now has an owner-selected policy: meaningful user-action requests renew idle age; local typing/scrolling reports are limited to once per minute; automatic polling does not count. The 30-minute idle/eight-hour absolute limits remain fixed. The owner accepted the operation/admission behavior and a configurable five-minute pre-write threshold. Server enforcement and concurrency still require drafting and tests.
+The main remaining behavior gap is requests without a valid session when sign-in is disabled outside development. Production disablement is permitted, while the development administrator is forbidden whenever `prod` is active. The design must state who, if anyone, becomes the effective account and how an authorized administrator reaches the banner. Do not silently forbid the override or select a production development-admin fallback.
 
-### Activity and operation admission
+Keep stored Google authentication, effective development identity, development provisioning and normal administrator bootstrap separate. Define one mode-to-effective-account contract across instances; scattered profile checks and overwritten security contexts would make expiry, revocation and private-state restoration brittle.
 
-The owner accepted ordinary user-action renewal, bounded local interaction reports, excluded automatic traffic and admission-based protection of accepted work. The owner also accepted the exact pre-action threshold and configurable timing defaults in every development, production and test profile; this is separate from idle renewal.
+Resource slices should consume trusted identity and current-permission checks, retain their ownership/admission rules and emit bounded audit metadata. Identity must not import project/chat/job/sharing internals or construct their engines early. T3 agrees narrow accepted-work and recovery obligations; later owners implement their real consumers.
 
-| Activity | Accepted treatment |
-| --- | --- |
-| Refresh/navigation; create/open/rename/delete an owned project | Qualifying activity; validate and renew on the existing server request |
-| Upload/open/archive/unarchive PDFs; retry eligible processing | Qualifying activity; no new individual PDF delete/edit capability |
-| Create/open/delete chats, send questions, change source selection | Qualifying activity on the existing authorized request |
-| Explicit own-session/permission-management actions | Qualifying activity; ordinary permission checks still apply |
-| Typing or PDF scrolling/page changes without an API request | Bounded activity notification from a visible tab, initially no more than once per minute across tabs sharing that session |
-| Automatic status polling, prefetch, worker completion, passive open tabs or another session's activity | Do not renew the meaningful-activity clock |
+Reuse Spring Security, Spring Session JDBC, Flyway, K0 errors/correlation and real PostgreSQL fixtures. Verify framework session listing/revocation before adding another registry. JDBC session storage does not settle the separately required JDBC/JPA/Spring Data JDBC domain-persistence comparison or directional module/interface design.
 
-Conditional sliding renewal has framework precedents; Spring's access updates still need application integration to exclude polling. [Conditional renewal](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.cookies.cookieauthenticationoptions.slidingexpiration), [Spring Session filter 4.1.1](https://raw.githubusercontent.com/spring-projects/spring-session/4.1.1/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java) (checked 2026-11-05).
+Session persistence, permissions, activity and enabled auditing share the current four-connection pool per instance with a two-second acquisition timeout. Bound login state, stored attributes, lists and cleanup; use indexed lookups and short transactions. Measure representative combined work before adding caches, write coalescing, an event bus or an audit service. One-minute local activity reporting does not cap all database writes. No traffic target, capacity estimate or elapsed delivery estimate is established; the bounded design supplies buildable milestones.
 
-Do not add a session-status round trip before every button click or an extra renewal call for actions already reaching the backend. Server admission checks the live session, current permission and ownership, then records qualifying activity. Idle renewal concerns this application's session, not another Google login. No claim of one database write per minute is made: ordinary session persistence still has its own work. Throttle only noisy client-local interaction signals initially; verify database costs before adding more write-coalescing machinery.
-
-Preserve the configured idle window on user-action API requests; local event recording has the configured report interval's granularity to specify/test in drafting. The server uses its own clock and cannot revive expired/revoked sessions from delayed reports.
-
-Treat operation admission separately from session lifetime. Recommend renewing idle age before admitting project creation/upload and letting an already-authorized request or durably accepted job finish despite ordinary idle expiry; new requests still need a valid session. The owner accepted ordinary-expiry protection and the accepted-work permission boundary below. Session-revocation races remain separate. An upload that has not reached durable acceptance must not be reported as safely accepted; T6 must define bounded transfer/staging, interruption and any reauthentication/finalization behavior. Permission/resource/admin revocation rules remain separate.
-
-The configured maximum is never extended. Accepted rule: with **five minutes or less remaining** (at or after **7h55m** from sign-in), require fresh sign-in before a new PDF upload or other state-changing action. Reads continue with a valid session until the maximum; new requests then require sign-in. The server decides at admission, not via a separate per-click status call. Already-authorized requests/accepted jobs finish despite ordinary expiry; unfinished transfers still need T6 staging/interruption rules. The cutoff is `max-lifetime` minus `reauthenticate-before-write`, not a guarantee of transfer duration. Passive reading can reach idle expiry; preserve position/draft. No implementation or repeat review is claimed.
-
-Accepted timing defaults are YAML-overridable in `dev`, `prod`, `test` and `itest`: idle `30m`, maximum lifetime `8h`, pre-write sign-in lead time `5m`, local activity-report interval `1m`. The [intake property table](authentication-decisions.md) names the planned settings; production and development use the same timer defaults. Tests may override them consistently. No runtime configuration has been added.
-
-### Other review findings
-
-Owner-accepted permission policy: check current authority on new protected requests; let already-authorized requests and durably accepted operations finish, including queued work. [OWASP request checks](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html#validate-the-permissions-on-every-request) and [Spring method authorization](https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html) support action-boundary checks; they do not choose this application's queued-job policy.
-
-Order operation acceptance and permission revocation atomically: admission committed first preserves that specific operation; revocation committed first rejects admission. Record the accepting account, approved action/target, request identity and immutable scope. Retain original bounded deadlines/automatic attempts; this is not a reusable permission snapshot. New submissions and user-triggered retries require current permission. Every later status/result/file request checks current read authority and ownership; an accepted job does not preserve revoked read access.
-
-No full-user job scan is required just because an action grant changes. Workers still honor current project deletion, sharing/lifecycle fences, quotas, spending/provider admission and settlement. Already dispatched calls are settled; deleted content cannot be republished. Explicit job cancellation is a separate control if later requested, not a required new UI. Tradeoff: a bounded, accepted queued operation can still spend after its submit permission is removed.
-
-Session revocation blocks old-session use. The owner permits new Google sign-in under current permissions, without account suspension. Concurrent login/revoke-all and admitted-work interactions need design. T3 agrees consumer contracts; implementation and verification remain pending.
-
-The owner requires new basics to reach existing users while preserving explicit administrator revocations. The [proposed mechanism](authentication-decisions.md#basic-permission-evolution), pending acceptance, combines shared basic defaults with explicit per-account grants/revocations; revocation wins. The owner accepted current server-side checks on the next protected request without user/session refresh or forced login. The proposal also avoids per-user backfills and permission polling. Stable action identifiers and explicit replacement migrations preserve restrictions. Categories are display groups, not wildcard grants. Full-project share/import defaults and administrators' ordinary-user capabilities are accepted; exact IDs/granularity still need design.
-
-The Google research recommends server-side OpenID Connect through Spring Security and PostgreSQL-backed Spring Session. Application identity should remain a UUID separate from email/profile data, with verified issuer/subject uniqueness and atomic first-account creation. Those mechanisms still need bounded selection and verification. The existing repository supplies safe error envelopes, request correlation, short transaction conventions and real-PostgreSQL test plumbing, but no identity implementation. Start from those conventions and the framework session store before proposing a duplicate session registry. JDBC sessions do not resolve the separate domain-persistence comparison required before domain implementation.
-
-Authentication itself needs finite resource use. Account project/PDF quotas do not bound login bursts, pending login state, session listings or administrative account searches. Reviewers recommend bounded state lifetimes and responses, small persisted attributes, indexed account/session lookup and verified cleanup. Measure session database work against the existing small pool and competing instances.
-
-The [accepted audit policy](authentication-decisions.md#accepted-audit-policy) configures administrators and ordinary users independently: admin capture defaults true/90-day retention; user capture defaults false/30-day retention. Either capture flag and retention can change in YAML. Keep read-only inspection permission, safe metadata and atomic administrative change/audit commits when enabled. Detailed audit events and failure handling need design. Login correlation, safe reason categories and sanitized startup diagnostics remain inputs; no external logging platform is proposed.
-
-The owner accepted [permission feedback](authentication-decisions.md#accepted-permission-feedback): hide unauthorized admin areas, disable ordinary actions with an explanation/notification, and reject stale-control submissions through current backend checks. Grants and UI permission refresh need no new Google login while the session remains valid; normal expiry/pre-write rules remain. Keep non-disclosing ownership errors and same-account draft privacy; reconcile submitted operations before retrying. T3 defines responses/metadata; T12 and feature owners integrate real views. Bootstrap still needs supported own-UUID discovery.
-
-The owner [preserves Google sessions across mode changes](authentication-decisions.md#accepted-authentication-mode-behavior), under ordinary deadlines/revocations, and requires a red admin banner when `prod` is active with sign-in disabled. Disabled development uses a persistent database admin automatically; keep stored Google sessions isolated and their timers running. Instances must agree on mode. Separately, restore can resurrect revoked sessions/grants or lose bootstrap completion. T3 supplies T11/T15 a recovery contract; non-serving restore, session invalidation and grant/bootstrap reconciliation remain proposed. A separate journal is optional. Neither concern adds content migration or Google-account-loss recovery.
+Operational acceptance must show that sanitized evidence can explain a failed login and a protected-request rejection: provider/protocol failure, idle/maximum expiry, pre-write sign-in, revocation, permission denial or database failure. Reuse K0 request correlation and public error shape, including new security-filter handlers. Optional action history must not be the only diagnostic source or be secretly recreated in logs when disabled.
 
 ## Goals vs. Non-Goals
 
-**In-scope goals already selected by the owner:**
+### Accepted identity and mode behavior
 
-- Google-only sign-in, automatic first-account creation, returning-account continuity and immediate project-creation permission.
-- Planned `app.auth.enabled`: common true, `dev` false and `prod` true, with explicit overrides allowed. Disabled development creates/reuses a database admin and signs in automatically; permissions, ownership and quotas still apply. Enabled development uses Google. Enabled mode rejects missing required Google configuration at startup; disabled mode needs none. No automatic fallback.
-- Server-enforced, configurable 30-minute idle and eight-hour absolute limits; valid sessions survive browser reopening and restarts without resetting age. Each session has independent timers.
-- Users list/revoke one or all own sessions; ordinary sign-out ends the current session, and the explicit all-sessions action includes it. Administrators can revoke selected/all user sessions through a separate permission across instances.
-- In-app assignment/revocation of individual action permissions plus resource ownership. Roles alone are insufficient. New basics extend to existing users without restoring revocations; the development account uses the same authorization paths.
-- One-time trusted operator command targeting an existing account UUID, with atomic initial grants/completion evidence. Ordinary startup never reapplies grants. After setup, atomically prevent removal of the final permission manager, including concurrent changes; count account grants rather than signed-in sessions.
+Google is the sole login provider. Keep a trusted application UUID separate from email/profile data; resolve returning identities and atomically avoid duplicate first-login accounts. The researched server-side OpenID Connect authorization-code integration still needs concrete design and verification. Rotate sessions at login, protect mutations against CSRF, use loopback-compatible development cookies and secure HttpOnly cookies for non-local HTTPS, and keep credentials/tokens out of browser storage.
 
-**Scope to resolve rather than treat as accepted defaults:** the exact permission catalog and UI, permission granularity beyond the selected basic capabilities, development-fixture implementation, activity/admission implementation, concurrent revocation ordering, configuration/failure implementation, mode/principal implementation, audit-event/failure details and recovery policy. The intake's selected basic capabilities cover owned projects, retained PDFs, chats, sessions, status and full-project share/import within existing limits; they add neither PDF editing nor individual PDF deletion.
+Planned `app.auth.enabled` defaults true in common configuration, false in `dev` and true in `prod`; explicit overrides are allowed. Enabled mode requires Google and fails startup for missing/blank required settings with a sanitized operator error. Disabled mode needs no Google settings. Missing configuration never changes the boolean.
 
-**Out-of-scope non-goals:** application passwords or a separate admin login; a general policy language; broader private-content administration; new account disable/delete/relinking or Google-account-loss recovery; Google-side logout/revocation guarantees; an application email service; a local-user product edition or account switcher; future PDF/chat/sharing implementations; deployment, paid calls and capacity claims. All standalone chat sharing/snapshots are dropped, including authenticated and public views. Full-project copies include all saved chats and source settings. Ordinary public login/static/health endpoints remain distinct from public content publication.
+Disabled development creates/reuses a persistent database administrator and automatically acts as that account. Initial creation supplies basic and administrative grants; restart preserves its UUID, data and explicit permission revocations. Normal permission, ownership and quota checks remain. Enabled development uses Google. Exclude development provisioning/automatic identity whenever `prod` is active, including mixed profiles. Keep development provisioning separate from normal bootstrap and production-manager availability.
+
+Mode changes preserve valid Google sessions under ordinary expiry/revocation without resetting/freezing deadlines. Development activity must neither overwrite nor renew dormant Google sessions. Prevent private draft transfer or automatic write replay across account changes. All serving instances must agree on mode. Non-development disabled-mode identity remains unresolved.
+
+When `prod` is active and effective auth is false, trusted backend metadata drives a prominent red administrator banner: **“Sign-in is disabled in the production profile.”** T12 integrates text and color; exact administrative audience remains design work.
+
+A transiently failed login ends safely and offers a user-triggered fresh sign-in with new state/code; never automatically replay callbacks/code exchange. Without a browser return, an in-app error cannot be guaranteed. Ordinary valid-session requests should avoid Google calls. Verify selected discovery/token/UserInfo/JWK dependencies, bounded transport behavior and failed same-browser reauthentication before claiming continuity.
+
+### Activity and operation admission
+
+Each signed-in session has independent server-enforced timers. Planned settings are overridable in `dev`, `prod`, `test` and `itest`:
+
+| Property | Default |
+| --- | --- |
+| `app.auth.session.idle-timeout` | `30m` |
+| `app.auth.session.max-lifetime` | `8h` |
+| `app.auth.session.reauthenticate-before-write` | `5m` |
+| `app.auth.session.activity-report-interval` | `1m` |
+
+Valid sessions survive browser reopening/backend restart without resetting age. Authorized user actions renew idle age through their existing requests: navigation, project/PDF/chat actions and explicit permission/session controls. Visible-tab typing, scrolling and PDF page changes use bounded local signals, initially at most once per minute across tabs sharing a session. Polling, prefetch, workers, passive tabs and another session's activity never renew it. Delayed reports cannot revive expired/revoked sessions. Do not add a session-status call before every button.
+
+With five minutes or less remaining before the configured absolute maximum, require fresh sign-in before uploads or other mutations; reads continue while valid. The default cutoff is 7h55m, derived from lifetime minus lead time. Never extend the maximum. Validate positive durations, activity interval below idle duration and lead time below maximum; short test overrides must remain consistent.
+
+Ordinary expiry does not cancel already-authorized requests or durably accepted jobs. New requests need valid authentication. T6 owns unfinished-transfer staging/interruption and durable acceptance; do not label an unaccepted upload safe. Preserve the view/unsent question on expiry and restore private state only for the same account as owning features arrive.
+
+Users list/revoke one or all own sessions; ordinary sign-out ends only the current session, while all-session revocation includes it. Separately authorized administrators revoke selected/all user sessions across instances. Old cookies cannot resume revoked sessions; a later Google sign-in remains allowed under current permissions. This neither suspends accounts nor guarantees Google logout/password prompts. Concurrent login/revoke-all and admitted-work interactions need design. No sticky sessions may be required; T13 extends integrated multi-instance evidence.
+
+### Other review findings
+
+Use explicit individual application permissions alongside ownership; roles alone are insufficient. New accounts receive own-project/document/chat/session/status and full-project share/import basics. Administrators receive those basics plus administrative grants, with individual revocations still authoritative. Quotas, recipient rules and private-resource ownership always apply. No PDF editing or individual PDF deletion is added.
+
+Administrators assign/revoke individual permissions in the app. New basics reach existing accounts without restoring explicit revocations. Check current authority on every new protected request without session refresh, forced sign-out or Google re-login. Hide unauthorized admin areas; ordinary actions may be disabled with explanations. Reject stale/forged submissions and never automatically replay denied actions. Grants and UI permission refresh work within a valid session; exact refresh strategy is drafting work.
+
+Already-authorized requests and specific durably accepted queued/running work may finish within original scope, deadlines and bounded automatic attempts. Atomically order admission against permission revocation: admission first preserves that operation; revocation first denies it. New submissions/user retries and later status/result/file reads require current authority. Lifecycle/sharing fences, quotas, spending admission and settlement still apply. No global job scan/cancellation follows from a grant change; accepted work can still spend after submit permission is removed.
+
+The proposed finite permission catalog with shared basic defaults and explicit account grants/revocations remains pending acceptance. Revocation wins. Stable identifiers/replacement migrations must preserve restrictions; activate permissions with their real features. No generic policy language, wildcard category grant or login-time permission snapshot is selected.
+
+A one-time trusted-host command targets an existing account UUID and atomically grants initial permission-management, administrator session-management and audit-inspection authority with durable completion evidence. Ordinary startup never replays grants. Draft supported own-UUID discovery and actionable command results. After setup, atomically prevent removal of the final permission manager, including concurrent self-revocation; count account authority, not live sessions. Development provisioning must not consume normal bootstrap. Restore obligations must prevent revived sessions/grants or replayed bootstrap; T11/T15 implement operational recovery. Audit retention is not bootstrap state.
+
+Accepted audit settings are independent and overridable across runtime/test profiles:
+
+| Property | Default |
+| --- | --- |
+| `app.audit.admins.enabled` | `true` |
+| `app.audit.admins.retention` | `90d` |
+| `app.audit.users.enabled` | `false` |
+| `app.audit.users.retention` | `30d` |
+
+Development administrators follow admin settings; disabled admin capture must not fall through to user capture. Classify authority at action admission and persist category for retention. Enabled administrative privilege/session changes and their audit rows commit together; audit failure rejects the change. Disabled admin capture omits that dependency. Other event/failure semantics need design.
+
+Provide permission-gated, read-only metadata history, excluding tokens, session credentials, private bodies and unnecessary profile data. Capture safe actor/target/action/time/outcome/correlation. Do not record failed actions as committed changes. Check flags before event enrichment; bound pagination/records/cleanup. Cleanup follows captured category/retention even when capture is off. Disabling capture does not erase existing history, reconstruct missing events or disable minimal failure diagnostics/functional state. Verify all four flag combinations and measure overhead. Feature owners emit actual hooks; T3 owns storage/settings/inspection contracts and T12 cross-feature presentation.
+
+**Non-goals:** application passwords/separate admin login; private-content administrator override; account suspension/deletion/relinking or Google-account-loss recovery; email service; local-user edition/account switcher; universal policy/event infrastructure; future resource/job/sharing implementations; deployment, paid calls or capacity guarantees.
 
 ## Alternatives Weighed
 
-The owner first rejected public snapshots, then removed all standalone chat snapshots, including authenticated restricted views, to simplify the product. R27/D-L and T17 are withdrawn; no publication permission, schema or route remains. Whole-project sharing/import remains. The former files-only/include-chats selector is superseded; all saved chats and source settings are included; T19 is mandatory.
+The owner selected Google over earlier application-password proposals and chose the one-time existing-account bootstrap over manual assignment. First registrant privilege, email-string matching and startup grant replay are excluded by that workflow.
 
-The owner selected Google as the sole login provider, replacing earlier application-password proposals. A separate password-based administrator login is not selected. Google proves identity; this application manages authority. No provider-based claim is being used to replace individual application grants.
+The accepted configurable boolean supersedes the earlier hard development-only restriction. Mode-change invalidation was rejected; valid Google sessions remain under ordinary deadlines. A production-disablement ban would require a new owner decision.
 
-The accepted YAML boolean supersedes both the earlier hard development-only restriction and the separate local-product interpretation. Defaults support IntelliJ startup with local services, and explicit overrides remain permitted in either profile. A proposal to forbid production disablement would require a new owner decision.
+All standalone chat sharing/snapshots are dropped, including restricted/public views and administrator exceptions; R27/T17 remain withdrawn. Whole-project copies include every saved chat/message/citation and source setting; T19 is mandatory, with no content selector/files-only product mode. The owner selects a designated signed-in recipient or a general link usable by any signed-in possessor with import permission/quotas. Copies are independent; revocation stops future imports without erasing accepted copies. T16/T19 own selection/proof, capture and copying. These accepted choices are context for T3, not T3 implementation work.
 
-The one-time internal setup command replaces manual initial assignment as the chosen workflow. First registrant privilege, email-string matching and automatic grant replay on normal startup are excluded by that choice. Later operator recovery remains unresolved; the bootstrap facility must not become an always-on recovery backdoor.
-
-Research recommends server-side OIDC and JDBC sessions over introducing browser-held login tokens or another identity service. These are recommendations to evaluate in drafting, not newly attributed owner rejections. Likewise, framework session lookup versus a parallel registry, a finite action catalog versus optional role grouping, and controlled identity recovery versus a separate journal remain technical alternatives. No implementation or performance comparison has selected their exact form.
-
-Full-project sharing/import is the only distribution feature. Edits/deletions in either project never affect the other; revocation stops future imports without erasing accepted copies. Full-project copies include all saved chats/messages/citations and source settings; T19 completes that mandatory scope in the same import pipeline. Share/import are basic grants, individually revocable; administrators get basic capabilities plus administrative grants. Standalone chat snapshots are dropped. Owners choose recipient-specific invitations or general links usable by signed-in accounts with import permission.
+Framework OIDC/JDBC sessions are the recommended starting point; duplicate session tracking, a policy engine and asynchronous audit infrastructure need demonstrated justification. Exact domain persistence, default/exception storage and restore mechanisms remain design alternatives, not owner rejections.
 
 ## Key Decisions & Staging for Next Steps
 
-Carry owner decisions above unchanged into the next draft. Review recommendations in this brief are pending dispositions, and no reviewer selected policy on the owner's behalf. The next decisions and drafting inputs are:
+Preserve accepted controls and stop adding adjacent product questions. Align this brief and obtain scoped drafting authority. Resolve non-development disabled-mode identity and disposition the permission mechanism; settle module direction, persistence, protocol/CSRF/errors, transaction races, safe session metadata, command sequence and consumer interfaces in one bounded design.
 
-1. Carry the selected activity policy and configurable timers into the bounded design and later verification; no further duration choice is pending.
-2. Carry the accepted-work permission boundary into consumer contracts; implement accepted fresh-login behavior and settle concurrent “all sessions” ordering.
-3. Map accepted basic/admin capabilities, including share/import, to finite permission IDs and the proposed default/exception mechanism; preserve explicit revocations.
-4. Carry accepted startup/[login recovery](../../research/google-sign-in-failure-handling.md) policies into design; carry accepted mode/session/banner rules into design and resolve identity restore safeguards.
-5. Carry accepted audit defaults into bounded event/failure/performance design; carry accepted permission feedback into response/UI design and settle session-management detail. Agree recipient identity with T16 without treating email text as universal proof.
+A proposed drafting sequence is account/security/session continuity and development modes, then permissions/bootstrap safeguards, then session administration/audit inspection and consumer contracts. These are recommendations, not accepted phases or authority to omit controls. Any actual T3 scope reduction/reassignment needs owner choice.
 
-After refinement and explicit brief alignment, the EGM handoff can offer formal drafting or retaining the brief for later. A bounded `egm-draft` must settle the real principal/permission API, protocol and CSRF/error behavior, persistence comparison, transaction races, command invocation, safe session metadata and consumer interfaces. It must name exact Create/Modify/Delete files, migrations, permitted shared edits, buildable phases and meaningful checks. This brief does not supply that execution allowlist or publish a gate.
-
-Proposed verification should separate three forms of evidence: no-sign-in startup/default/override behavior; offline protocol, persistence, ownership, permission and cross-instance tests; and actual configured Google acceptance. Exercise first-login races, changed email without account merging, browser/restart continuity, both deadlines, unattended polling, permission propagation, revoke-all races, atomic last-manager/bootstrap rules, catalog upgrades and mode changes. Reuse real PostgreSQL fixtures and verify security-filter responses against K0. T3 tests should remain offline-capable; later feature integrations carry their own draft/view and durable-work scenarios.
-
-No Google project/client or actual sign-in has been verified, and this round ran no application tests or performance measurements. A controlled issuer or developer shortcut cannot establish Google readiness. Formal design review, explicit implementation authority and later report-only implementation review remain separate steps under the roadmap and workflow.
+The design must list exact Create/Modify/Delete files, migrations, permitted shared edits, buildable phases and meaningful checks. Midpoint evidence should establish two-account identity/session continuity; final T3 evidence must cover all accepted controls, first-login/bootstrap/revocation races, timing/activity, permission evolution, mode isolation and audit combinations using real PostgreSQL. Keep developer-bypass checks, offline test-only OIDC protocol/fault checks and real Google acceptance separate. No Google project/client/sign-in, application tests or load measurements were verified in this checkpoint. Formal design review, separate implementation authority and later fresh implementation review still follow.

@@ -3,7 +3,7 @@
 * **Author:** igrgin
 * **Date:** 2026-11-05
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
-* **Status:** Goldfish brainstorm round 1 completed; owner dispositions/brief alignment pending. Formal design/review and implementation remain pending.
+* **Status:** Two six-lens Goldfish brainstorm rounds completed; bounded brief alignment pending. Formal design/review and implementation remain pending.
 * **Artifact directory:** `docs/designs/t3-identity/`
 * **Workflow:** EGM with small fixes 0.2.1, `egm-brainstorm`.
 
@@ -193,9 +193,15 @@ Check the actor category and its enable flag before constructing/enriching/writi
 - Implement the selected persistent development-admin account, create-once grants, automatic identity and Google-session isolation; settle exact fixture identifiers and separate test setup. Non-development disabled-mode identity remains open.
 - Implement/verify the accepted missing-configuration startup rules; carry the accepted recovery policy into explicit discovery/UserInfo/key/transport dependencies in the bounded design. No local-to-Google product migration or account switcher is needed by this request.
 - Atomic automatic account creation, returning-identity lookup and changed-email behavior; the no-extra-onboarding outcome is settled.
-- The basic permission set, setup-command implementation/recovery policy, exact permission-management UI, any role grouping, session/device representation and concurrent revocation behavior. Independent per-session timers, user individual/all-session controls and administrator revocation are requested; provider-side revocation/recovery remains separate.
-- The identity and proof needed for named project invitations. Google sign-in must not silently change accepted sharing behavior; development fixtures do not authorize access to real users' private resources.
+- Concrete IDs/granularity for the accepted basic permissions, the proposed default/exception storage mechanism, setup-command implementation/recovery policy, exact permission-management UI, session/device representation and concurrent revocation behavior. Independent per-session timers, user individual/all-session controls and administrator revocation are selected; provider-side revocation/recovery remains separate.
+- Agree trusted identity/current-permission contracts for named project invitations and general-link imports. Recipient selection/proof and acceptance workflows remain T16/T19 work; development fixtures do not authorize access to real users' private resources.
 - Exact API/CSRF/error/principal/module interfaces, persistence comparison, file boundaries, implementation phases and meaningful checks required by the roadmap.
 - Actual Google project/client availability and a real-provider acceptance gate, separately from controlled offline tests and development-shortcut checks.
 
 The development shortcut is a local workflow convenience; it does not require a separate product ownership/network-access design. After the owner explicitly confirmed readiness, six fresh Goldfish lenses completed sequentially at baseline `bb26f25`. The [concepts brief](concepts_brief.md) and [round-1 report](../../reviews/t3-identity/brainstorm-round-1/review.md) record the synthesis and unresolved choices. Findings are pending owner/design disposition; this is not formal design acceptance or implementation authority.
+
+## Scope/progress checkpoint, 2026-11-06
+
+At the owner's request, [round 2](../../reviews/t3-identity/brainstorm-round-2/review.md) completed all six fresh lenses at `77e7746`. Twelve raw observations became five Major findings and one Nit. The direction is coherent, but progress is research/decisions only: the reviewed branch changes are all Markdown and T3 runtime behavior is absent. Accepted admin, permission, session and audit requirements remain in scope.
+
+The recommendation is to stop broad product exploration and align the bounded brief before drafting. T3 supplies identity/sessions/permissions, its selected administrative controls and audit foundation, plus narrow consumer contracts. Later owners implement their projects, uploads/jobs, sharing/copying, feature audit hooks and operational recovery. The principal for disabled sign-in outside development remains the clearest open behavior choice; permission evolution, mode isolation, diagnostics and combined database cost are bounded-design obligations. This checkpoint neither removes features nor authorizes drafting or implementation.
