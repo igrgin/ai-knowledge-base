@@ -138,6 +138,20 @@ Production disablement and its red admin banner remain allowed, but this decisio
 
 [Spring Boot profiles](https://docs.spring.io/spring-boot/reference/features/profiles.html) support configuration by active profile, and [Spring Security session persistence](https://docs.spring.io/spring-security/reference/servlet/authentication/persistence.html) associates stored authentication with an HTTP session (checked 2026-11-06). Preserving it across our custom boolean and isolating the fallback identity are application design/test obligations, not framework guarantees. No configuration, principal or banner has been implemented or tested.
 
+## Proposed administrative audit history
+
+**Next owner decision, pending acceptance, 2026-11-06:** keep a small database-backed history of administrative permission grants/revocations and administrator-driven session revocations, including initial normal/development administrator provisioning. These records explain committed authority changes; avoid recording every ordinary document/chat action in this history.
+
+Record the acting application account or trusted setup identity, target account, action, permission before/after or safe session-revocation scope, server UTC time, committed outcome and request/operation correlation. Use safe internal identifiers rather than raw cookies/session credentials. Exclude Google authorization codes/tokens, passwords/secrets, PDF/chat bodies and unnecessary profile data. Rejected/failed attempts get bounded sanitized failure evidence in ordinary operational logs; they must never appear as committed changes.
+
+Recommend a read-only administrative history list behind an explicit application permission to view it. Give the initial normal permission manager and development admin that inspection permission during their respective initial provisioning, subject to subsequent authorized grants/revocations. Reading this history grants no private-project/document/chat access. No in-app edit/delete action for individual history records is proposed; the application's retention cleanup is separate. This is a small list within administration, not a general analytics dashboard or logging service.
+
+Propose **90 days by default**, configurable in application YAML for development, production and tests, with bounded database cleanup. Ninety days is a project recommendation, not an external standard or legal retention claim. The design must choose exact property names, indexes, pagination/cleanup work limits and verification; no performance guarantee follows. Current permissions and the bootstrap-completed marker persist independently of history retention. This database history alone does not resolve old-backup authority recovery (M9); the separate restore contract remains open.
+
+Commit a successful privilege/session-revocation change and its audit row in the same database transaction. If that audit write fails, reject/roll back that administrative action rather than silently making an unrecorded change. This availability tradeoff is a project proposal, not a framework default or an OWASP mandate. A failed admin change must leave ordinary application operations available where their existing dependencies permit.
+
+[OWASP logging guidance](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), checked 2026-11-06, supports recording security/administrative events with actor/action/target/time information, restricting log access, excluding credentials and defining retention. The explicit inspection permission, 90-day default, transaction/failure policy and UI scope above remain unaccepted recommendations. No audit table, endpoint, cleanup task or runtime test exists from this proposal.
+
 ## Questions still requiring design or owner input
 
 - Property binding, configuration validation and checks for the accepted YAML/profile defaults and explicit overrides.
