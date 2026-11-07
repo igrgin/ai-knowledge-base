@@ -1,7 +1,7 @@
 # T3 identity, sessions, permissions and administration
 
 * **Author:** igrgin
-* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner confirmed existing-session-only disabled mode (A); permission storage remains open.
+* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner confirmed mode A and per-account grants with independent convenience templates; Technical Plan approval remains pending.
 * **Date:** 2026-11-07, Europe/Zagreb
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
 * **Workflow:** EGM with small fixes 0.2.1, `egm-draft`.
@@ -41,7 +41,7 @@ The detailed accepted decisions remain constraints throughout drafting. A techni
 | Session continuity and isolation | Preserve valid Google application sessions across browser reopening, backend restart and mode changes without resetting/freezing their deadlines. Keep dormant Google sessions separate from development identity; development activity never renews them. Resume only still-valid sessions. Keep private view/draft restoration within the same account and never replay a write automatically. |
 | Independent session timing | Each application session has its own server-enforced defaults: 30 minutes idle and 8 hours maximum. Meaningful authorized actions renew inactivity; local visible-tab interaction reports are limited to once per minute across tabs sharing a session. Polling, prefetch, workers, passive tabs and other sessions do not renew it. At five minutes or less before the maximum, new uploads/mutations need fresh sign-in; reads remain available while valid. All four timing defaults are configurable in development, production and test profiles. |
 | Session management | Users list/revoke selected or all own sessions; ordinary logout ends the current session, while revoke-all includes it. Explicitly authorized admins manage user sessions across instances. Revoked cookies cannot resume sessions; later Google sign-in remains possible with current permissions. Define concurrent-login/revoke-all behavior without adding account suspension. |
-| Current individual permissions | Admins assign/revoke individual permissions in the app. New and existing accounts receive new basic permissions without restoring explicit revocations. Check current permissions and resource ownership for each new protected request; no forced logout or Google re-login for grant changes. Hide unauthorized admin areas and explain disabled ordinary actions; reject stale/forged submissions. |
+| Current individual permissions | Admins assign/revoke individual permissions in the app. New and existing accounts receive basic permissions; a deliberate all-user grant may restore a previously removed permission, as amended by the owner on 2026-11-07. Check current permissions and resource ownership for each new protected request; no forced logout or Google re-login for grant changes. Hide unauthorized admin areas and explain disabled ordinary actions; reject stale/forged submissions. |
 | Initial administration | A one-time trusted-host command targets an existing account UUID and atomically establishes initial permission-management, admin session-management and audit-inspection grants. Supply supported own-UUID discovery and useful command outcomes. Do not replay grants on ordinary startup. After setup, atomically prevent removal of the final permission manager, including concurrent changes. Count account authority rather than live sessions. |
 | Configurable audit foundation | Independently default admin capture to true with 90-day retention and ordinary-user capture to false with 30-day retention; all four settings are overridable across profiles. Admin capture may be disabled, including for the development admin, without falling through to user capture. Preserve captured category for cleanup and keep functional permissions/bootstrap state separate from history. |
 | Safe audit inspection and diagnostics | Provide permission-gated, read-only metadata history, without private content, tokens or session credentials. When admin capture is enabled, its privilege/session changes and audit rows commit together; audit failure rejects the change. Disabled capture omits that write dependency. Define remaining event/failure semantics. Minimal sanitized failure diagnostics remain available independently and must not recreate disabled action history. |
@@ -114,35 +114,66 @@ Alternative B, optional configured Google entry while auth is false, is not used
 
 Required mode checks will cover: disabled production startup without Google settings; valid-session access versus no/expired/revoked-session denial; blocked new entry and callbacks; unchanged 30m/8h limits and 5m pre-write behavior; explicit re-enablement; admin banner metadata; mixed-profile fixture exclusion; and development activity not renewing dormant Google sessions. Exact tests/files follow in the detailed implementation plan.
 
-### 2. Permission storage — next author decision
+### 2. Permission storage — selected per-account grants
 
-The accepted outcome is fixed: current server-side action checks, individual grants/revocations, new basic permissions for old and new accounts, and explicit revocations that are never silently restored. The representation below is still open; neither option changes ownership checks, the final-manager invariant or the accepted admission/revocation boundary.
+**Owner amendment, 2026-11-07:** use individual grants as the current authority, with convenient permission templates such as Basic and Admin. No template membership is saved on an account. Removing a grant removes access; there is no separate deny/revoked state used for authorization. The owner expressly accepts that a deliberate decision to grant P to all users includes Ben even if an administrator previously removed P from Ben. This supersedes the earlier requirement that such a global update must preserve every past individual revocation.
+
+#### Logical data and enforcement
+
+```text
+Account ── individual grant ── Permission
+Template ── listed permission ── Permission
+
+No Account → Template membership or inherited authority
+```
+
+* The permission catalog defines stable named actions. Each account's stored grants determine its action authority, alongside current resource ownership, quotas and lifecycle/admission checks.
+* Templates list permissions for convenient application through permission management. Selecting Basic/Admin populates actual grants; it does not assign a continuing role/template membership. User/admin concepts are separate from templates; this decision does not introduce a new account-type flag or replace individual permission enforcement.
+* An individual grant adds access. Removing it removes access on new protected requests under the accepted transaction ordering. A missing grant means no permission; the server need not know whether it was never assigned or deliberately removed.
+* Current grants are checked on the server. Do not treat a browser list or login-time permission snapshot as authority. Grant changes require no session invalidation or Google sign-in.
+* Optional audit history still records administrative changes when enabled, subject to its accepted retention. It is not read to reconstruct current grants or preserve an indefinite deny state.
+
+For example, Ana may hold Create, Upload and Import grants; Ben may hold only Create and Upload. A deliberate all-user Import grant later gives both accounts Import. Ben's earlier removal does not block that explicit grant decision. The operation targets accounts directly, regardless of any template previously used.
+
+#### Templates and automatic/default updates
+
+| Event | Selected behavior |
+| --- | --- |
+| First successful Google sign-in | Create the account and its ordinary basic grants atomically. Do not save Basic membership. |
+| Returning sign-in or ordinary restart | Preserve existing grants. Do not reapply Basic/Admin or restore missing grants merely because the user logs in or the app starts. |
+| Initial normal/development admin setup | Copy the selected initial grants once, with durable completion evidence. Keep the existing separation of development provisioning and normal bootstrap. |
+| Admin removes P from Ben | Remove Ben's P grant. No permanent authorization tombstone is required. |
+| Admin deliberately grants P again, directly or through a template | Add the concrete P grant. A prior removal does not veto the explicit new grant. |
+| A reviewed new basic-permission rollout targets all users | Populate concrete grants for existing accounts, including admin-capable accounts. Apply the active basic policy at new-account creation. This does not require login/session refresh. |
+| A deliberate decision grants an existing P to all users | Add P to all targeted accounts, including Ben. This may intentionally override earlier individual removals. |
+| Template definition changes without a grant rollout | Existing account grants stay unchanged; there is no saved membership to synchronize. Future explicit applications use the changed definition. |
+
+Changing a template and deciding to change every account are different operations. No generic bulk-edit UI, runtime template editor or policy language is added by this decision; exact application/rollout interfaces remain bounded design work. A feature migration or other approved rollout must state its target accounts and privilege effect. Administrative-only actions must not accidentally enter ordinary-user grants.
+
+A rollout must not silently run again on every startup or restore a later removal through an unnoticed retry. Its grant effects and durable completion/progress need a defined transaction/recovery boundary, independent of retained audit history. Coordinate grant population with concurrent account creation and permission edits. Exact atomic/batched implementation, schema/indexes and deployment overlap remain technical-plan work; no performance guarantee follows from this selection.
+
+Stable permission identifiers remain important. Display renames preserve the identifier. Splits/replacements must explicitly define grant mapping and whether they are deliberately granting new authority globally; do not disguise a regrant as a label change. No permanent revocation record is needed to block a global grant that the owner explicitly intends to apply to everyone.
+
+The accepted last-permission-manager invariant, conditional atomic admin auditing, session revocation semantics and admitted-work boundary remain unchanged. Permission-template application is itself an authorized administrative action and must preserve those safeguards.
+
+The shared-default/inherited-exception alternative is not selected. The earlier per-account proposal's additional permanent revocation evidence is also superseded by this owner's clarified global-update policy. These dispositions belong in the later Alternatives Considered section; this subsection does not select an ORM or physical database schema.
+
+#### Next template-application choice
+
+The storage model does not yet specify what selecting a template does to grants outside that template:
 
 | Option | Mechanism | Trade-off and failure condition |
 | --- | --- | --- |
-| **1 — Shared defaults with account exceptions** | Store the basic set once in the permission catalog. Store each account's explicit grant/revocation exceptions. Evaluate `(basic defaults + explicit grants) minus explicit revocations` from current database state. New basic activation changes the catalog rather than writing a grant for every account. | Keeps default activation independent of account count and remembers deliberate restrictions. Every check must apply inheritance/precedence correctly; replacement migrations must carry revocations forward. A faulty default change can affect every inheriting account. |
-| **2 — Stored grants for every account** | Store each account's granted permissions, plus durable explicit-revocation evidence. A reviewed feature migration grants a newly basic action to eligible existing accounts, excluding explicit revocations; account creation supplies the active basic set. | Reads use an account's concrete grant set, but storage and new-basic rollout writes grow with account count. Migration/account-creation ordering must prevent missing grants, and backfill/restart logic must never override remembered revocations. |
+| **Add its permissions** | Insert the template's grants and keep all other current grants. Existing listed grants remain present. | Convenient for adding a permission set; does not remove unrelated access. Selecting Basic cannot by itself reset someone to only basic capabilities. Listed permissions previously removed are deliberately granted again. |
+| **Replace the current grant list** | Make the account's concrete grant list match the selected template, adding and removing grants as necessary. Still save no template membership. | Provides a reset to that set, but can remove individually added or administrative access. The existing final-manager invariant must reject any replacement that would remove the last permission manager. |
 
-Both options keep permission changes on the server with no forced logout or permission-refresh login. Neither selects a cache, event bus, ORM or database table layout. Deployment activation, transaction ordering and indexed queries must be specified for whichever option the author chooses.
-
-#### Same user behavior, different stored data
-
-For example, importing authorized full-project copies is a basic capability. Suppose Ana keeps that default and an administrator explicitly revokes it for Ben:
-
-| Operation | 1 — Shared defaults + exceptions | 2 — Per-account grants |
-| --- | --- | --- |
-| Represent Ana's access | Basic catalog includes import; Ana needs no import-specific exception. | Ana has a stored import grant. |
-| Represent Ben's restriction | Ben has an explicit import revocation overriding the basic default. | Ben lacks the grant and has durable explicit-revocation evidence. |
-| Add a newly basic permission with its feature | Change the shared catalog once; accounts inherit it except where explicitly revoked. | Add grants for eligible accounts, preserving revocations and coordinating with concurrent account creation. |
-| Evaluate a protected request | Read the applicable shared default and account exceptions from current server state. | Read the account's current grants and revocation evidence from server state. |
-
-Ana and Ben see the same allowed/denied behavior under either choice. Both support individual grants/revocations and preserve deliberate restrictions through new defaults. Option 1 concentrates complexity in inheritance and catalog changes; option 2 concentrates it in grant population, rollout and synchronization. Neither option is selected or ranked here.
+Neither application behavior is selected here. Both are explicit admin operations, rather than automatic template synchronization.
 
 ## Open Questions
 
 These are bounded inputs for the technical plan, not requests to reopen accepted product choices.
 
-1. **Authority representation and evolution:** choose the finite permission/default/revocation mechanism, stable identifiers and replacement rules. The shared-default/per-account-exception model remains a proposal. Preserve create-once setup evidence independently of retained audit history.
+1. **Permission administration and evolution:** choose additive versus replacement template application; settle stable IDs, grant rollout/retry ordering, the permission-management UI and exact schema. Per-account grants without template membership or permanent deny state are selected. Preserve create-once setup evidence independently of retained audit history.
 2. **Security/session and persistence boundaries:** settle module direction, domain persistence comparison, session/context isolation, filter/CSRF/error behavior, transaction ordering and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
 3. **Audit and operational bounds:** settle action/failure behavior, safe metadata, retention cleanup and finite diagnostic acceptance. Bound and measure combined session/permission/audit work against the existing datasource rather than assuming its cost.
 4. **Executable handoff:** later approved sections must identify exact file actions, migrations, permitted shared changes, buildable phases and meaningful checks, carrying every accepted requirement and review obligation forward.
