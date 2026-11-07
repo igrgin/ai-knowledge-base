@@ -87,6 +87,8 @@ After initial setup, the application must retain at least one account with permi
 
 ## Research and audit
 
+The [2026-11-07 independent domain-persistence comparison](../../research/t3-domain-persistence-comparison.md) supports the next Technical Plan decision: explicit JDBC, Spring Data JDBC or JPA/mixed access. It checks the current foundation and official capabilities without selecting a stack or claiming a measured winner. Spring Session JDBC is separate; its default independent transactions require explicit participation design for the accepted atomic admin-revocation/audit behavior. The [Technical Plan](design_draft.md#3-domain-persistence--next-author-decision) records the unselected options and common obligations.
+
 The [source-backed Google investigation](../../research/google-sign-in-investigation.md) covers existing-version fit, Google project/client setup, identity scopes, callback origins, persistent sessions, logout, offline verification and recipient identity. The [plan and issue audit](../../reviews/t3-identity/google-auth-plan-audit.md) records changed files, unchanged boundaries and exact proposed remote issue edits.
 
 The recommended signed-in integration uses server-side OpenID Connect through Spring Security and PostgreSQL-backed application sessions. Keep the application's UUID identity independent of Google's email/profile. These mechanisms and their exact routes/schema still require the bounded T3 design; the provider decision alone does not select every research recommendation.

@@ -166,12 +166,57 @@ Administrators remove individual permissions through separate explicit actions. 
 
 The replaced-list alternative is not selected because the owner wants unrelated grants retained. Carry that disposition into the later Alternatives Considered section.
 
+### 3. Domain persistence — next author decision
+
+The [independent primary-source comparison](../../research/t3-domain-persistence-comparison.md) addresses the application design's first-domain-persistence checkpoint. It examined the committed foundation at `f68be1c`: the backend has Spring JDBC/Flyway/PostgreSQL and no domain repositories, entities or tables beyond V1's extension. The locally managed Boot version is 4.1.2. The note records exact managed versions, verified official capability sources and remaining integration limits. It is research evidence, not a selected stack, benchmark or completed formal design review.
+
+This decision concerns application accounts, Google identity links, permissions/grants/templates, bootstrap/rollout state and audit data. Spring Session JDBC's framework-owned HTTP-session persistence is a separate choice. Selecting a domain repository style does not change the accepted permission model or let future resource slices bypass ownership.
+
+#### Three unselected approaches
+
+| Option | Mechanism | Trade-off and failure condition |
+| --- | --- | --- |
+| **1 — Spring JDBC / explicit SQL repositories** | Use the existing JDBC foundation, `JdbcClient`/templates and short application-service transactions. Write parameterized SQL and map results to application data. | Keeps SQL and lock/update boundaries explicit; routine create/read/update/list operations need handwritten queries and mapping. Incorrect SQL, constraints or transaction scope can still break invariants. Existing dependencies establish no performance advantage. |
+| **2 — Spring Data JDBC repositories plus targeted SQL** | Use repository/aggregate mapping for ordinary persistence, with explicit SQL for grant sets, shared guards, bulk updates and projections where needed. | Reduces some routine repository work. Aggregate membership must be deliberate: treating all grants as children saved through one account can conflict with independent grant edits. The documented default child replacement behavior needs consideration or custom methods. It does not remove the need for transaction/SQL design. |
+| **3 — Spring Data JPA/Hibernate plus targeted SQL** | Map entities/relationships and use repository queries, adding native SQL/JDBC for appropriate operations. If mixed, configure a compatible shared transaction boundary. | Provides entity/relationship persistence facilities. Managed entity state, flush timing and refresh/clear behavior must stay consistent with direct SQL changes. Separate local transaction managers are not automatically atomic, even on one database. |
+
+All three can implement T3. No option is selected, ranked or established as faster. The [research note](../../research/t3-domain-persistence-comparison.md#transactions-and-mixed-access) supplies the official capability sources and labels its project-fit judgments as inferences. The domain convention in K0 remains provisional until the owner chooses; amend it with actual manager/mixed-access rules if the chosen stack differs.
+
+#### Responsibilities shared by every option
+
+```mermaid
+flowchart LR
+  UI[Browser UI] --> Security[Google / application-session resolution]
+  Security --> Services[T3 application operations]
+  Services --> Repositories[Account / grants / bootstrap / audit repositories]
+  Services --> Sessions[Spring Session repository]
+  Repositories --> DB[(PostgreSQL)]
+  Sessions --> DB
+```
+
+This is a logical data path, not the unresolved package/module graph. Administrative mutation and enabled audit capture must share the required committing transaction; two arrows to PostgreSQL alone do not establish that guarantee.
+
+* **Account creation:** a database uniqueness constraint protects the Google issuer/subject mapping. First-login resolution and initial grants must commit atomically, with a defined conflict/retry path; email never merges accounts.
+* **Grant operations:** unique account/permission grants prevent duplication. Additive template application inserts missing grants; individual removal deletes a grant. Global rollout completion/progress must coordinate with account creation, concurrent edits and retries without reapplying completed grants on ordinary restart.
+* **Administration:** normal bootstrap consumes durable setup completion once, separately from development provisioning. Last-manager protection needs a shared database serialization/locking protocol covering every relevant grant removal. A repository `save()` or count alone cannot establish it.
+* **Current authority/admission:** the chosen repository boundary must support current grant checks and atomic ordering against revocation. It must not turn managed/cached permission data into lasting authority or make identity import future project/job internals.
+* **Audit:** enabled administrative changes and their audit rows commit or roll back together; disabled capture omits that dependency. Inspection and cleanup remain bounded, category-aware operations, independent of functional bootstrap/grant state.
+* **Resource use:** release connections/locks before Google/network/filesystem waits. Session persistence, grants and audit share the existing four-connection datasource with a 2000 ms acquisition timeout. Measure combined queries, pool/lock waits, transaction durations and enabled audit work before introducing optimizations or claiming capacity.
+
+#### Session-revocation integration obligation
+
+The official [Spring Session JDBC transaction documentation](https://docs.spring.io/spring-session/reference/configuration/jdbc.html) says session operations default to `REQUIRES_NEW`, and provides transaction customization. Therefore an outer administrative service transaction does not, by itself, make framework session deletion atomic with its audit insert.
+
+The design must explicitly settle the participating transaction operations/manager for audited revocation and account for servlet save ordering and concurrent revoke/save/login. Verify that enabled audit failure rolls back both effects, disabled capture has no audit-write dependency, and concurrent requests cannot revive a revoked session. Do not silently drop atomicity or add a duplicate session registry as a shortcut. Exact configuration and race handling remain subsequent technical-plan work after the domain-stack choice.
+
+No production dependency, configuration, schema, code or test was changed to establish these findings. The later exact-file implementation plan must name the selected dependency/configuration changes, additive Flyway migrations, owned repositories, shared-contract edits and meaningful PostgreSQL/security checks. This subsection does not authorize those edits.
+
 ## Open Questions
 
 These are bounded inputs for the technical plan, not requests to reopen accepted product choices.
 
 1. **Permission administration and evolution:** settle stable IDs, grant rollout/retry ordering, the permission-management UI and exact schema. Template application is additive; admins remove grants separately. Per-account grants without template membership or permanent deny state are selected. Preserve create-once setup evidence independently of retained audit history.
-2. **Security/session and persistence boundaries:** settle module direction, domain persistence comparison, session/context isolation, filter/CSRF/error behavior, transaction ordering and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
+2. **Security/session and persistence boundaries:** choose the domain stack from the completed comparison; settle module direction, session/context isolation, filter/CSRF/error behavior, transaction ordering, audited Spring Session transaction participation and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
 3. **Audit and operational bounds:** settle action/failure behavior, safe metadata, retention cleanup and finite diagnostic acceptance. Bound and measure combined session/permission/audit work against the existing datasource rather than assuming its cost.
 4. **Executable handoff:** later approved sections must identify exact file actions, migrations, permitted shared changes, buildable phases and meaningful checks, carrying every accepted requirement and review obligation forward.
 
