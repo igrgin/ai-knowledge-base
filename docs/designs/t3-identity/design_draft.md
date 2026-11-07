@@ -1,7 +1,7 @@
 # T3 identity, sessions, permissions and administration
 
 * **Author:** igrgin
-* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner confirmed mode A and per-account grants with independent convenience templates; Technical Plan approval remains pending.
+* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner confirmed mode A and per-account grants with independent, additive convenience templates; Technical Plan approval remains pending.
 * **Date:** 2026-11-07, Europe/Zagreb
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
 * **Workflow:** EGM with small fixes 0.2.1, `egm-draft`.
@@ -158,22 +158,19 @@ The accepted last-permission-manager invariant, conditional atomic admin auditin
 
 The shared-default/inherited-exception alternative is not selected. The earlier per-account proposal's additional permanent revocation evidence is also superseded by this owner's clarified global-update policy. These dispositions belong in the later Alternatives Considered section; this subsection does not select an ORM or physical database schema.
 
-#### Next template-application choice
+#### Selected template application: add only
 
-The storage model does not yet specify what selecting a template does to grants outside that template:
+The owner selected additive application on 2026-11-07. Applying a template inserts its listed permission grants and keeps every other current grant. An already-present grant stays present without duplication. A listed permission previously removed is deliberately granted again by this explicit application. Do not save template membership or synchronize accounts after later template-definition changes.
 
-| Option | Mechanism | Trade-off and failure condition |
-| --- | --- | --- |
-| **Add its permissions** | Insert the template's grants and keep all other current grants. Existing listed grants remain present. | Convenient for adding a permission set; does not remove unrelated access. Selecting Basic cannot by itself reset someone to only basic capabilities. Listed permissions previously removed are deliberately granted again. |
-| **Replace the current grant list** | Make the account's concrete grant list match the selected template, adding and removing grants as necessary. Still save no template membership. | Provides a reset to that set, but can remove individually added or administrative access. The existing final-manager invariant must reject any replacement that would remove the last permission manager. |
+Administrators remove individual permissions through separate explicit actions. Selecting Basic after applying Admin therefore does not remove existing administrative grants. Resetting an account to exactly a template is not part of this workflow. The last-permission-manager invariant, current authorization and conditional atomic admin auditing still apply to all grant/removal operations.
 
-Neither application behavior is selected here. Both are explicit admin operations, rather than automatic template synchronization.
+The replaced-list alternative is not selected because the owner wants unrelated grants retained. Carry that disposition into the later Alternatives Considered section.
 
 ## Open Questions
 
 These are bounded inputs for the technical plan, not requests to reopen accepted product choices.
 
-1. **Permission administration and evolution:** choose additive versus replacement template application; settle stable IDs, grant rollout/retry ordering, the permission-management UI and exact schema. Per-account grants without template membership or permanent deny state are selected. Preserve create-once setup evidence independently of retained audit history.
+1. **Permission administration and evolution:** settle stable IDs, grant rollout/retry ordering, the permission-management UI and exact schema. Template application is additive; admins remove grants separately. Per-account grants without template membership or permanent deny state are selected. Preserve create-once setup evidence independently of retained audit history.
 2. **Security/session and persistence boundaries:** settle module direction, domain persistence comparison, session/context isolation, filter/CSRF/error behavior, transaction ordering and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
 3. **Audit and operational bounds:** settle action/failure behavior, safe metadata, retention cleanup and finite diagnostic acceptance. Bound and measure combined session/permission/audit work against the existing datasource rather than assuming its cost.
 4. **Executable handoff:** later approved sections must identify exact file actions, migrations, permitted shared changes, buildable phases and meaningful checks, carrying every accepted requirement and review obligation forward.
