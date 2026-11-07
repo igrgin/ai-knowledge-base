@@ -3,7 +3,7 @@
 * **Author:** igrgin
 * **Date:** 2026-11-05
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
-* **Status:** Two six-lens Goldfish brainstorm rounds completed; owner-authorized bounded EGM draft active. Its Overview & Goals awaits section approval; formal design/review and implementation remain incomplete.
+* **Status:** Two six-lens Goldfish brainstorm rounds completed; Overview & Goals approved 2026-11-07. Technical Plan drafting active; disabled-sign-in entry alternatives remain unselected. Formal design/review and implementation remain incomplete.
 * **Artifact directory:** `docs/designs/t3-identity/`
 * **Workflow:** EGM with small fixes 0.2.1, `egm-brainstorm`.
 
@@ -203,6 +203,8 @@ The development shortcut is a local workflow convenience; it does not require a 
 ## Scope/progress checkpoint, 2026-11-06
 
 Following the checkpoint, the owner authorized [bounded drafting](design_draft.md) from the brief, preserving accepted decisions and resolving non-development disabled-sign-in behavior within the technical plan. No option for that open behavior has yet been selected; draft section approvals and formal design review remain separate from this authority.
+
+On 2026-11-07 the owner approved Overview & Goals and instructed proceeding to the Technical Plan, starting with disabled-sign-in behavior. Its initial subsection compares existing-session-only access with existing sessions plus optional configured Google entry outside development. These are proposals pending owner choice; the accepted mode decisions above have not been replaced.
 
 At the owner's request, [round 2](../../reviews/t3-identity/brainstorm-round-2/review.md) completed all six fresh lenses at `77e7746`. Twelve raw observations became five Major findings and one Nit. The direction is coherent, but progress is research/decisions only: the reviewed branch changes are all Markdown and T3 runtime behavior is absent. Accepted admin, permission, session and audit requirements remain in scope.
 

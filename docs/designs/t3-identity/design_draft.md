@@ -1,12 +1,14 @@
 # T3 identity, sessions, permissions and administration
 
 * **Author:** igrgin
-* **Status:** Draft — Overview & Goals awaiting section approval; technical plan not yet drafted.
-* **Date:** 2026-11-06, Europe/Zagreb
+* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress, starting with disabled-sign-in behavior. No mode option selected.
+* **Date:** 2026-11-07, Europe/Zagreb
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
 * **Workflow:** EGM with small fixes 0.2.1, `egm-draft`.
 * **Predecessor:** [Concepts brief](concepts_brief.md), with [accepted decisions](authentication-decisions.md) and [round-2 findings](../../reviews/t3-identity/brainstorm-round-2/review.md).
 * **Authority:** The owner authorized bounded T3 drafting and resolution of disabled-sign-in behavior on 2026-11-06. This is a working design, not implementation authority or completed design review.
+
+The owner approved Overview & Goals on 2026-11-07 and instructed proceeding to the Technical Plan, starting with the remaining disabled-sign-in behavior. The approval preserves the existing scope; it does not select an unresolved technical mechanism.
 
 ## Overview
 
@@ -62,11 +64,42 @@ T3 completion must eventually demonstrate its accepted behavior through its own 
 * Introducing a generic policy language, universal domain-event system, second job engine or new audit service without demonstrated need.
 * Authorizing implementation, publishing gates, changing remote issues, deploying or making paid calls through this draft.
 
+## Technical Plan (Architecture)
+
+### 1. Authentication mode and effective account
+
+This subsection starts the technical plan with one pending author decision. The options below are application-policy proposals, not framework defaults or selected behavior. The remainder of the technical plan and its section approval follow after the consequential choices are settled.
+
+#### Rules already fixed
+
+| Configuration | Account behavior already accepted |
+| --- | --- |
+| Auth enabled, any profile | Use normal Google authentication/application sessions. Missing required Google settings stops startup with sanitized feedback. Do not select a development account. |
+| Auth disabled, `dev` active and `prod` absent | Create/reuse and automatically select the persistent development database admin. Preserve stored Google sessions separately under running deadlines; do not renew them through development activity. |
+| Auth disabled outside that development case, including mixed `dev`/`prod` | Startup does not require Google configuration. Do not provision/select the development admin. Existing-session and no-session request behavior must be explicitly selected below. |
+
+In every case, current application permissions and resource ownership remain enforced. Mode changes do not invalidate saved Google sessions, reset/freeze their deadlines or revive expired/revoked sessions. When `prod` is active and auth is false, an identifiable administrator must receive the selected red banner. A browser-supplied UUID/email cannot establish an account.
+
+#### Pending decision: entry outside development when auth is false
+
+Both alternatives below retain valid Google sessions as the effective account for requests outside development. Neither supplies an anonymous content path, shared fallback account, new login provider or production development admin. They differ in whether fresh Google entry remains available.
+
+| Alternative | Mechanism | Trade-off and failure condition |
+| --- | --- | --- |
+| **A — Existing sessions only** | Keep using existing valid Google sessions with normal activity, permission and deadline rules. Disable new Google entry/callback completion while the flag is false. A request without a valid session cannot access protected resources; show a neutral entry-unavailable message without starting a login loop. | Gives “sign-in disabled” a literal meaning outside development. An existing admin can reach the banner while their session remains valid. A new browser, revoked/expired session or session needing pre-write reauthentication cannot regain access until the operator re-enables auth with valid Google settings. This mode is not a replacement login path or indefinite outage workaround. |
+| **B — Existing sessions plus configured Google entry** | Keep using valid Google sessions. Also offer fresh Google sign-in/reauthentication when the operator supplies complete required Google settings. Without those settings, startup still succeeds and protected entry requires an already-valid session. | Allows new browsers and pre-write reauthentication while Google is configured and available. Outside development, the boolean would disable the requirement for Google configuration rather than disable Google entry itself; the property/banner wording is consequently less literal and needs clear operator documentation. Without configuration or during provider failure, fresh entry remains unavailable and existing-session limits still apply. |
+
+Neither alternative permits extending deadlines because reauthentication is unavailable. Ordinary reads require a valid session; new writes at or beyond the configured pre-write threshold require fresh authentication. Logout/session revocation continues to end the selected sessions without suspending the account. Already-admitted work retains its previously accepted boundary; no new job behavior is introduced here.
+
+The selected production banner condition and wording remain unchanged under either proposal. Its audience is an existing authenticated account with the administrative authority to be defined later in this plan. Neither option guarantees a reachable in-app banner after all administrator sessions have expired. Deployment documentation must explain the selected entry behavior; an additional startup warning remains a separate recommendation, not an accepted replacement for the banner.
+
+No alternative is selected or ranked. Account/context storage, exact routes, response fields and security-filter implementation remain later technical-plan work. After selection, record it in the intake and governing design before treating it as a consumer contract.
+
 ## Open Questions
 
 These are bounded inputs for the technical plan, not requests to reopen accepted product choices.
 
-1. **Disabled sign-in outside development:** define the effective account and entry outcome for valid-session and no-session requests, including how an authorized admin reaches the production banner. No fallback account outside development has been selected.
+1. **Disabled sign-in outside development:** choose Technical Plan alternative A or B, or revise the proposed behavior. No option or fallback account outside development has been selected.
 2. **Authority representation and evolution:** choose the finite permission/default/revocation mechanism, stable identifiers and replacement rules. The shared-default/per-account-exception model remains a proposal. Preserve create-once setup evidence independently of retained audit history.
 3. **Security/session and persistence boundaries:** settle module direction, domain persistence comparison, session/context isolation, filter/CSRF/error behavior, transaction ordering and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
 4. **Audit and operational bounds:** settle action/failure behavior, safe metadata, retention cleanup and finite diagnostic acceptance. Bound and measure combined session/permission/audit work against the existing datasource rather than assuming its cost.
@@ -79,4 +112,4 @@ These are bounded inputs for the technical plan, not requests to reopen accepted
 * [Available contracts](../../contracts/README.md) and [K0 foundation](../../contracts/k0-foundation.md)
 * [Google sign-in investigation](../../research/google-sign-in-investigation.md) and [failure-handling investigation](../../research/google-sign-in-failure-handling.md)
 
-Technical Plan, Critical User Journeys, Alternatives Considered, Non-Functional Requirements and Detailed Implementation Plan will be drafted through the subsequent EGM section gates. This initial section does not supply an implementation file allowlist or resolve the open architecture choices.
+The Technical Plan is in progress. Critical User Journeys, Alternatives Considered, Non-Functional Requirements and Detailed Implementation Plan will follow through the EGM section gates. This working draft does not yet supply an implementation file allowlist or resolve the open architecture choices.
