@@ -1,7 +1,7 @@
 # T3 identity, sessions, permissions and administration
 
 * **Author:** igrgin
-* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress, starting with disabled-sign-in behavior. No mode option selected.
+* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner favors existing-session-only disabled mode (A), used as the working policy; permission storage remains open.
 * **Date:** 2026-11-07, Europe/Zagreb
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
 * **Workflow:** EGM with small fixes 0.2.1, `egm-draft`.
@@ -68,7 +68,7 @@ T3 completion must eventually demonstrate its accepted behavior through its own 
 
 ### 1. Authentication mode and effective account
 
-This subsection starts the technical plan with one pending author decision. The options below are application-policy proposals, not framework defaults or selected behavior. The remainder of the technical plan and its section approval follow after the consequential choices are settled.
+The owner favors alternative A on 2026-11-07: retain the ability to disable sign-in outside development, with valid sessions usable until their normal limits end. The current draft uses that direction below. Technical Plan section approval remains pending; this is an application policy, not a framework default.
 
 #### Rules already fixed
 
@@ -76,30 +76,60 @@ This subsection starts the technical plan with one pending author decision. The 
 | --- | --- |
 | Auth enabled, any profile | Use normal Google authentication/application sessions. Missing required Google settings stops startup with sanitized feedback. Do not select a development account. |
 | Auth disabled, `dev` active and `prod` absent | Create/reuse and automatically select the persistent development database admin. Preserve stored Google sessions separately under running deadlines; do not renew them through development activity. |
-| Auth disabled outside that development case, including mixed `dev`/`prod` | Startup does not require Google configuration. Do not provision/select the development admin. Existing-session and no-session request behavior must be explicitly selected below. |
+| Auth disabled outside that development case, including mixed `dev`/`prod` | Startup does not require Google configuration. Use an existing valid Google session; without one, deny protected access. Block new Google sign-in and callback completion until auth is re-enabled. Never provision/select the development admin or invent a fallback account. |
 
 In every case, current application permissions and resource ownership remain enforced. Mode changes do not invalidate saved Google sessions, reset/freeze their deadlines or revive expired/revoked sessions. When `prod` is active and auth is false, an identifiable administrator must receive the selected red banner. A browser-supplied UUID/email cannot establish an account.
 
-#### Pending decision: entry outside development when auth is false
+#### Working policy A: existing sessions only outside development
 
-Both alternatives below retain valid Google sessions as the effective account for requests outside development. Neither supplies an anonymous content path, shared fallback account, new login provider or production development admin. They differ in whether fresh Google entry remains available.
+Disabling sign-in is allowed outside development, including production, even if rarely used. It stops new Google entry and callback completion; it does not erase existing sessions. An already-valid Google session continues to identify its original account, using normal meaningful-activity renewal, current permissions, ownership checks and revocation rules. No session is guaranteed to last until the absolute maximum: idle expiry or explicit revocation can end it earlier.
 
-| Alternative | Mechanism | Trade-off and failure condition |
+A request without a valid session cannot enter protected application areas. Show a neutral sign-in-unavailable outcome; do not redirect repeatedly to Google, select a shared account or replay a pending action. A Google flow begun before disablement cannot complete into a new application login while disabled. Exact routes/status codes and preservation of a separate existing session during failed reauthentication remain implementation-design work.
+
+The configured maximum is never extended. At the default 7h55m pre-write threshold, a new upload/mutation still needs fresh authentication. Because fresh sign-in is disabled, that write cannot proceed until the operator re-enables auth and the user authenticates again. Reads continue only while the existing session remains valid. Accepted requests/durable work keep their original admission boundary; disabling entry does not create a job-cancellation policy.
+
+An existing administrator session can reach the required red production banner. After all administrator sessions expire or are revoked, there may be no in-app audience for it. Restoring access then requires the operator to re-enable auth through deployment configuration with valid Google settings. There is no special recovery account, fresh-password guarantee or automatic extension. The additional sanitized startup warning remains a recommendation, not an accepted replacement for the banner.
+
+The effective-account ordering is:
+
+```text
+on protected request
+  if auth is disabled and dev is active and prod is absent
+    use the persisted development account
+    keep stored Google sessions separate and dormant
+  else if an existing Google session is valid
+    use that session's application account
+  else if auth is enabled
+    require normal Google sign-in
+    stop this protected request
+  else
+    deny protected entry with sign-in-unavailable feedback
+    stop this protected request
+
+  validate current permissions, ownership and applicable fresh-sign-in rules
+  admit the operation only if those checks pass
+```
+
+Alternative B, optional configured Google entry while auth is false, is not used in the current draft. It would permit fresh entry but make the property/banner less literal. Retain that comparison for the later Alternatives Considered section; the owner's wording favored A rather than approving the entire Technical Plan.
+
+Required mode checks will cover: disabled production startup without Google settings; valid-session access versus no/expired/revoked-session denial; blocked new entry and callbacks; unchanged 30m/8h limits and 5m pre-write behavior; explicit re-enablement; admin banner metadata; mixed-profile fixture exclusion; and development activity not renewing dormant Google sessions. Exact tests/files follow in the detailed implementation plan.
+
+### 2. Permission storage — next author decision
+
+The accepted outcome is fixed: current server-side action checks, individual grants/revocations, new basic permissions for old and new accounts, and explicit revocations that are never silently restored. The representation below is still open; neither option changes ownership checks, the final-manager invariant or the accepted admission/revocation boundary.
+
+| Option | Mechanism | Trade-off and failure condition |
 | --- | --- | --- |
-| **A — Existing sessions only** | Keep using existing valid Google sessions with normal activity, permission and deadline rules. Disable new Google entry/callback completion while the flag is false. A request without a valid session cannot access protected resources; show a neutral entry-unavailable message without starting a login loop. | Gives “sign-in disabled” a literal meaning outside development. An existing admin can reach the banner while their session remains valid. A new browser, revoked/expired session or session needing pre-write reauthentication cannot regain access until the operator re-enables auth with valid Google settings. This mode is not a replacement login path or indefinite outage workaround. |
-| **B — Existing sessions plus configured Google entry** | Keep using valid Google sessions. Also offer fresh Google sign-in/reauthentication when the operator supplies complete required Google settings. Without those settings, startup still succeeds and protected entry requires an already-valid session. | Allows new browsers and pre-write reauthentication while Google is configured and available. Outside development, the boolean would disable the requirement for Google configuration rather than disable Google entry itself; the property/banner wording is consequently less literal and needs clear operator documentation. Without configuration or during provider failure, fresh entry remains unavailable and existing-session limits still apply. |
+| **1 — Shared defaults with account exceptions** | Store the basic set once in the permission catalog. Store each account's explicit grant/revocation exceptions. Evaluate `(basic defaults + explicit grants) minus explicit revocations` from current database state. New basic activation changes the catalog rather than writing a grant for every account. | Keeps default activation independent of account count and remembers deliberate restrictions. Every check must apply inheritance/precedence correctly; replacement migrations must carry revocations forward. A faulty default change can affect every inheriting account. |
+| **2 — Stored grants for every account** | Store each account's granted permissions, plus durable explicit-revocation evidence. A reviewed feature migration grants a newly basic action to eligible existing accounts, excluding explicit revocations; account creation supplies the active basic set. | Reads use an account's concrete grant set, but storage and new-basic rollout writes grow with account count. Migration/account-creation ordering must prevent missing grants, and backfill/restart logic must never override remembered revocations. |
 
-Neither alternative permits extending deadlines because reauthentication is unavailable. Ordinary reads require a valid session; new writes at or beyond the configured pre-write threshold require fresh authentication. Logout/session revocation continues to end the selected sessions without suspending the account. Already-admitted work retains its previously accepted boundary; no new job behavior is introduced here.
-
-The selected production banner condition and wording remain unchanged under either proposal. Its audience is an existing authenticated account with the administrative authority to be defined later in this plan. Neither option guarantees a reachable in-app banner after all administrator sessions have expired. Deployment documentation must explain the selected entry behavior; an additional startup warning remains a separate recommendation, not an accepted replacement for the banner.
-
-No alternative is selected or ranked. Account/context storage, exact routes, response fields and security-filter implementation remain later technical-plan work. After selection, record it in the intake and governing design before treating it as a consumer contract.
+Both options keep permission changes on the server with no forced logout or permission-refresh login. Neither selects a cache, event bus, ORM or database table layout. Deployment activation, transaction ordering and indexed queries must be specified for whichever option the author chooses.
 
 ## Open Questions
 
 These are bounded inputs for the technical plan, not requests to reopen accepted product choices.
 
-1. **Disabled sign-in outside development:** choose Technical Plan alternative A or B, or revise the proposed behavior. No option or fallback account outside development has been selected.
+1. **Disabled sign-in outside development:** working direction A is recorded above from the owner's preference. Final Technical Plan review must confirm its entry, reauthentication and operator-recovery consequences; no fallback account outside development is added.
 2. **Authority representation and evolution:** choose the finite permission/default/revocation mechanism, stable identifiers and replacement rules. The shared-default/per-account-exception model remains a proposal. Preserve create-once setup evidence independently of retained audit history.
 3. **Security/session and persistence boundaries:** settle module direction, domain persistence comparison, session/context isolation, filter/CSRF/error behavior, transaction ordering and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
 4. **Audit and operational bounds:** settle action/failure behavior, safe metadata, retention cleanup and finite diagnostic acceptance. Bound and measure combined session/permission/audit work against the existing datasource rather than assuming its cost.
