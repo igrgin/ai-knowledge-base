@@ -1,7 +1,7 @@
 # T3 identity, sessions, permissions and administration
 
 * **Author:** igrgin
-* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner favors existing-session-only disabled mode (A), used as the working policy; permission storage remains open.
+* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner confirmed existing-session-only disabled mode (A); permission storage remains open.
 * **Date:** 2026-11-07, Europe/Zagreb
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
 * **Workflow:** EGM with small fixes 0.2.1, `egm-draft`.
@@ -68,7 +68,7 @@ T3 completion must eventually demonstrate its accepted behavior through its own 
 
 ### 1. Authentication mode and effective account
 
-The owner favors alternative A on 2026-11-07: retain the ability to disable sign-in outside development, with valid sessions usable until their normal limits end. The current draft uses that direction below. Technical Plan section approval remains pending; this is an application policy, not a framework default.
+The owner confirmed alternative A on 2026-11-07 after clarifying the distinction between disabling fresh entry and ending existing sessions. Retain the ability to disable sign-in outside development, with valid sessions usable until their normal limits end. Technical Plan section approval remains pending; this is an application policy, not a framework default.
 
 #### Rules already fixed
 
@@ -80,13 +80,13 @@ The owner favors alternative A on 2026-11-07: retain the ability to disable sign
 
 In every case, current application permissions and resource ownership remain enforced. Mode changes do not invalidate saved Google sessions, reset/freeze their deadlines or revive expired/revoked sessions. When `prod` is active and auth is false, an identifiable administrator must receive the selected red banner. A browser-supplied UUID/email cannot establish an account.
 
-#### Working policy A: existing sessions only outside development
+#### Selected policy A: existing sessions only outside development
 
 Disabling sign-in is allowed outside development, including production, even if rarely used. It stops new Google entry and callback completion; it does not erase existing sessions. An already-valid Google session continues to identify its original account, using normal meaningful-activity renewal, current permissions, ownership checks and revocation rules. No session is guaranteed to last until the absolute maximum: idle expiry or explicit revocation can end it earlier.
 
 A request without a valid session cannot enter protected application areas. Show a neutral sign-in-unavailable outcome; do not redirect repeatedly to Google, select a shared account or replay a pending action. A Google flow begun before disablement cannot complete into a new application login while disabled. Exact routes/status codes and preservation of a separate existing session during failed reauthentication remain implementation-design work.
 
-The configured maximum is never extended. At the default 7h55m pre-write threshold, a new upload/mutation still needs fresh authentication. Because fresh sign-in is disabled, that write cannot proceed until the operator re-enables auth and the user authenticates again. Reads continue only while the existing session remains valid. Accepted requests/durable work keep their original admission boundary; disabling entry does not create a job-cancellation policy.
+The configured maximum is never extended. At the default 7h55m pre-write threshold, a new upload/mutation still needs fresh authentication. Because fresh sign-in is disabled, reject that new write without starting or queuing it. After the operator re-enables auth and the user successfully authenticates, the user must explicitly retry; nothing automatically resumes or replays. Reads continue only while the existing session remains valid. Accepted requests/durable work keep their original admission boundary; disabling entry does not create a job-cancellation policy.
 
 An existing administrator session can reach the required red production banner. After all administrator sessions expire or are revoked, there may be no in-app audience for it. Restoring access then requires the operator to re-enable auth through deployment configuration with valid Google settings. There is no special recovery account, fresh-password guarantee or automatic extension. The additional sanitized startup warning remains a recommendation, not an accepted replacement for the banner.
 
@@ -110,7 +110,7 @@ on protected request
   admit the operation only if those checks pass
 ```
 
-Alternative B, optional configured Google entry while auth is false, is not used in the current draft. It would permit fresh entry but make the property/banner less literal. Retain that comparison for the later Alternatives Considered section; the owner's wording favored A rather than approving the entire Technical Plan.
+Alternative B, optional configured Google entry while auth is false, is not used in the current draft. It would permit fresh entry but make the property/banner less literal. Retain that comparison for the later Alternatives Considered section. The owner confirmed A after the expiry/pre-write clarification; this does not approve the entire Technical Plan.
 
 Required mode checks will cover: disabled production startup without Google settings; valid-session access versus no/expired/revoked-session denial; blocked new entry and callbacks; unchanged 30m/8h limits and 5m pre-write behavior; explicit re-enablement; admin banner metadata; mixed-profile fixture exclusion; and development activity not renewing dormant Google sessions. Exact tests/files follow in the detailed implementation plan.
 
@@ -125,15 +125,27 @@ The accepted outcome is fixed: current server-side action checks, individual gra
 
 Both options keep permission changes on the server with no forced logout or permission-refresh login. Neither selects a cache, event bus, ORM or database table layout. Deployment activation, transaction ordering and indexed queries must be specified for whichever option the author chooses.
 
+#### Same user behavior, different stored data
+
+For example, importing authorized full-project copies is a basic capability. Suppose Ana keeps that default and an administrator explicitly revokes it for Ben:
+
+| Operation | 1 — Shared defaults + exceptions | 2 — Per-account grants |
+| --- | --- | --- |
+| Represent Ana's access | Basic catalog includes import; Ana needs no import-specific exception. | Ana has a stored import grant. |
+| Represent Ben's restriction | Ben has an explicit import revocation overriding the basic default. | Ben lacks the grant and has durable explicit-revocation evidence. |
+| Add a newly basic permission with its feature | Change the shared catalog once; accounts inherit it except where explicitly revoked. | Add grants for eligible accounts, preserving revocations and coordinating with concurrent account creation. |
+| Evaluate a protected request | Read the applicable shared default and account exceptions from current server state. | Read the account's current grants and revocation evidence from server state. |
+
+Ana and Ben see the same allowed/denied behavior under either choice. Both support individual grants/revocations and preserve deliberate restrictions through new defaults. Option 1 concentrates complexity in inheritance and catalog changes; option 2 concentrates it in grant population, rollout and synchronization. Neither option is selected or ranked here.
+
 ## Open Questions
 
 These are bounded inputs for the technical plan, not requests to reopen accepted product choices.
 
-1. **Disabled sign-in outside development:** working direction A is recorded above from the owner's preference. Final Technical Plan review must confirm its entry, reauthentication and operator-recovery consequences; no fallback account outside development is added.
-2. **Authority representation and evolution:** choose the finite permission/default/revocation mechanism, stable identifiers and replacement rules. The shared-default/per-account-exception model remains a proposal. Preserve create-once setup evidence independently of retained audit history.
-3. **Security/session and persistence boundaries:** settle module direction, domain persistence comparison, session/context isolation, filter/CSRF/error behavior, transaction ordering and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
-4. **Audit and operational bounds:** settle action/failure behavior, safe metadata, retention cleanup and finite diagnostic acceptance. Bound and measure combined session/permission/audit work against the existing datasource rather than assuming its cost.
-5. **Executable handoff:** later approved sections must identify exact file actions, migrations, permitted shared changes, buildable phases and meaningful checks, carrying every accepted requirement and review obligation forward.
+1. **Authority representation and evolution:** choose the finite permission/default/revocation mechanism, stable identifiers and replacement rules. The shared-default/per-account-exception model remains a proposal. Preserve create-once setup evidence independently of retained audit history.
+2. **Security/session and persistence boundaries:** settle module direction, domain persistence comparison, session/context isolation, filter/CSRF/error behavior, transaction ordering and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
+3. **Audit and operational bounds:** settle action/failure behavior, safe metadata, retention cleanup and finite diagnostic acceptance. Bound and measure combined session/permission/audit work against the existing datasource rather than assuming its cost.
+4. **Executable handoff:** later approved sections must identify exact file actions, migrations, permitted shared changes, buildable phases and meaningful checks, carrying every accepted requirement and review obligation forward.
 
 ## Additional Resources
 
