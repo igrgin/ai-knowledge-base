@@ -1,7 +1,7 @@
 # T3 identity, sessions, permissions and administration
 
 * **Author:** igrgin
-* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner confirmed mode A, individual grants/additive templates and Spring JDBC with JdbcClient; transaction coordination is the next open choice. Technical Plan approval remains pending.
+* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner confirmed mode A, individual grants/additive templates and Spring JDBC with JdbcClient; mandatory manager-row locking and database enforcement are required; the enforcement mechanism remains open. Technical Plan approval remains pending.
 * **Date:** 2026-11-08, Europe/Zagreb
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
 * **Workflow:** EGM with small fixes 0.2.1, `egm-draft`.
@@ -250,28 +250,56 @@ Required result:
 
 Count eligible account authority, not active sessions. Never let the development fixture silently satisfy normal production-manager availability. Every mutation capable of changing that protected population must follow the chosen protocol, including setup/template/rollout paths where relevant. Precise normal/development eligibility and schema representation remain part of the bounded design.
 
-#### Next author decision: coordinate manager changes
+#### Required manager-row locking and non-bypassable database path
 
-These are alternatives for this invariant, not a global application lock or a decision to make every request serializable. Ordinary document reads and unrelated business work must not acquire a global manager lock. The following mechanisms are documented by PostgreSQL; their T3 fit/trade-offs are design inferences.
+**Owner requirement, 2026-11-08:** an operation changing/removing permission-manager authority must first lock all current eligible manager rows with `SELECT … FOR UPDATE`. It must not be possible for application code to bypass the lock/check through an ordinary direct `UPDATE` or `DELETE`. Record this as mandatory database enforcement, not a repository convention or optional Java helper.
+
+This resolves the previously open coordination menu: a guard row, advisory lock or SERIALIZABLE setting alone does not substitute for the requested all-manager row locks. They may be evaluated as supplemental protection for a changing membership set if needed. The account/role-ID sketch remains illustrative; no role column or physical schema has been selected. Under the accepted grant model, identify managers by actual permission-management authority, rather than merely an Admin template or label.
+
+The protected scope here is manager-authority/status mutation and any path capable of removing the final manager. It is not a decision to lock every manager while an admin reads a PDF or performs an unrelated ordinary action. Normal bootstrap enables the post-setup invariant; development provisioning cannot silently satisfy normal production-manager availability.
+
+#### Required operation shape
+
+```text
+begin the administrative database transaction
+  enter the database-enforced mutation path
+  protect manager-set membership changes under the agreed protocol
+  select all current eligible manager account/authority rows
+    in a consistent stable order FOR UPDATE
+  after waiting, revalidate current authority and the manager set
+  allow the proposed change only if a manager remains after setup
+  make the protected change
+  write enabled administrative audit in the same transaction
+commit, or roll back the change and enabled audit together
+```
+
+This is an obligation outline, not finished SQL or a proven concurrency protocol. The final schema must identify which account and grant rows need locking: locking an account row by itself does not force unrelated grant-table writes to follow the protocol. Do not use `COUNT(*) FOR UPDATE`, omit rows with `LIMIT`/`SKIP LOCKED`, or proceed after failing to obtain the required locks.
+
+`FOR UPDATE` conflicts with competing writes/locking reads, while ordinary MVCC reads can continue. It locks rows found by the query; it is not a predicate lock that freezes future manager membership. A query can start before another transaction promotes/demotes managers and then wait, so one stale row-set/count cannot be assumed sufficient. Protect promotions, removals, setup/template/global-rollout paths and membership changes compatibly, with fresh validation and defined lock order. Exact supplemental coordination, zero-manager bootstrap handling and normal/development eligibility remain explicit design work. [PostgreSQL row locking](https://www.postgresql.org/docs/17/explicit-locking.html), [locking SELECT behavior](https://www.postgresql.org/docs/17/sql-select.html).
+
+Locks remain inside short transactions; obtain them in one consistent order and define bounded wait/deadlock behavior. Neither lock waiting nor a database retry authorizes automatic replay of an authorization-denied or reauthentication-blocked user action. Failed lock acquisition must leave the protected change uncommitted. Ordinary business reads and unrelated work do not acquire a global manager lock merely because the caller is an admin.
+
+#### Next author decision: enforce the mandatory path
+
+Both alternatives below must implement the required manager-row locks, invariant, membership coordination and transaction boundaries. Neither is selected yet.
 
 | Option | Mechanism | Trade-off and failure condition |
 | --- | --- | --- |
-| **1 — Lock one database guard row** | Keep a small coordination row. At READ COMMITTED, every relevant manager change locks it before checking and changing grants; subsequent count/check statements observe the serialized order. | Makes the protocol visible in schema/SQL, with one-at-a-time manager edits. Requires the row to exist and every relevant writer to use the same guard/lock order. A bypassing writer breaks the guarantee. |
-| **2 — Transaction-level advisory lock** | Acquire a dedicated PostgreSQL advisory lock key before relevant manager checks/changes; transaction end releases it. | Avoids a persistent guard row, but the shared key and namespace are application conventions all writers must follow. A missing/wrong key breaks coordination. Use transaction-level locking rather than leaving session-level locks attached to pooled connections. |
-| **3 — Serializable manager-change transactions** | Put all invariant-relevant checks/writes under compatible SERIALIZABLE transactions; handle serialization aborts by retrying the complete database transaction with fresh checks. | Database conflict detection supplies the serial ordering guarantee for successful transactions. Requires bounded whole-transaction retries and every relevant writer following the protocol; an incomplete retry or incompatible bypass is unsafe. Contention can cause aborted attempts. |
+| **1 — Protected database function and restricted runtime writes** | The application's runtime database role has no direct mutation rights on protected authority data. It may execute a narrowly granted function which obtains all required locks, validates the invariant and performs the authorized mutation in the caller's transaction. | Makes ordinary bypassing SQL fail and starts coordination before the protected mutation. Moves a small critical mutation boundary into database code; requires owner/runtime privilege separation and secure function configuration. Missing restrictions, an overly privileged runtime role or an unsafe function would invalidate the guarantee. |
+| **2 — Database-trigger enforcement** | Relevant direct writes invoke database triggers that force the locking/invariant protocol. Ordinary SQL cannot execute a protected mutation without the enabled trigger path. | Supports direct repository SQL, with implicit database-side behavior. Trigger timing, multi-row changes, lock order, bootstrap and all mutation paths must be designed carefully; a per-row count check alone is insufficient. Missing/disabled triggers or bypass privileges would invalidate the guarantee. |
 
-Sources: [PostgreSQL row/advisory locking and lock order](https://www.postgresql.org/docs/17/explicit-locking.html), [isolation and serialization retry rules](https://www.postgresql.org/docs/17/transaction-iso.html). No coordination option is selected or ranked. Actual contention/latency is unmeasured.
+The enforcement boundary is normal application/database-runtime credentials. Trusted schema-owner/migration operators can deliberately change database protections; this requirement is not a claim to constrain a PostgreSQL superuser. Database roles/credentials here are separate from application user/admin concepts and permission templates. The current shared Flyway/runtime configuration must be reviewed for the selected enforcement mechanism before claiming restricted-write protection.
 
-For either lock approach, waits/timeouts must be bounded in the implementation design and fail safely. For the serializable alternative, retries apply only after a database serialization abort, with no committed external effects; authorization denial or unavailable reauthentication is not automatically retried. Recheck authority on each database attempt. None of these mechanisms queues or replays a denied user action or cancels accepted jobs.
+For the function alternative, evaluate a narrowly scoped `SECURITY DEFINER` owner, trusted/qualified object lookup and restricted execute rights; PostgreSQL documents safe `search_path` handling and revoking default public execution. Do not assume a caller-privileged function can both perform forbidden writes and prevent the caller from doing them directly. [Function security](https://www.postgresql.org/docs/17/sql-createfunction.html), [database privileges](https://www.postgresql.org/docs/17/sql-grant.html). For the trigger alternative, use the documented [trigger timing and row/statement semantics](https://www.postgresql.org/docs/17/sql-createtrigger.html) to construct and verify the whole protocol; no trigger SQL is selected by this outline.
 
-After selection, specify the exact protected population, lock acquisition order, transaction boundaries, retry/timeout settings, API outcomes and meaningful concurrent-PostgreSQL checks. Session-revocation fencing, per-account operation-admission ordering and the module graph remain additional technical-plan decisions; this one invariant does not settle them.
+Required checks include two-manager concurrent removals, promotion/removal and changing-set races, bulk updates, trusted bootstrap, enabled audit rollback, bounded lock failure and actual direct-SQL attempts under the runtime role. The direct-SQL test must show rejection or automatic enforcement; Java-only tests cannot establish this requirement. Session-revocation fencing, per-account admission ordering, module interfaces and exact schema/file actions remain later bounded-design work. No database roles, functions, triggers or runtime configuration have been created here.
 
 ## Open Questions
 
 These are bounded inputs for the technical plan, not requests to reopen accepted product choices.
 
 1. **Permission administration and evolution:** settle stable IDs, grant rollout/retry ordering, the permission-management UI and exact schema. Template application is additive; admins remove grants separately. Per-account grants without template membership or permanent deny state are selected. Preserve create-once setup evidence independently of retained audit history.
-2. **Security/session and persistence boundaries:** use the selected Spring JDBC/`JdbcClient` stack; choose final-manager coordination and settle module direction, session/context isolation, filter/CSRF/error behavior, transaction ordering, audited Spring Session transaction participation and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
+2. **Security/session and persistence boundaries:** use the selected Spring JDBC/`JdbcClient` stack; implement the required all-manager row locking after choosing database function versus trigger enforcement, and settle module direction, session/context isolation, filter/CSRF/error behavior, transaction ordering, audited Spring Session transaction participation and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
 3. **Audit and operational bounds:** settle action/failure behavior, safe metadata, retention cleanup and finite diagnostic acceptance. Bound and measure combined session/permission/audit work against the existing datasource rather than assuming its cost.
 4. **Executable handoff:** later approved sections must identify exact file actions, migrations, permitted shared changes, buildable phases and meaningful checks, carrying every accepted requirement and review obligation forward.
 
