@@ -3,7 +3,7 @@
 * **Author:** igrgin
 * **Date:** 2026-11-05
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
-* **Status:** Two six-lens Goldfish brainstorm rounds completed; Overview & Goals approved 2026-11-07. Technical Plan drafting uses owner-confirmed mode A; per-account grants and convenience templates are selected; full section approval remains open. Formal design/review and implementation remain incomplete.
+* **Status:** Two six-lens Goldfish brainstorm rounds completed; Overview & Goals approved 2026-11-07. Technical Plan drafting uses owner-confirmed mode A; per-account grants/additive templates and Spring JDBC/`JdbcClient` are selected; full section approval remains open. Formal design/review and implementation remain incomplete.
 * **Artifact directory:** `docs/designs/t3-identity/`
 * **Workflow:** EGM with small fixes 0.2.1, `egm-brainstorm`.
 
@@ -87,7 +87,7 @@ After initial setup, the application must retain at least one account with permi
 
 ## Research and audit
 
-The [2026-11-07 independent domain-persistence comparison](../../research/t3-domain-persistence-comparison.md) supports the next Technical Plan decision: explicit JDBC, Spring Data JDBC or JPA/mixed access. It checks the current foundation and official capabilities without selecting a stack or claiming a measured winner. Spring Session JDBC is separate; its default independent transactions require explicit participation design for the accepted atomic admin-revocation/audit behavior. The [Technical Plan](design_draft.md#3-domain-persistence--next-author-decision) records the unselected options and common obligations.
+After the [2026-11-07 independent domain-persistence comparison](../../research/t3-domain-persistence-comparison.md) and fit discussion, the owner selected Spring JDBC with `JdbcClient` on 2026-11-08. Use explicit parameterized SQL/repositories and short Spring service transactions over the existing datasource; no Spring Data JDBC/JPA domain stack is adopted. The comparison remains source evidence, without a measured winner. Spring Session JDBC is separate; its default independent transactions require explicit participation design for the accepted atomic admin-revocation/audit behavior. The [Technical Plan](design_draft.md#3-domain-persistence--next-author-decision) records the selected stack, evaluated alternatives and common obligations.
 
 The [source-backed Google investigation](../../research/google-sign-in-investigation.md) covers existing-version fit, Google project/client setup, identity scopes, callback origins, persistent sessions, logout, offline verification and recipient identity. The [plan and issue audit](../../reviews/t3-identity/google-auth-plan-audit.md) records changed files, unchanged boundaries and exact proposed remote issue edits.
 
@@ -195,7 +195,7 @@ Check the actor category and its enable flag before constructing/enriching/writi
 - Atomic automatic account creation, returning-identity lookup and changed-email behavior; the no-extra-onboarding outcome is settled.
 - Concrete IDs/granularity for the accepted basic permissions, the selected per-account grants and pending template-application/rollout details, setup-command implementation/recovery policy, exact permission-management UI, session/device representation and concurrent revocation behavior. Independent per-session timers, user individual/all-session controls and administrator revocation are selected; provider-side revocation/recovery remains separate.
 - Agree trusted identity/current-permission contracts for named project invitations and general-link imports. Recipient selection/proof and acceptance workflows remain T16/T19 work; development fixtures do not authorize access to real users' private resources.
-- Exact API/CSRF/error/principal/module interfaces, persistence comparison, file boundaries, implementation phases and meaningful checks required by the roadmap.
+- Exact API/CSRF/error/principal/module interfaces, transaction/locking design for the selected JDBC stack, file boundaries, implementation phases and meaningful checks required by the roadmap.
 - Actual Google project/client availability and a real-provider acceptance gate, separately from controlled offline tests and development-shortcut checks.
 
 The development shortcut is a local workflow convenience; it does not require a separate product ownership/network-access design. After the owner explicitly confirmed readiness, six fresh Goldfish lenses completed sequentially at baseline `bb26f25`. The [concepts brief](concepts_brief.md) and [round-1 report](../../reviews/t3-identity/brainstorm-round-1/review.md) record the synthesis and unresolved choices. Findings are pending owner/design disposition; this is not formal design acceptance or implementation authority.

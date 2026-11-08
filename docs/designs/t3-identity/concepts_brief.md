@@ -99,7 +99,7 @@ The accepted configurable boolean supersedes the earlier hard development-only r
 
 All standalone chat sharing/snapshots are dropped, including restricted/public views and administrator exceptions; R27/T17 remain withdrawn. Whole-project copies include every saved chat/message/citation and source setting; T19 is mandatory, with no content selector/files-only product mode. The owner selects a designated signed-in recipient or a general link usable by any signed-in possessor with import permission/quotas. Copies are independent; revocation stops future imports without erasing accepted copies. T16/T19 own selection/proof, capture and copying. These accepted choices are context for T3, not T3 implementation work.
 
-Framework OIDC/JDBC sessions are the recommended starting point; duplicate session tracking, a policy engine and asynchronous audit infrastructure need demonstrated justification. The owner selected per-account grants and independent templates over shared-default inheritance and permanent deny records. Exact domain persistence and restore mechanisms remain open design alternatives.
+Framework OIDC/JDBC sessions are the recommended starting point; duplicate session tracking, a policy engine and asynchronous audit infrastructure need demonstrated justification. The owner selected per-account grants and independent templates over shared-default inheritance and permanent deny records. The owner selected Spring JDBC with `JdbcClient` on 2026-11-08. Exact SQL transaction/locking and restore mechanisms remain design work.
 
 ## Key Decisions & Staging for Next Steps
 

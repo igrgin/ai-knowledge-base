@@ -1,8 +1,8 @@
 # T3 identity, sessions, permissions and administration
 
 * **Author:** igrgin
-* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner confirmed mode A and per-account grants with independent, additive convenience templates; Technical Plan approval remains pending.
-* **Date:** 2026-11-07, Europe/Zagreb
+* **Status:** Draft — Overview & Goals approved 2026-11-07; Technical Plan in progress. Owner confirmed mode A, individual grants/additive templates and Spring JDBC with JdbcClient; transaction coordination is the next open choice. Technical Plan approval remains pending.
+* **Date:** 2026-11-08, Europe/Zagreb
 * **Issue:** [#3](https://github.com/igrgin/ai-knowledge-base/issues/3)
 * **Workflow:** EGM with small fixes 0.2.1, `egm-draft`.
 * **Predecessor:** [Concepts brief](concepts_brief.md), with [accepted decisions](authentication-decisions.md) and [round-2 findings](../../reviews/t3-identity/brainstorm-round-2/review.md).
@@ -166,21 +166,25 @@ Administrators remove individual permissions through separate explicit actions. 
 
 The replaced-list alternative is not selected because the owner wants unrelated grants retained. Carry that disposition into the later Alternatives Considered section.
 
-### 3. Domain persistence — next author decision
+<a id="3-domain-persistence--next-author-decision"></a>
+
+### 3. Domain persistence — selected Spring JDBC
 
 The [independent primary-source comparison](../../research/t3-domain-persistence-comparison.md) addresses the application design's first-domain-persistence checkpoint. It examined the committed foundation at `f68be1c`: the backend has Spring JDBC/Flyway/PostgreSQL and no domain repositories, entities or tables beyond V1's extension. The locally managed Boot version is 4.1.2. The note records exact managed versions, verified official capability sources and remaining integration limits. It is research evidence, not a selected stack, benchmark or completed formal design review.
 
 This decision concerns application accounts, Google identity links, permissions/grants/templates, bootstrap/rollout state and audit data. Spring Session JDBC's framework-owned HTTP-session persistence is a separate choice. Selecting a domain repository style does not change the accepted permission model or let future resource slices bypass ownership.
 
-#### Three unselected approaches
+#### Selected approach and evaluated alternatives
 
 | Option | Mechanism | Trade-off and failure condition |
 | --- | --- | --- |
-| **1 — Spring JDBC / explicit SQL repositories** | Use the existing JDBC foundation, `JdbcClient`/templates and short application-service transactions. Write parameterized SQL and map results to application data. | Keeps SQL and lock/update boundaries explicit; routine create/read/update/list operations need handwritten queries and mapping. Incorrect SQL, constraints or transaction scope can still break invariants. Existing dependencies establish no performance advantage. |
+| **Selected — Spring JDBC / JdbcClient repositories** | Use the existing JDBC foundation, `JdbcClient`/templates and short application-service transactions. Write parameterized SQL and map results to application data. | Keeps SQL and lock/update boundaries explicit; routine create/read/update/list operations need handwritten queries and mapping. Incorrect SQL, constraints or transaction scope can still break invariants. Existing dependencies establish no performance advantage. |
 | **2 — Spring Data JDBC repositories plus targeted SQL** | Use repository/aggregate mapping for ordinary persistence, with explicit SQL for grant sets, shared guards, bulk updates and projections where needed. | Reduces some routine repository work. Aggregate membership must be deliberate: treating all grants as children saved through one account can conflict with independent grant edits. The documented default child replacement behavior needs consideration or custom methods. It does not remove the need for transaction/SQL design. |
 | **3 — Spring Data JPA/Hibernate plus targeted SQL** | Map entities/relationships and use repository queries, adding native SQL/JDBC for appropriate operations. If mixed, configure a compatible shared transaction boundary. | Provides entity/relationship persistence facilities. Managed entity state, flush timing and refresh/clear behavior must stay consistent with direct SQL changes. Separate local transaction managers are not automatically atomic, even on one database. |
 
-All three can implement T3. No option is selected, ranked or established as faster. The [research note](../../research/t3-domain-persistence-comparison.md#transactions-and-mixed-access) supplies the official capability sources and labels its project-fit judgments as inferences. The domain convention in K0 remains provisional until the owner chooses; amend it with actual manager/mixed-access rules if the chosen stack differs.
+**Owner decision, 2026-11-08:** use Spring JDBC with `JdbcClient` for T3 domain persistence. Keep parameterized SQL and focused repository methods over the Boot-managed PostgreSQL datasource, with short Spring application-service transactions. `JdbcTemplate`/named-parameter facilities remain available for operations beyond the facade, such as batch execution; this does not introduce Spring Data JDBC, JPA or Hibernate domain persistence.
+
+The owner selected this after the [comparison](../../research/t3-domain-persistence-comparison.md#transactions-and-mixed-access) and fit discussion: accept more handwritten SQL/mapping in exchange for explicit grant, locking and audit operations, while retaining the existing foundation. The other stacks remain viable but are not adopted here. No measured speed/security advantage is claimed. K0 records the confirmed JDBC convention; Spring Session's transaction participation still needs separate design.
 
 #### Responsibilities shared by every option
 
@@ -211,12 +215,63 @@ The design must explicitly settle the participating transaction operations/manag
 
 No production dependency, configuration, schema, code or test was changed to establish these findings. The later exact-file implementation plan must name the selected dependency/configuration changes, additive Flyway migrations, owned repositories, shared-contract edits and meaningful PostgreSQL/security checks. This subsection does not authorize those edits.
 
+### 4. Administrative transactions and final-manager protection
+
+#### Transaction boundaries fixed by the selected behavior
+
+Each atomic T3 database operation runs in a short service transaction over the same datasource as its `JdbcClient` repositories. Repository helpers participate in that operation's transaction; they do not independently commit a grant and then try to add an enabled audit row afterward. Keep Google calls, user interaction, file work and unrelated future jobs outside the open database transaction.
+
+| Operation | State that must commit together |
+| --- | --- |
+| First successful Google sign-in | New application account, unique issuer/subject mapping and initial concrete basic grants. Resolve duplicate callbacks through database uniqueness and a defined re-read/retry path. |
+| Apply template / grant or remove permissions | Current authorized grant mutation and its admin audit row when capture is enabled. Additive application keeps unrelated grants; removal is explicit. |
+| First normal admin setup | Trusted-operator target validation, initial grants and durable consumed-bootstrap state; enabled provisioning audit participates. Development provisioning remains separate. |
+| Permission-manager removal | The authorized change, final-manager invariant and enabled audit; a failed invariant or enabled audit write rolls back the change. |
+| Reviewed global grant rollout | Grant effects and durable completion/progress with explicit target accounts. A completed rollout cannot silently replay over a later removal through ordinary recovery. Exact batching/concurrency rules remain to be designed. |
+| Admin session revocation | Actual invalidation and enabled audit must be atomic. Framework transaction propagation and concurrent save/login fencing remain a separate integration obligation above. |
+
+Classify an administrator action for audit before a self-revocation changes the actor's grants; keep the captured category for retention. When admin capture is disabled, skip event enrichment and the audit write dependency while retaining ordinary authorization/validation. Commit failure must never be reported as a successful change. Exact response codes, idempotency/request handling and timeout values belong in the remaining API/implementation design.
+
+#### The race this decision must prevent
+
+After normal setup, suppose Ana and Ben are both permission managers and each removes their own permission concurrently:
+
+```text
+Without coordination:
+  Ana's transaction reads manager count = 2
+  Ben's transaction reads manager count = 2
+  each removes one manager grant
+  both commit → no permission manager remains
+
+Required result:
+  at most one of those removals commits
+  the other is rejected after checking the current manager population
+```
+
+Count eligible account authority, not active sessions. Never let the development fixture silently satisfy normal production-manager availability. Every mutation capable of changing that protected population must follow the chosen protocol, including setup/template/rollout paths where relevant. Precise normal/development eligibility and schema representation remain part of the bounded design.
+
+#### Next author decision: coordinate manager changes
+
+These are alternatives for this invariant, not a global application lock or a decision to make every request serializable. Ordinary document reads and unrelated business work must not acquire a global manager lock. The following mechanisms are documented by PostgreSQL; their T3 fit/trade-offs are design inferences.
+
+| Option | Mechanism | Trade-off and failure condition |
+| --- | --- | --- |
+| **1 — Lock one database guard row** | Keep a small coordination row. At READ COMMITTED, every relevant manager change locks it before checking and changing grants; subsequent count/check statements observe the serialized order. | Makes the protocol visible in schema/SQL, with one-at-a-time manager edits. Requires the row to exist and every relevant writer to use the same guard/lock order. A bypassing writer breaks the guarantee. |
+| **2 — Transaction-level advisory lock** | Acquire a dedicated PostgreSQL advisory lock key before relevant manager checks/changes; transaction end releases it. | Avoids a persistent guard row, but the shared key and namespace are application conventions all writers must follow. A missing/wrong key breaks coordination. Use transaction-level locking rather than leaving session-level locks attached to pooled connections. |
+| **3 — Serializable manager-change transactions** | Put all invariant-relevant checks/writes under compatible SERIALIZABLE transactions; handle serialization aborts by retrying the complete database transaction with fresh checks. | Database conflict detection supplies the serial ordering guarantee for successful transactions. Requires bounded whole-transaction retries and every relevant writer following the protocol; an incomplete retry or incompatible bypass is unsafe. Contention can cause aborted attempts. |
+
+Sources: [PostgreSQL row/advisory locking and lock order](https://www.postgresql.org/docs/17/explicit-locking.html), [isolation and serialization retry rules](https://www.postgresql.org/docs/17/transaction-iso.html). No coordination option is selected or ranked. Actual contention/latency is unmeasured.
+
+For either lock approach, waits/timeouts must be bounded in the implementation design and fail safely. For the serializable alternative, retries apply only after a database serialization abort, with no committed external effects; authorization denial or unavailable reauthentication is not automatically retried. Recheck authority on each database attempt. None of these mechanisms queues or replays a denied user action or cancels accepted jobs.
+
+After selection, specify the exact protected population, lock acquisition order, transaction boundaries, retry/timeout settings, API outcomes and meaningful concurrent-PostgreSQL checks. Session-revocation fencing, per-account operation-admission ordering and the module graph remain additional technical-plan decisions; this one invariant does not settle them.
+
 ## Open Questions
 
 These are bounded inputs for the technical plan, not requests to reopen accepted product choices.
 
 1. **Permission administration and evolution:** settle stable IDs, grant rollout/retry ordering, the permission-management UI and exact schema. Template application is additive; admins remove grants separately. Per-account grants without template membership or permanent deny state are selected. Preserve create-once setup evidence independently of retained audit history.
-2. **Security/session and persistence boundaries:** choose the domain stack from the completed comparison; settle module direction, session/context isolation, filter/CSRF/error behavior, transaction ordering, audited Spring Session transaction participation and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
+2. **Security/session and persistence boundaries:** use the selected Spring JDBC/`JdbcClient` stack; choose final-manager coordination and settle module direction, session/context isolation, filter/CSRF/error behavior, transaction ordering, audited Spring Session transaction participation and cross-instance consistency. Preserve the accepted deadlines and revocation semantics.
 3. **Audit and operational bounds:** settle action/failure behavior, safe metadata, retention cleanup and finite diagnostic acceptance. Bound and measure combined session/permission/audit work against the existing datasource rather than assuming its cost.
 4. **Executable handoff:** later approved sections must identify exact file actions, migrations, permitted shared changes, buildable phases and meaningful checks, carrying every accepted requirement and review obligation forward.
 
