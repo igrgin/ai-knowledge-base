@@ -1,5 +1,13 @@
 # AI Knowledge Base repository guidance
 
+## Shared workflow
+
+Use the shared skills in `.agents/skills/`, linked to
+`~/Documents/home-repo/.agents/skills/`. For implementation, diagnosis, review,
+coordination, and skill setup, read `~/Documents/home-repo/docs/agent-workflow.md`.
+For GitHub work, use `~/Documents/home-repo/docs/github-workflow.md` as the
+authority, including when project documents reference older remote conventions.
+
 ## Delivery work
 
 For delivery work, use the [EGM workflow](docs/egm-workflow.md), [application design](docs/designs/application.md) and [roadmap](docs/roadmap.md). Before substantial feature implementation, satisfy the roadmap's bounded EGM design/review prerequisite. The roadmap owns task authority, dependencies, file/schema ownership and progress; the [contract index](docs/contracts/README.md) owns gate availability. T3 and later features require separate authorization.
@@ -7,10 +15,6 @@ For delivery work, use the [EGM workflow](docs/egm-workflow.md), [application de
 ## Agent assignments
 
 For skill routing, review handoff, sequential execution and role/model assignment, read the [workflow](docs/egm-workflow.md). Use the installed skill's own procedure. For architecture bootstrap, explicitly select `target_filename="EGM.md"` and a bounded subtree.
-
-## Remote work
-
-Before issue work, branch or commit operations, pushes, PR changes, comments, CI work or merges, read and follow [remote-work.md](docs/remote-work.md).
 
 ## Architecture
 
