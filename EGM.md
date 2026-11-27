@@ -65,6 +65,6 @@ verification entry points, not evidence that a particular candidate has passed.
 
 ## Design and Contract Maintenance
 
-[Application design](docs/designs/application.md) owns product requirements and proposed mechanisms; the [roadmap](docs/roadmap.md) owns task authority and progress, and the [contract index](docs/contracts/README.md) owns gate availability. Follow the [EGM workflow](docs/egm-workflow.md) for design, review, implementation handoff and agent assignments, and [remote work](docs/remote-work.md) for issue/branch/PR operations.
+[Application design](docs/designs/application.md) owns product requirements and proposed mechanisms; the [roadmap](docs/roadmap.md) owns task authority and progress, and the [contract index](docs/contracts/README.md) owns gate availability. Follow the [EGM workflow](docs/egm-workflow.md) for design, review, implementation handoff and agent assignments, and the shared GitHub workflow named in [AGENTS.md](AGENTS.md) for issue, branch, and PR operations.
 
 K0 stays canonical. Update affected package contracts alongside implementation and reconcile accepted design amendments at their owning source. Every substantial feature requires the roadmap's [bounded design prerequisite](docs/roadmap.md#feature-design-prerequisite); the application design and task areas are not execution handoffs. Future feature proposals remain in design records until accepted and implemented; package maps describe actual code and explicit consumer obligations. T3 is the proposed next feature-design task and has not started.

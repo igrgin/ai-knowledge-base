@@ -5,16 +5,19 @@
 Use the shared skills in `.agents/skills/`, linked to
 `~/Documents/home-repo/.agents/skills/`. For implementation, diagnosis, review,
 coordination, and skill setup, read `~/Documents/home-repo/docs/agent-workflow.md`.
-For GitHub work, use `~/Documents/home-repo/docs/github-workflow.md` as the
-authority, including when project documents reference older remote conventions.
+For GitHub work, follow `~/Documents/home-repo/docs/github-workflow.md` and
+see [project GitHub requirements](docs/remote-work.md) for the repository checks.
 
 ## Delivery work
 
-For delivery work, use the [EGM workflow](docs/egm-workflow.md), [application design](docs/designs/application.md) and [roadmap](docs/roadmap.md). Before substantial feature implementation, satisfy the roadmap's bounded EGM design/review prerequisite. The roadmap owns task authority, dependencies, file/schema ownership and progress; the [contract index](docs/contracts/README.md) owns gate availability. T3 and later features require separate authorization.
+Use the [EGM workflow](docs/egm-workflow.md) for skill selection, design and
+review handoffs, and agent assignments. Before substantial feature
+implementation, satisfy the roadmap's design and review prerequisite.
 
-## Agent assignments
-
-For skill routing, review handoff, sequential execution and role/model assignment, read the [workflow](docs/egm-workflow.md). Use the installed skill's own procedure. For architecture bootstrap, explicitly select `target_filename="EGM.md"` and a bounded subtree.
+Use the [application design](docs/designs/application.md) for requirements, the
+[roadmap](docs/roadmap.md) for task authority, dependencies, file and schema
+ownership, and progress, and the [contract index](docs/contracts/README.md) for
+gate availability. T3 and later features require separate authorization.
 
 ## Architecture
 
