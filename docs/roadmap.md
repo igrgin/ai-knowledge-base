@@ -4,7 +4,7 @@
 
 [Issue #24](https://github.com/igrgin/ai-knowledge-base/issues/24) covers the EGM documentation cutover. The owner's 2026-11-05 instruction extends this PR to substantive architecture/task reassessment and warranted documentation changes; [results and dispositions](reviews/egm-migration/reassessment.md) record that amendment. T1 is merged in [PR #21](https://github.com/igrgin/ai-knowledge-base/pull/21); T2 is merged in [PR #23](https://github.com/igrgin/ai-knowledge-base/pull/23), merge `d5b2efceda70db39bcf6e19fcdef69c9f236f297`. T3–T20 remain pending and require separate implementation authority. No paid calls, deployment or merge follows from this record. Concurrency remains one.
 
-[Application design](designs/application.md) owns product requirements and proposed mechanisms. [Contract availability](contracts/README.md) owns published interface gates. [Workflow](egm-workflow.md) owns EGM routing and review handoff; [remote work](remote-work.md) owns native task/branch/PR operations. Current progress belongs here; detailed execution evidence belongs on the task/PR.
+[Application design](designs/application.md) owns product requirements and proposed mechanisms. [Contract availability](contracts/README.md) owns published interface gates. [Workflow](egm-workflow.md) owns EGM routing and review handoff; the shared GitHub workflow named in [AGENTS.md](../AGENTS.md) governs issue, branch, and PR operations. Current progress belongs here; detailed execution evidence belongs on the task/PR.
 
 ## Feature design prerequisite
 
@@ -207,7 +207,7 @@ Each requirement maps to its owning vertical implementation and later integratio
 | C3 limits/languages/evaluation | Existing quotas/English-first criteria unchanged; feature tests and T13/T14 evidence before expansion |
 | C4 unfinished/failed archives | T6 owns processing state; T20 visibility/cancellation; T7 uses the same fences and T13 verifies combined cases |
 | C5 backup/provider retention | T11 local journal/restore; T16/T17 replay integration; T15 transparent retention; hosted backup terms remain later |
-| C6 review/operations/platform policy | Use the EGM workflow, fresh implementation review and selected project agent assignments. The remote-work guide governs native GitHub operations; hosted controls remain deferred and require actual authority |
+| C6 review/operations/platform policy | Use the EGM workflow, fresh implementation review and selected project agent assignments. The shared GitHub workflow governs repository operations; hosted controls remain deferred and require actual authority |
 | C7 account email | T3 password sessions and in-app T16 invitations; no email service added; hosted verification/recovery later |
 | C8 dependency/model compatibility/access | Core checks T1, feature-library checks in its slice; T5 test adapters remain test-only; paid/account-quality limitations affect T14 only |
 | C9 unknown total workload/capacity | T13 reproducible experiments, T14 bounded provider evidence; no invented throughput promise or budget increase |

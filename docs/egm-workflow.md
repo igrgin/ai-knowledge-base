@@ -33,7 +33,7 @@ Update changed package maps and canonical contracts with the implementation. Pro
 
 Obtain a fresh, report-only implementation review of the actual diff for bugs, security and design compliance. Give it the candidate identity, actual checks and governing requirements; wait for completion and preserve findings, dispositions, failed checks and limits. A design review does not review implementation. A targeted specialist is useful for a concrete additional concern. Use the installed EGM procedure for document reviews; do not substitute an invented stage/iteration policy.
 
-For issue work, branches, commits, pushes, PRs, comments, CI operations and merge/closure, read [remote work](remote-work.md). It is the single authority for those operations. The existing `Tests` check and native protections remain in force. No paid call or deployment follows from review or an application budget target.
+For GitHub work, follow the shared workflow named in [AGENTS.md](../AGENTS.md) and read the [project GitHub requirements](remote-work.md). No paid call or deployment follows from review or an application budget target.
 
 ## Concurrency and shared ownership
 
